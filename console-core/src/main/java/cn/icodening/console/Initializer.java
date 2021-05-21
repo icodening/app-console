@@ -8,6 +8,8 @@ public interface Initializer {
 
     /**
      * 初始化
+     *
+     * @param agentArgs 启动时的premain args
      */
-    void initialize();
+    void initialize(String agentArgs);
 }

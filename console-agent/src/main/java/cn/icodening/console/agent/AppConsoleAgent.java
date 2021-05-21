@@ -1,10 +1,8 @@
 package cn.icodening.console.agent;
 
-import cn.icodening.console.boot.BootService;
-import cn.icodening.console.extension.ExtensionLoader;
+import cn.icodening.console.boot.BootServiceManager;
 
 import java.lang.instrument.Instrumentation;
-import java.util.List;
 
 /**
  * @author icodening
@@ -13,11 +11,27 @@ import java.util.List;
 public class AppConsoleAgent {
 
     public static void premain(String agentArgs, Instrumentation instrumentation) {
+        //FIXME LOG
         System.out.println("app console agent start");
-        List<BootService> bootServices = ExtensionLoader.getExtensionLoader(BootService.class).getAllExtension();
-        for (BootService bootService : bootServices) {
-            bootService.initialize();
-            bootService.start();
+        // 启动所有服务扩展点
+        try {
+            BootServiceManager.initBootServices(agentArgs);
+            BootServiceManager.startBootServices();
+        } catch (Exception e) {
+            //FIXME LOG
+            System.out.println(e.getMessage());
         }
+
+        // TODO Extension
+
+        // 安全销毁所有服务扩展点
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                BootServiceManager.destroyBootServices();
+            } catch (Exception e) {
+                //FIXME LOG
+                System.out.println(e.getMessage());
+            }
+        }));
     }
 }
