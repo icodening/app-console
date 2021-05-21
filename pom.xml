@@ -8,9 +8,14 @@
     <artifactId>app-console</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0</version>
+    <modules>
+        <module>console-core</module>
+        <module>console-agent</module>
+    </modules>
 
     <properties>
         <java.version>1.8</java.version>
+        <maven-shade-plugin.version>3.1.1</maven-shade-plugin.version>
     </properties>
 
 
@@ -22,6 +27,11 @@
 
     <build>
         <plugins>
+            <plugin>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>${maven-shade-plugin.version}</version>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

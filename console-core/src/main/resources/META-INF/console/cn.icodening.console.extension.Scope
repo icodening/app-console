@@ -1,0 +1,2 @@
+singleton=cn.icodening.console.extension.Singleton
+prototype=cn.icodening.console.extension.Prototype
