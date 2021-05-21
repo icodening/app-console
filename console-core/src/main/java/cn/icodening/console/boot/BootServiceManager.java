@@ -2,6 +2,7 @@ package cn.icodening.console.boot;
 
 import cn.icodening.console.extension.ExtensionLoader;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -39,6 +40,7 @@ public class BootServiceManager {
     private static List<BootService> getBootServices() {
         if (null == bootServices) {
             bootServices = ExtensionLoader.getExtensionLoader(BootService.class).getAllExtension();
+            Collections.sort(bootServices);
         }
         return bootServices;
     }
