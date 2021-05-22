@@ -1,5 +1,6 @@
 package cn.icodening.console.extension;
 
+import cn.icodening.console.AgentPath;
 import cn.icodening.console.ObjectFactory;
 import cn.icodening.console.util.Holder;
 import cn.icodening.console.util.MessageManager;
@@ -7,6 +8,7 @@ import cn.icodening.console.util.ReflectUtil;
 import cn.icodening.console.util.StringUtil;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -51,7 +53,7 @@ public class ExtensionLoader<T> {
     private boolean init = false;
 
     static {
-       ExtensionLoader.getExtensionLoader(ExtensionLoadedPostProcessor.class);
+        ExtensionLoader.getExtensionLoader(ExtensionLoadedPostProcessor.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -61,7 +63,7 @@ public class ExtensionLoader<T> {
             Enumeration<URL> scopes = classLoader.getResources(DEFAULT_LOAD_PATH + Scope.class.getName());
             while (scopes.hasMoreElements()) {
                 URL url = scopes.nextElement();
-                Map<String, Class<?>> scopeMap = readFile(url.openStream());
+                Map<String, Class<?>> scopeMap = readFile(classLoader, url.openStream());
                 scopeMap.forEach((name, clazz) -> {
                     nameScopeMap.putIfAbsent(name, ReflectUtil.newInstance((Class<Scope>) clazz));
                 });
@@ -69,7 +71,7 @@ public class ExtensionLoader<T> {
             Enumeration<URL> resources = classLoader.getResources(DEFAULT_LOAD_PATH + type.getName());
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
-                Map<String, Class<?>> nameClassMap = readFile(url.openStream());
+                Map<String, Class<?>> nameClassMap = readFile(classLoader, url.openStream());
                 nameClassMap.forEach((name, clazz) -> {
                     Extension meta = clazz.getAnnotation(Extension.class);
                     String scope = Scope.SINGLETON;
@@ -98,7 +100,9 @@ public class ExtensionLoader<T> {
 
     public ExtensionLoader(Class<T> type) {
         this.type = type;
-        this.classLoader = Thread.currentThread().getContextClassLoader();
+        ExtensionClassLoader classLoader = new ExtensionClassLoader(ExtensionLoader.class.getClassLoader());
+        classLoader.addPath(new File(AgentPath.INSTANCE.getPath() + "/extensions"));
+        this.classLoader = classLoader;
     }
 
     private static <T> boolean withExtensionAnnotation(Class<T> type) {
@@ -191,8 +195,7 @@ public class ExtensionLoader<T> {
         return result;
     }
 
-    private static Map<String, Class<?>> readFile(InputStream inputStream) {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+    private Map<String, Class<?>> readFile(ClassLoader classLoader, InputStream inputStream) {
         Map<String, Class<?>> nameClassMap = new HashMap<>();
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             String row;

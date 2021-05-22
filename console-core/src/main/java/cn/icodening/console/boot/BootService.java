@@ -1,5 +1,6 @@
 package cn.icodening.console.boot;
 
+import cn.icodening.console.AppConsoleException;
 import cn.icodening.console.Initializer;
 import cn.icodening.console.Sortable;
 import cn.icodening.console.extension.Extensible;
@@ -11,13 +12,18 @@ import cn.icodening.console.extension.Extensible;
 @Extensible
 public interface BootService extends Initializer, Sortable {
 
+
     /**
      * 启动
+     *
+     * @throws AppConsoleException 所有异常
      */
-    void start();
+    void start() throws AppConsoleException;
 
     /**
      * 销毁
+     *
+     * @throws AppConsoleException 所有异常
      */
-    void destroy();
+    void destroy() throws AppConsoleException;
 }

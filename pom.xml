@@ -11,6 +11,7 @@
     <modules>
         <module>console-core</module>
         <module>console-agent</module>
+        <module>console-extensions</module>
     </modules>
 
     <properties>
