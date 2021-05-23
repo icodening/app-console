@@ -17,6 +17,11 @@
         <premain.class>cn.icodening.console.agent.AppConsoleAgent</premain.class>
         <can.redefine.classes>true</can.redefine.classes>
         <can.retransform.classes>true</can.retransform.classes>
+        <extension.jars.dir>${project.build.directory}/extensions</extension.jars.dir>
+        <console.agent.config.dir>${project.build.directory}/config</console.agent.config.dir>
+        <extension.jars.source.dir>${project.build.directory}/../../console-extension-jars</extension.jars.source.dir>
+        <console.agent.config.source.dir>${project.build.directory}/../../console-dist/src/main/resources
+        </console.agent.config.source.dir>
     </properties>
 
     <dependencies>
@@ -30,6 +35,33 @@
     <build>
         <finalName>console-agent</finalName>
         <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+                                <copy todir="${extension.jars.dir}">
+                                    <fileset dir="${extension.jars.source.dir}">
+                                        <include name="*.jar"/>
+                                    </fileset>
+                                </copy>
+                                <copy todir="${console.agent.config.dir}">
+                                    <fileset dir="${console.agent.config.source.dir}">
+                                        <include name="*.properties"/>
+                                    </fileset>
+                                </copy>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <artifactId>maven-shade-plugin</artifactId>
                 <executions>

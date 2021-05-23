@@ -28,6 +28,7 @@ public class ConfigurationBootService extends BaseBootService {
                     ConfigurationManager.INSTANCE.set((String) key, properties.getProperty((String) key));
                 }
             }
+            System.out.println("[" + ConfigurationBootService.class.getName() + "] load success: " + properties);
         } catch (IOException e) {
             //FIXME LOG
             throw AppConsoleException.wrapperException(e);
