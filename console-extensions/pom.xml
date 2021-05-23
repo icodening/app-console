@@ -18,6 +18,44 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <sdk.plugin.related.dir/>
+
+        <ant-contrib.version>1.0b3</ant-contrib.version>
+        <ant-nodeps.version>1.8.1</ant-nodeps.version>
+        <extensions.dest.dir>${project.build.directory}/../../../console-extension-jars</extensions.dest.dir>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>cn.icodening</groupId>
+            <artifactId>console-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+                                <copy todir="${extensions.dest.dir}">
+                                    <fileset dir="${project.build.directory}">
+                                        <include name="*.jar"/>
+                                    </fileset>
+                                </copy>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
