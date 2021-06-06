@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>console-boot</module>
+        <module>spring-register</module>
     </modules>
 
     <properties>
@@ -22,7 +23,9 @@
 
         <ant-contrib.version>1.0b3</ant-contrib.version>
         <ant-nodeps.version>1.8.1</ant-nodeps.version>
-        <extensions.dest.dir>${project.build.directory}/../../../console-extension-jars</extensions.dest.dir>
+        <base.dir>${project.basedir}</base.dir>
+        <extensions.dest.dir>${base.dir}/../../console-extension-jars</extensions.dest.dir>
+        <!--        <extensions.dest.dir>${project.build.directory}/../../../console-extension-jars</extensions.dest.dir>-->
     </properties>
 
     <dependencies>
@@ -46,6 +49,7 @@
                                 <copy todir="${extensions.dest.dir}">
                                     <fileset dir="${project.build.directory}">
                                         <include name="*.jar"/>
+                                        <exclude name="*-sources.jar"/>
                                     </fileset>
                                 </copy>
                             </tasks>

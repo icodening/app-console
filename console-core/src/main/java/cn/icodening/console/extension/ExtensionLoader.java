@@ -100,7 +100,8 @@ public class ExtensionLoader<T> {
 
     public ExtensionLoader(Class<T> type) {
         this.type = type;
-        ExtensionClassLoader classLoader = new ExtensionClassLoader(ExtensionLoader.class.getClassLoader());
+        ExtensionClassLoader classLoader = new ExtensionClassLoader(type.getClassLoader());
+//        ExtensionClassLoader classLoader = new ExtensionClassLoader(ExtensionLoader.class.getClassLoader());
         classLoader.addPath(new File(AgentPath.INSTANCE.getPath() + "/extensions"));
         this.classLoader = classLoader;
     }

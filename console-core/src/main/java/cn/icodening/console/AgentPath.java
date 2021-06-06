@@ -21,6 +21,7 @@ public enum AgentPath {
 
     AgentPath() {
         path = findPath();
+        System.out.println("agent path: " + path);
     }
 
     public File getPath() {

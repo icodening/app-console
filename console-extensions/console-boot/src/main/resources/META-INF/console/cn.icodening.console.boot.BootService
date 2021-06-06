@@ -1,1 +1,3 @@
 config=cn.icodening.console.boot.ConfigurationBootService
+register=cn.icodening.console.boot.RegisterBootService
+dynamicClassPath=cn.icodening.console.boot.DynamicClassPathBootService

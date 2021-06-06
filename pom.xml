@@ -13,6 +13,7 @@
         <module>console-agent</module>
         <module>console-extensions</module>
         <module>console-dist</module>
+        <module>console-server</module>
     </modules>
 
     <properties>
@@ -20,13 +21,25 @@
         <maven-shade-plugin.version>3.1.1</maven-shade-plugin.version>
         <maven-assembly-plugin.version>3.1.0</maven-assembly-plugin.version>
         <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
-
+        <springboot.version>2.1.9.RELEASE</springboot.version>
+        <fastjson.version>1.2.75</fastjson.version>
     </properties>
 
 
     <dependencyManagement>
         <dependencies>
-
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <scope>import</scope>
+                <type>pom</type>
+                <version>${springboot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -53,6 +66,21 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <attach>true</attach>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase><!--指定绑定的声明周期阶段-->
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

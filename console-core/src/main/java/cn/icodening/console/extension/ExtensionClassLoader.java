@@ -22,7 +22,8 @@ public class ExtensionClassLoader extends ClassLoader {
     private final List<File> classpath = new LinkedList<>();
 
     private List<Jar> allJars;
-    private ReentrantLock jarScanLock = new ReentrantLock();
+
+    private final ReentrantLock jarScanLock = new ReentrantLock();
 
     public ExtensionClassLoader(ClassLoader parent) {
         super(parent);
@@ -85,6 +86,17 @@ public class ExtensionClassLoader extends ClassLoader {
         };
     }
 
+    public String getJarPathByClass(String classFilePath) {
+        List<ExtensionClassLoader.Jar> allJars = getAllJars();
+        for (ExtensionClassLoader.Jar allJar : allJars) {
+            JarFile jarFile = allJar.jarFile;
+            JarEntry jarEntry = jarFile.getJarEntry(classFilePath);
+            if (jarEntry != null) {
+                return jarFile.getName();
+            }
+        }
+        return null;
+    }
 
     private List<Jar> getAllJars() {
         if (allJars == null) {
@@ -111,7 +123,7 @@ public class ExtensionClassLoader extends ClassLoader {
                         File file = new File(path, fileName);
                         Jar jar = new Jar(new JarFile(file), file);
                         jars.add(jar);
-                    } catch (IOException e) {
+                    } catch (IOException ignored) {
                     }
                 }
             }
