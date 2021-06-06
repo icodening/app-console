@@ -9,4 +9,6 @@ import cn.icodening.console.entity.InstanceEntity;
 public interface InstanceService extends IService<InstanceEntity> {
 
     void register(InstanceEntity instanceEntity);
+
+    void deregister(String identity);
 }

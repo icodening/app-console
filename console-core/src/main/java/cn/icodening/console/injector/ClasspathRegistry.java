@@ -1,4 +1,4 @@
-package cn.icodening.console.boot;
+package cn.icodening.console.injector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,19 +7,19 @@ import java.util.List;
  * @author icodening
  * @date 2021.06.06
  */
-public class ClassPathRegistry {
+public class ClasspathRegistry {
 
     private final List<String> urls = new ArrayList<>();
 
-    public void addURL(String url) {
+    public void addUrl(String url) {
         urls.add(url);
     }
 
-    public void removeURL(String url) {
+    public void removeUrl(String url) {
         urls.remove(url);
     }
 
-    public List<String> getAllURL() {
+    public List<String> getAllUrl() {
         return new ArrayList<>(urls);
     }
 }

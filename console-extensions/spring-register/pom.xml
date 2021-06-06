@@ -15,12 +15,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
         </dependency>
         <dependency>
             <groupId>cn.icodening</groupId>
-            <artifactId>console-boot</artifactId>
+            <artifactId>console-core</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

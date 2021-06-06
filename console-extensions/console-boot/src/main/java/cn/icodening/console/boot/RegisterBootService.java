@@ -20,6 +20,8 @@ import java.io.IOException;
  */
 public class RegisterBootService extends BaseBootService {
 
+    private volatile ApplicationInstance applicationInstance;
+
     @Override
     public void start() throws AppConsoleException {
         String serverAddress = ConfigurationManager.INSTANCE.get("serverAddress");
@@ -28,6 +30,7 @@ public class RegisterBootService extends BaseBootService {
         EventDispatcher.register(ApplicationInstanceStartedEvent.class, (ConsoleEventListener<ApplicationInstanceStartedEvent>) event -> {
             ApplicationInstance applicationInstance = event.getApplicationInstance();
             if (applicationInstance != null) {
+                RegisterBootService.this.applicationInstance = applicationInstance;
                 Request post = Request.of(serverAddress + "/instance/register", "POST");
                 post.getHeaders().set("Content-Type", "application/json;charset=utf8");
                 byte[] requestBody = JSON.toJSONBytes(applicationInstance);
@@ -41,5 +44,20 @@ public class RegisterBootService extends BaseBootService {
             }
         });
         System.out.println(RegisterBootService.class.getName() + ": add register callback success");
+    }
+
+    @Override
+    public void destroy() {
+        if (applicationInstance != null) {
+            String serverAddress = ConfigurationManager.INSTANCE.get("serverAddress");
+            String identity = applicationInstance.getIdentity();
+            Request post = Request.of(serverAddress + "/instance/deregister/" + identity, "POST");
+            try {
+                HttpUtil.exchange(post);
+            } catch (IOException e) {
+                //FIXME LOG
+                e.printStackTrace();
+            }
+        }
     }
 }

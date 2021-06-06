@@ -25,8 +25,9 @@ public class InstanceController {
         return ConsoleResponse.ok();
     }
 
-    @DeleteMapping("/deregister")
-    public Object deregister() {
-        return "success";
+    @PostMapping("/deregister/{identity}")
+    public Object deregister(@PathVariable String identity) {
+        instanceService.deregister(identity);
+        return ConsoleResponse.ok();
     }
 }

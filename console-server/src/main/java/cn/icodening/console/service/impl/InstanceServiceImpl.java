@@ -18,11 +18,6 @@ import java.util.Date;
 public class InstanceServiceImpl extends AbstractServiceImpl<InstanceEntity, InstanceRepository> implements InstanceService {
 
     @Override
-    public void addRecord(InstanceEntity record) {
-
-    }
-
-    @Override
     public void register(InstanceEntity instanceEntity) {
         InstanceEntity entity = baseRepository.findOne((Specification<InstanceEntity>)
                 (root, query, criteriaBuilder) -> {
@@ -37,5 +32,14 @@ public class InstanceServiceImpl extends AbstractServiceImpl<InstanceEntity, Ins
         BeanUtils.copyProperties(instanceEntity, entity, "createTime", "modifyTime", "id");
         entity.setModifyTime();
         save(entity);
+    }
+
+    @Override
+    public void deregister(String identity) {
+        baseRepository.findOne((Specification<InstanceEntity>) (root, query, criteriaBuilder) -> {
+            Predicate equal = criteriaBuilder.equal(root.get("identity").as(String.class), identity);
+            query.where(equal);
+            return query.getRestriction();
+        }).ifPresent(entity -> baseRepository.deleteById(entity.getId()));
     }
 }
