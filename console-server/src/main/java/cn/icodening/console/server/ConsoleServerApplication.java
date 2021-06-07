@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
  * @date 2021.05.24
  */
 @SpringBootApplication
-@EntityScan(basePackages = "cn.icodening.console.entity")
+@EntityScan(basePackages = "cn.icodening.console.server.entity")
 public class ConsoleServerApplication {
 
     public static void main(String[] args) {
