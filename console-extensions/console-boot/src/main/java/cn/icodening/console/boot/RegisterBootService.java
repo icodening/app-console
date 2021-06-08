@@ -26,7 +26,6 @@ public class RegisterBootService extends BaseBootService {
     public void start() throws AppConsoleException {
         String serverAddress = ConfigurationManager.INSTANCE.get("serverAddress");
         //TODO register callback for application ready
-        System.out.println(RegisterBootService.class.getName() + ": start register callback success");
         EventDispatcher.register(ApplicationInstanceStartedEvent.class, (ConsoleEventListener<ApplicationInstanceStartedEvent>) event -> {
             ApplicationInstance applicationInstance = event.getApplicationInstance();
             if (applicationInstance != null) {

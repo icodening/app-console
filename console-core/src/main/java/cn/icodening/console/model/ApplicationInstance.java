@@ -13,7 +13,7 @@ public class ApplicationInstance {
 
     private String ip;
 
-    private String name;
+    private String applicationName;
 
     private String identity;
 
@@ -30,7 +30,7 @@ public class ApplicationInstance {
 
         private String ip;
 
-        private String name;
+        private String applicationName;
 
         private String identity;
 
@@ -48,8 +48,8 @@ public class ApplicationInstance {
             return this;
         }
 
-        public Builder name(String name) {
-            this.name = name;
+        public Builder applicationName(String applicationName) {
+            this.applicationName = applicationName;
             return this;
         }
 
@@ -71,7 +71,7 @@ public class ApplicationInstance {
         public ApplicationInstance build() {
             ApplicationInstance applicationInstance = new ApplicationInstance();
             applicationInstance.setIp(ip);
-            applicationInstance.setName(name);
+            applicationInstance.setApplicationName(applicationName);
             applicationInstance.setIdentity(identity);
             applicationInstance.setPort(port);
             applicationInstance.setPid(pid);
@@ -96,12 +96,12 @@ public class ApplicationInstance {
         this.ip = ip;
     }
 
-    public String getName() {
-        return name;
+    public String getApplicationName() {
+        return applicationName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
     }
 
     public String getIdentity() {
@@ -134,7 +134,7 @@ public class ApplicationInstance {
         return "ApplicationInstance{" +
                 "port=" + port +
                 ", ip='" + ip + '\'' +
-                ", name='" + name + '\'' +
+                ", applicationName='" + applicationName + '\'' +
                 ", identity='" + identity + '\'' +
                 ", pid='" + pid + '\'' +
                 ", attributes=" + attributes +

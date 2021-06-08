@@ -14,6 +14,7 @@
     <modules>
         <module>console-boot</module>
         <module>spring-register</module>
+        <module>spring-ratelimit</module>
     </modules>
 
     <properties>

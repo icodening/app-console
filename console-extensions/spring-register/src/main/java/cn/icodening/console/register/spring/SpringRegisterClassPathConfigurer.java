@@ -8,10 +8,12 @@ import cn.icodening.console.injector.ClasspathInjector;
  */
 public class SpringRegisterClassPathConfigurer implements ClasspathInjector {
 
+    private static final String DISPATCHER_SERVLET_CLASS = "org.springframework.web.servlet.DispatcherServlet";
+
     @Override
     public boolean shouldInject() {
         try {
-            Class.forName("org.springframework.web.servlet.DispatcherServlet");
+            Class.forName(DISPATCHER_SERVLET_CLASS);
             return true;
         } catch (ClassNotFoundException e) {
             System.out.println(SpringRegisterClassPathConfigurer.class.getName() + ":" + e.getMessage());

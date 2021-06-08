@@ -2,8 +2,6 @@ package cn.icodening.console.server.aop;
 
 import cn.icodening.console.server.common.Modifiable;
 import org.springframework.aop.MethodBeforeAdvice;
-import org.springframework.aop.Pointcut;
-import org.springframework.aop.support.StaticMethodMatcherPointcut;
 
 import java.lang.reflect.Method;
 
@@ -17,24 +15,12 @@ import java.lang.reflect.Method;
 public class ModifyEntityAdvice
         implements MethodBeforeAdvice {
 
-    private static final String JPA_SAVE_METHOD_NAME = "save";
-
-    private final Pointcut pointcut = new StaticMethodMatcherPointcut() {
-        @Override
-        public boolean matches(Method method, Class<?> targetClass) {
-            return JPA_SAVE_METHOD_NAME.equalsIgnoreCase(method.getName());
-        }
-    };
-
-    public Pointcut getPointcut() {
-        return pointcut;
-    }
-
     @Override
     public void before(Method method, Object[] args, Object target) throws Throwable {
         if (args.length != 1) {
             return;
         }
+        //FIXME save list
         if (args[0] instanceof Modifiable) {
             ((Modifiable) args[0]).setModifyTime();
         }

@@ -15,6 +15,8 @@ import javax.persistence.Table;
 @DynamicUpdate
 public class RateLimitEntity extends ConfigurableScopeEntity {
 
+    private static final String CONFIG_TYPE = "RATE_LIMIT";
+
     @Column(name = "endpoint", nullable = false, length = 50)
     private String endpoint;
 
@@ -46,5 +48,10 @@ public class RateLimitEntity extends ConfigurableScopeEntity {
 
     public void setDimension(String dimension) {
         this.dimension = dimension;
+    }
+
+    @Override
+    public String getConfigType() {
+        return CONFIG_TYPE;
     }
 }

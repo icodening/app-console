@@ -15,6 +15,8 @@ import java.net.SocketException;
 import java.util.Enumeration;
 
 /**
+ * FIXME Log
+ *
  * @author icodening
  * @date 2021.06.06
  */
@@ -46,7 +48,7 @@ public class AppConsoleListener implements ApplicationListener<ContextRefreshedE
         ApplicationInstance instance = builder.ip(localhost)
                 .port(Integer.parseInt(portString))
                 .pid(pid)
-                .name(applicationName)
+                .applicationName(applicationName)
                 .identity(localhost + ":" + portString)
                 .build();
         EventDispatcher.dispatch(new ApplicationInstanceStartedEvent(instance));

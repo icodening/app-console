@@ -17,8 +17,8 @@ import java.util.Objects;
 @DynamicUpdate
 public class InstanceEntity extends AbstractEntity {
 
-    @Column(name = "name", nullable = false, length = 32)
-    private String name;
+    @Column(name = "application_name", nullable = false, length = 32)
+    private String applicationName;
 
     @Column(name = "ip", nullable = false, length = 64)
     private String ip;
@@ -30,12 +30,12 @@ public class InstanceEntity extends AbstractEntity {
     @NotNull
     private String identity;
 
-    public String getName() {
-        return name;
+    public String getApplicationName() {
+        return applicationName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
     }
 
     public String getIp() {

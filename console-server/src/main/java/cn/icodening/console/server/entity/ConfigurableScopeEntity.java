@@ -11,6 +11,11 @@ import javax.persistence.MappedSuperclass;
 public abstract class ConfigurableScopeEntity extends AbstractEntity {
 
     /**
+     * 配置类型
+     */
+    private transient String configType;
+
+    /**
      * 作用范围: group、application、instance
      */
     @Column(name = "scope", nullable = false, length = 50)
@@ -51,4 +56,6 @@ public abstract class ConfigurableScopeEntity extends AbstractEntity {
     public void setEnable(Boolean enable) {
         this.enable = enable;
     }
+
+    public abstract String getConfigType();
 }

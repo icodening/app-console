@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  cn.icodening.console.ratelimit.RateLimitAutoConfiguration
+org.springframework.context.ApplicationListener=\
+  cn.icodening.console.ratelimit.PushDataReceivedEventListener

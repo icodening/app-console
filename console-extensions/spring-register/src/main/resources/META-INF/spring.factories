@@ -1,2 +1,4 @@
 org.springframework.context.ApplicationListener=\
   cn.icodening.console.register.spring.AppConsoleListener
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  cn.icodening.console.register.spring.RegisterAutoConfiguration
