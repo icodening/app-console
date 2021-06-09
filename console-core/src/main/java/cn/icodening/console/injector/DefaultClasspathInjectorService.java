@@ -5,6 +5,8 @@ import cn.icodening.console.AppConsoleException;
 import cn.icodening.console.boot.BaseBootService;
 import cn.icodening.console.extension.ExtensionClassLoader;
 import cn.icodening.console.extension.ExtensionLoader;
+import cn.icodening.console.logger.Logger;
+import cn.icodening.console.logger.LoggerFactory;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -17,6 +19,8 @@ import java.util.List;
  * @date 2021.06.06
  */
 public class DefaultClasspathInjectorService extends BaseBootService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultClasspathInjectorService.class);
 
     @Override
     public void start() throws AppConsoleException {
@@ -45,15 +49,15 @@ public class DefaultClasspathInjectorService extends BaseBootService {
                 addUrlMethod.setAccessible(true);
                 List<String> allUrls = classPathRegistry.getAllUrl();
                 for (String u : allUrls) {
-                    System.out.println(u);
+                    LOGGER.debug(u);
                     URL url = new URL(u);
                     addUrlMethod.invoke(contextClassLoader, url);
                 }
                 if (allUrls.isEmpty()) {
-                    System.out.println(DefaultClasspathInjectorService.class.getName() + ": dynamic class path url is empty");
+                    LOGGER.warn("no jar to add to the class path");
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.warn(e);
             }
 
         }

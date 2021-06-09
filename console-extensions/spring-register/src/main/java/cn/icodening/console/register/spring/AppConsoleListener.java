@@ -1,8 +1,10 @@
 package cn.icodening.console.register.spring;
 
-import cn.icodening.console.event.ApplicationInstanceStartedEvent;
+import cn.icodening.console.common.event.ApplicationInstanceStartedEvent;
+import cn.icodening.console.common.model.ApplicationInstance;
 import cn.icodening.console.event.EventDispatcher;
-import cn.icodening.console.model.ApplicationInstance;
+import cn.icodening.console.logger.Logger;
+import cn.icodening.console.logger.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -15,29 +17,26 @@ import java.net.SocketException;
 import java.util.Enumeration;
 
 /**
- * FIXME Log
- *
  * @author icodening
  * @date 2021.06.06
  */
 public class AppConsoleListener implements ApplicationListener<ContextRefreshedEvent> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppConsoleListener.class);
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        System.out.println(AppConsoleListener.class.getName() + ": ContextRefreshedEvent");
         String localhost = getLocalhost();
         if (localhost == null) {
-            System.out.println(AppConsoleListener.class.getName() + ": localhost is null, dont't register");
+            LOGGER.info("localhost is null, dont't register");
             return;
         }
         ApplicationContext applicationContext = event.getApplicationContext();
         String portString = applicationContext.getEnvironment().getProperty("server.port");
         if (portString == null) {
-            //FIXME
             portString = "8080";
-            System.out.println(AppConsoleListener.class.getName() + ": post is null, will be use port 8080");
         }
-
+        LOGGER.info("post is " + portString);
         ApplicationInstance.Builder builder = ApplicationInstance.newBuilder();
         String name = ManagementFactory.getRuntimeMXBean().getName();
         String pid = name.substring(0, name.indexOf("@"));
@@ -52,7 +51,6 @@ public class AppConsoleListener implements ApplicationListener<ContextRefreshedE
                 .identity(localhost + ":" + portString)
                 .build();
         EventDispatcher.dispatch(new ApplicationInstanceStartedEvent(instance));
-        System.out.println(this.getClass().getName() + ": register instance");
     }
 
     private String getLocalhost() {

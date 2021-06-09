@@ -1,16 +1,18 @@
-package cn.icodening.console.model;
+package cn.icodening.console.common.model;
 
 /**
  * @author icodening
  * @date 2021.06.08
  */
-public class PushData {
+public class PushData<T> {
 
     private String type;
 
-    private Object data;
+    private T data;
 
     private long sendTimestamp;
+
+    private String action;
 
     public String getType() {
         return type;
@@ -20,11 +22,11 @@ public class PushData {
         this.type = type;
     }
 
-    public Object getData() {
+    public T getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(T data) {
         this.data = data;
     }
 
@@ -36,12 +38,21 @@ public class PushData {
         this.sendTimestamp = sendTimestamp;
     }
 
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
     @Override
     public String toString() {
         return "PushData{" +
                 "type='" + type + '\'' +
                 ", data=" + data +
                 ", sendTimestamp=" + sendTimestamp +
+                ", action='" + action + '\'' +
                 '}';
     }
 }

@@ -1,6 +1,4 @@
-package cn.icodening.console.server.entity;
-
-import org.hibernate.annotations.DynamicUpdate;
+package cn.icodening.console.common.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +10,6 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "ratelimit")
-@DynamicUpdate
 public class RateLimitEntity extends ConfigurableScopeEntity {
 
     private static final String CONFIG_TYPE = "RATE_LIMIT";

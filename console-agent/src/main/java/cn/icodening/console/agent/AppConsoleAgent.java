@@ -1,6 +1,8 @@
 package cn.icodening.console.agent;
 
 import cn.icodening.console.boot.BootServiceManager;
+import cn.icodening.console.logger.Logger;
+import cn.icodening.console.logger.LoggerFactory;
 
 import java.lang.instrument.Instrumentation;
 
@@ -10,16 +12,16 @@ import java.lang.instrument.Instrumentation;
  */
 public class AppConsoleAgent {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppConsoleAgent.class);
+
     public static void premain(String agentArgs, Instrumentation instrumentation) {
-        //FIXME LOG
-        System.out.println("app console agent start");
+        LOGGER.info("app console agent start");
         // 启动所有服务扩展点
         try {
             BootServiceManager.initBootServices(agentArgs);
             BootServiceManager.startBootServices();
         } catch (Exception e) {
-            //FIXME LOG
-            System.out.println(e.getMessage());
+            LOGGER.warn(e.getMessage());
         }
 
         // TODO Extension
@@ -29,8 +31,7 @@ public class AppConsoleAgent {
             try {
                 BootServiceManager.destroyBootServices();
             } catch (Exception e) {
-                //FIXME LOG
-                System.out.println(e.getMessage());
+                LOGGER.warn(e.getMessage());
             }
         }));
     }

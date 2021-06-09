@@ -1,6 +1,6 @@
 package cn.icodening.console.server.aop;
 
-import cn.icodening.console.server.common.Modifiable;
+import cn.icodening.console.common.Modifiable;
 import org.springframework.aop.MethodBeforeAdvice;
 
 import java.lang.reflect.Method;

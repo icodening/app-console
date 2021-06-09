@@ -1,4 +1,4 @@
-package cn.icodening.console.server.common;
+package cn.icodening.console.common;
 
 import java.util.Date;
 

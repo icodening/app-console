@@ -1,6 +1,6 @@
 package cn.icodening.console.server.service;
 
-import cn.icodening.console.server.entity.InstanceEntity;
+import cn.icodening.console.common.entity.InstanceEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

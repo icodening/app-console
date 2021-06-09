@@ -1,6 +1,6 @@
 package cn.icodening.console.server.service;
 
-import cn.icodening.console.server.entity.InstanceEntity;
+import cn.icodening.console.common.entity.InstanceEntity;
 
 import java.util.List;
 

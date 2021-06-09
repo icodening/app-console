@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>app-console</artifactId>
+        <groupId>cn.icodening</groupId>
+        <version>1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>console-common</artifactId>
+
+    <properties>
+        <base.dir>${project.basedir}</base.dir>
+        <extensions.dest.dir>${base.dir}/../console-extension-jars</extensions.dest.dir>
+        <agent.extensions.dest.dir>${extensions.dest.dir}/../console-agent/target/extensions</agent.extensions.dest.dir>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>cn.icodening</groupId>
+            <artifactId>console-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>javax.persistence-api</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+                                <copy todir="${extensions.dest.dir}" overwrite="true">
+                                    <fileset dir="${project.build.directory}" erroronmissingdir="false">
+                                        <include name="*.jar"/>
+                                        <exclude name="*-sources.jar"/>
+                                    </fileset>
+                                </copy>
+                                <copy todir="${agent.extensions.dest.dir}" overwrite="true">
+                                    <fileset dir="${extensions.dest.dir}" erroronmissingdir="false">
+                                        <include name="*.jar"/>
+                                        <exclude name="*-sources.jar"/>
+                                    </fileset>
+                                </copy>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

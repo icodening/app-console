@@ -2,6 +2,8 @@ package cn.icodening.console.server.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
@@ -22,7 +24,15 @@ public class WebConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
+    public RestTemplate restTemplate(ClientHttpRequestFactory httpRequestFactory) {
+        return new RestTemplate(httpRequestFactory);
+    }
+
+    @Bean
+    public ClientHttpRequestFactory httpRequestFactory() {
+        final HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(200);
+        requestFactory.setReadTimeout(5000);
+        return requestFactory;
     }
 }

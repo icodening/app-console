@@ -1,6 +1,6 @@
 package cn.icodening.console.server.service;
 
-import cn.icodening.console.server.model.PushData;
+import cn.icodening.console.common.model.PushData;
 
 import java.util.List;
 

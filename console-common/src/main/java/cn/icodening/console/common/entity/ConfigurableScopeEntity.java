@@ -1,4 +1,4 @@
-package cn.icodening.console.server.entity;
+package cn.icodening.console.common.entity;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -9,11 +9,6 @@ import javax.persistence.MappedSuperclass;
  */
 @MappedSuperclass
 public abstract class ConfigurableScopeEntity extends AbstractEntity {
-
-    /**
-     * 配置类型
-     */
-    private transient String configType;
 
     /**
      * 作用范围: group、application、instance

@@ -1,6 +1,6 @@
 package cn.icodening.console.server.web.controller;
 
-import cn.icodening.console.server.entity.RateLimitEntity;
+import cn.icodening.console.common.entity.RateLimitEntity;
 import cn.icodening.console.server.service.IService;
 import cn.icodening.console.server.service.RateLimitService;
 import cn.icodening.console.server.web.controller.base.CrudController;

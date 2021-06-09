@@ -1,6 +1,6 @@
 package cn.icodening.console.server.event;
 
-import cn.icodening.console.server.entity.ConfigurableScopeEntity;
+import cn.icodening.console.common.entity.ConfigurableScopeEntity;
 import org.springframework.context.ApplicationEvent;
 
 /**

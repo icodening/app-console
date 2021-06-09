@@ -1,12 +1,14 @@
 package cn.icodening.console.boot;
 
 import cn.icodening.console.AppConsoleException;
+import cn.icodening.console.common.event.ApplicationInstanceStartedEvent;
+import cn.icodening.console.common.model.ApplicationInstance;
 import cn.icodening.console.config.ConfigurationManager;
-import cn.icodening.console.event.ApplicationInstanceStartedEvent;
 import cn.icodening.console.event.ConsoleEventListener;
 import cn.icodening.console.event.EventDispatcher;
 import cn.icodening.console.http.Request;
-import cn.icodening.console.model.ApplicationInstance;
+import cn.icodening.console.logger.Logger;
+import cn.icodening.console.logger.LoggerFactory;
 import cn.icodening.console.util.HttpUtil;
 import com.alibaba.fastjson.JSON;
 
@@ -22,10 +24,11 @@ public class RegisterBootService extends BaseBootService {
 
     private volatile ApplicationInstance applicationInstance;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegisterBootService.class);
+
     @Override
     public void start() throws AppConsoleException {
         String serverAddress = ConfigurationManager.INSTANCE.get("serverAddress");
-        //TODO register callback for application ready
         EventDispatcher.register(ApplicationInstanceStartedEvent.class, (ConsoleEventListener<ApplicationInstanceStartedEvent>) event -> {
             ApplicationInstance applicationInstance = event.getApplicationInstance();
             if (applicationInstance != null) {
@@ -36,13 +39,13 @@ public class RegisterBootService extends BaseBootService {
                 post.setBody(requestBody);
                 try {
                     HttpUtil.exchange(post);
+                    LOGGER.info("[" + applicationInstance + "] register backend success! backend address is:" + serverAddress);
                 } catch (IOException e) {
-                    //TODO LOG ignore register fail
-                    e.printStackTrace();
+                    //TODO ignore or retry?
+                    LOGGER.warn("[" + applicationInstance + "] register failed !!!", e.getCause());
                 }
             }
         });
-        System.out.println(RegisterBootService.class.getName() + ": add register callback success");
     }
 
     @Override
@@ -54,8 +57,7 @@ public class RegisterBootService extends BaseBootService {
             try {
                 HttpUtil.exchange(post);
             } catch (IOException e) {
-                //FIXME LOG
-                e.printStackTrace();
+                throw AppConsoleException.wrapperException(e);
             }
         }
     }

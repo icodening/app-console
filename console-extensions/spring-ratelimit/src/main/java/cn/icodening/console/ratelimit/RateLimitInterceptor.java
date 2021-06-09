@@ -1,9 +1,13 @@
 package cn.icodening.console.ratelimit;
 
+import cn.icodening.console.AppConsoleException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author icodening
@@ -11,11 +15,20 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class RateLimitInterceptor extends HandlerInterceptorAdapter {
 
+    @Autowired
+    private List<RateLimiter> rateLimiters = Collections.emptyList();
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        //FIXME LOG
+        //FIXME LOG and foreach
         System.out.println(RateLimitInterceptor.class.getName() + ": rate limit interceptor enable!!!");
-        //TODO get config by current uri
+        System.out.println("ratelimits: " + rateLimiters);
+        for (RateLimiter rateLimiter : rateLimiters) {
+            boolean allow = rateLimiter.isAllow(request);
+            if (!allow) {
+                throw new AppConsoleException("当前请求已被限流! 请稍后再试");
+            }
+        }
         return true;
     }
 }

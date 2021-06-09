@@ -1,4 +1,4 @@
-package cn.icodening.console.model;
+package cn.icodening.console.common.model;
 
 import java.util.HashMap;
 import java.util.Map;

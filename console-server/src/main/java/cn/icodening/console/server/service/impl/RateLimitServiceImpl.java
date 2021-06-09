@@ -1,7 +1,8 @@
 package cn.icodening.console.server.service.impl;
 
-import cn.icodening.console.server.common.ex.ConsoleException;
-import cn.icodening.console.server.entity.RateLimitEntity;
+import cn.icodening.console.AppConsoleException;
+import cn.icodening.console.common.entity.RateLimitEntity;
+import cn.icodening.console.server.common.util.BeanPropertyUtil;
 import cn.icodening.console.server.repository.RateLimitRepository;
 import cn.icodening.console.server.service.RateLimitService;
 import org.springframework.beans.BeanUtils;
@@ -32,10 +33,10 @@ public class RateLimitServiceImpl extends AbstractServiceImpl<RateLimitEntity, R
     public void updateRecord(RateLimitEntity record) {
         Long id = record.getId();
         if (id == null) {
-            throw new ConsoleException("ID 不能为空");
+            throw new AppConsoleException("ID 不能为空");
         }
-        RateLimitEntity recordFromDb = baseRepository.findById(id).orElseThrow(() -> new ConsoleException("该记录不存在"));
-        BeanUtils.copyProperties(record, recordFromDb, "createTime", "modifyTime", "id");
+        RateLimitEntity recordFromDb = baseRepository.findById(id).orElseThrow(() -> new AppConsoleException("该记录不存在"));
+        BeanUtils.copyProperties(record, recordFromDb, BeanPropertyUtil.getNullFieldNames(record));
         save(recordFromDb);
     }
 }

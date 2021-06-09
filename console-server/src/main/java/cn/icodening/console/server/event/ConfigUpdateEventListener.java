@@ -1,8 +1,8 @@
 package cn.icodening.console.server.event;
 
-import cn.icodening.console.server.entity.ConfigurableScopeEntity;
-import cn.icodening.console.server.entity.InstanceEntity;
-import cn.icodening.console.server.model.PushData;
+import cn.icodening.console.common.entity.ConfigurableScopeEntity;
+import cn.icodening.console.common.entity.InstanceEntity;
+import cn.icodening.console.common.model.PushData;
 import cn.icodening.console.server.service.InstanceFinderManager;
 import cn.icodening.console.server.service.NotifyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 @Component
 public class ConfigUpdateEventListener implements ApplicationListener<ConfigUpdateEvent> {
 
+    private static final String INSTANCE_RECEIVER = "/configReceiver";
+
     @Autowired
     private InstanceFinderManager instanceFinderManager;
 
@@ -34,7 +36,7 @@ public class ConfigUpdateEventListener implements ApplicationListener<ConfigUpda
         final List<String> addresses = instanceEntities
                 .stream()
                 .map(instanceEntity ->
-                        "http://" + instanceEntity.getIp() + ":" + instanceEntity.getPort() + "/configReceiver")
+                        "http://" + instanceEntity.getIp() + ":" + instanceEntity.getPort() + INSTANCE_RECEIVER)
                 .collect(Collectors.toList());
         final PushData pushData = new PushData();
         pushData.setData(event.getSource());

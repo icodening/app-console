@@ -1,6 +1,6 @@
 package cn.icodening.console.server.aop;
 
-import cn.icodening.console.server.entity.ConfigurableScopeEntity;
+import cn.icodening.console.common.entity.ConfigurableScopeEntity;
 import cn.icodening.console.server.event.ConfigUpdateEvent;
 import org.springframework.aop.AfterReturningAdvice;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,6 @@ public class ConfigurableScopeEntityAdvice
             final String scope = ((ConfigurableScopeEntity) args[0]).getScope();
             //获取影响目标
             final String affectTarget = ((ConfigurableScopeEntity) args[0]).getAffectTarget();
-            //TODO get scope-finder by scope value, find affect target by scope-finder
             if (StringUtils.hasText(scope) && StringUtils.hasText(affectTarget)) {
                 CompletableFuture.runAsync(() -> applicationContext.publishEvent(new ConfigUpdateEvent((ConfigurableScopeEntity) args[0])), pushExecutor);
             }

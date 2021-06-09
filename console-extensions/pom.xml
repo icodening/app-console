@@ -26,13 +26,13 @@
         <ant-nodeps.version>1.8.1</ant-nodeps.version>
         <base.dir>${project.basedir}</base.dir>
         <extensions.dest.dir>${base.dir}/../../console-extension-jars</extensions.dest.dir>
-        <!--        <extensions.dest.dir>${project.build.directory}/../../../console-extension-jars</extensions.dest.dir>-->
+        <agent.extensions.dest.dir>${extensions.dest.dir}/../console-agent/target/extensions</agent.extensions.dest.dir>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>cn.icodening</groupId>
-            <artifactId>console-core</artifactId>
+            <artifactId>console-common</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
@@ -47,8 +47,14 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
-                                <copy todir="${extensions.dest.dir}">
-                                    <fileset dir="${project.build.directory}">
+                                <copy todir="${extensions.dest.dir}" overwrite="true">
+                                    <fileset dir="${project.build.directory}" erroronmissingdir="false">
+                                        <include name="*.jar"/>
+                                        <exclude name="*-sources.jar"/>
+                                    </fileset>
+                                </copy>
+                                <copy todir="${agent.extensions.dest.dir}" overwrite="true">
+                                    <fileset dir="${extensions.dest.dir}" erroronmissingdir="false">
                                         <include name="*.jar"/>
                                         <exclude name="*-sources.jar"/>
                                     </fileset>

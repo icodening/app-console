@@ -16,20 +16,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>org.springframework</groupId>-->
-        <!--            <artifactId>spring-webmvc</artifactId>-->
-        <!--            <scope>compile</scope>-->
-        <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>javax.servlet</groupId>-->
-        <!--            <artifactId>javax.servlet-api</artifactId>-->
-        <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>cn.icodening</groupId>-->
-        <!--            <artifactId>console-core</artifactId>-->
-        <!--            <version>${project.version}</version>-->
-        <!--        </dependency>-->
         <dependency>
             <groupId>cn.icodening</groupId>
             <artifactId>spring-register</artifactId>

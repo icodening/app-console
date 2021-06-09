@@ -1,6 +1,6 @@
 package cn.icodening.console.register.spring;
 
-import cn.icodening.console.model.PushData;
+import cn.icodening.console.common.model.PushData;
 import org.springframework.context.ApplicationEvent;
 
 /**

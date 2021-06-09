@@ -1,6 +1,6 @@
 package cn.icodening.console.server.service.impl;
 
-import cn.icodening.console.server.entity.InstanceEntity;
+import cn.icodening.console.common.entity.InstanceEntity;
 import cn.icodening.console.server.service.InstanceFinder;
 import cn.icodening.console.server.service.InstanceService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,9 +1,6 @@
-package cn.icodening.console.server.entity;
+package cn.icodening.console.common.entity;
 
-import cn.icodening.console.server.common.Modifiable;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.format.annotation.DateTimeFormat;
+import cn.icodening.console.common.Modifiable;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,7 +11,6 @@ import java.util.Date;
  * @date 2021.05.24
  */
 @MappedSuperclass
-@DynamicUpdate
 public abstract class AbstractEntity implements Serializable, Modifiable {
 
     @Id
@@ -22,13 +18,13 @@ public abstract class AbstractEntity implements Serializable, Modifiable {
     private Long id;
 
     @Column(nullable = false)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+//    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     @Column(nullable = false)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+//    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date modifyTime;
 
     public Long getId() {

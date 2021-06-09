@@ -3,6 +3,8 @@ package cn.icodening.console.boot;
 import cn.icodening.console.AppConsoleException;
 import cn.icodening.console.Sortable;
 import cn.icodening.console.config.ConfigurationManager;
+import cn.icodening.console.logger.Logger;
+import cn.icodening.console.logger.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,10 +17,12 @@ import java.util.Set;
  */
 public class ConfigurationBootService extends BaseBootService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationBootService.class);
+
     @Override
     public void start() {
         // load local config
-        System.out.println("[" + ConfigurationBootService.class.getName() + "] load " + ConfigurationManager.DEFAULT_CONFIG_PATH);
+        LOGGER.info("load " + ConfigurationManager.DEFAULT_CONFIG_PATH);
         try {
             Properties properties = new Properties();
             properties.load(new FileInputStream(ConfigurationManager.DEFAULT_CONFIG_PATH));
@@ -28,9 +32,8 @@ public class ConfigurationBootService extends BaseBootService {
                     ConfigurationManager.INSTANCE.set((String) key, properties.getProperty((String) key));
                 }
             }
-            System.out.println("[" + ConfigurationBootService.class.getName() + "] load success: " + properties);
+            LOGGER.info("load success:  " + properties);
         } catch (IOException e) {
-            //FIXME LOG
             throw AppConsoleException.wrapperException(e);
         }
     }

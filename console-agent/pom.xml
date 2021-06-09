@@ -43,13 +43,13 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
-                                <copy todir="${extension.jars.dir}">
-                                    <fileset dir="${extension.jars.source.dir}">
+                                <copy todir="${extension.jars.dir}" overwrite="true">
+                                    <fileset dir="${extension.jars.source.dir}" erroronmissingdir="false">
                                         <include name="*.jar"/>
                                     </fileset>
                                 </copy>
-                                <copy todir="${console.agent.config.dir}">
-                                    <fileset dir="${console.agent.config.source.dir}">
+                                <copy todir="${console.agent.config.dir}" overwrite="true">
+                                    <fileset dir="${console.agent.config.source.dir}" erroronmissingdir="false">
                                         <include name="*.properties"/>
                                     </fileset>
                                 </copy>

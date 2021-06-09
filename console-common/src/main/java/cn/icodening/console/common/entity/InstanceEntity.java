@@ -1,11 +1,8 @@
-package cn.icodening.console.server.entity;
-
-import org.hibernate.annotations.DynamicUpdate;
+package cn.icodening.console.common.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
@@ -14,7 +11,6 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "instance")
-@DynamicUpdate
 public class InstanceEntity extends AbstractEntity {
 
     @Column(name = "application_name", nullable = false, length = 32)
@@ -27,7 +23,6 @@ public class InstanceEntity extends AbstractEntity {
     private Integer port;
 
     @Column(name = "identity", nullable = true, length = 32)
-    @NotNull
     private String identity;
 
     public String getApplicationName() {

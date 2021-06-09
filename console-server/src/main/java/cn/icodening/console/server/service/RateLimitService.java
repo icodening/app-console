@@ -1,6 +1,6 @@
 package cn.icodening.console.server.service;
 
-import cn.icodening.console.server.entity.RateLimitEntity;
+import cn.icodening.console.common.entity.RateLimitEntity;
 
 /**
  * @author icodening

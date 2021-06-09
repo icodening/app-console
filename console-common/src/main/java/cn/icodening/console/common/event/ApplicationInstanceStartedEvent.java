@@ -1,6 +1,7 @@
-package cn.icodening.console.event;
+package cn.icodening.console.common.event;
 
-import cn.icodening.console.model.ApplicationInstance;
+import cn.icodening.console.common.model.ApplicationInstance;
+import cn.icodening.console.event.AppConsoleEvent;
 
 /**
  * @author icodening

@@ -1,6 +1,7 @@
 package cn.icodening.console.server.repository;
 
-import cn.icodening.console.server.entity.InstanceEntity;
+
+import cn.icodening.console.common.entity.InstanceEntity;
 
 /**
  * @author icodening

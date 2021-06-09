@@ -1,6 +1,7 @@
 package cn.icodening.console.register.spring;
 
-import cn.icodening.console.model.PushData;
+import cn.icodening.console.common.model.PushData;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -13,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
 
 /**
  * @author icodening
@@ -29,7 +29,7 @@ public class ReceiveConfigServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println(ReceiveConfigServlet.class.getName() + ": receive message");
+        System.out.println(ReceiveConfigServlet.class.getName() + ": receive message from: " + req.getRemoteAddr());
         try (ServletInputStream inputStream = req.getInputStream();
              ServletOutputStream outputStream = resp.getOutputStream();
              ByteArrayOutputStream bos = new ByteArrayOutputStream(512)) {
@@ -38,15 +38,10 @@ public class ReceiveConfigServlet extends HttpServlet {
             while ((len = inputStream.read(data)) != -1) {
                 bos.write(data, 0, len);
             }
-            System.out.println("receive message is: " + new String(bos.toByteArray()));
-            final PushData pushData = objectMapper.readValue(bos.toByteArray(), PushData.class);
+            final PushData pushData = objectMapper.readValue(bos.toByteArray(), new TypeReference<PushData>() {
+            });
             applicationEventPublisher.publishEvent(new PushDataReceivedEvent(pushData));
-            final HashMap<String, String> resultMap = new HashMap<>(2);
-            resultMap.put("success", "true");
-            resultMap.put("code", "200");
-            final byte[] resultBytes = objectMapper.writeValueAsBytes(resultMap);
-            outputStream.write(resultBytes);
-
+            outputStream.write("success".getBytes());
         }
     }
 }

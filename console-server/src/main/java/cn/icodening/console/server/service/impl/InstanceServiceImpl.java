@@ -1,6 +1,7 @@
 package cn.icodening.console.server.service.impl;
 
-import cn.icodening.console.server.entity.InstanceEntity;
+import cn.icodening.console.common.entity.InstanceEntity;
+import cn.icodening.console.server.common.util.BeanPropertyUtil;
 import cn.icodening.console.server.repository.InstanceRepository;
 import cn.icodening.console.server.service.InstanceService;
 import org.springframework.beans.BeanUtils;
@@ -28,7 +29,8 @@ public class InstanceServiceImpl extends AbstractServiceImpl<InstanceEntity, Ins
             instanceEntity.setCreateTime(new Date());
             return instanceEntity;
         });
-        BeanUtils.copyProperties(instanceEntity, entity, "createTime", "modifyTime", "id");
+        final String[] fieldNames = BeanPropertyUtil.getNullFieldNames(instanceEntity);
+        BeanUtils.copyProperties(instanceEntity, entity, fieldNames);
         save(entity);
     }
 
