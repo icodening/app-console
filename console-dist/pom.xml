@@ -24,6 +24,11 @@
                     <artifactId>console-agent</artifactId>
                     <version>${project.version}</version>
                 </dependency>
+                <dependency>
+                    <groupId>cn.icodening</groupId>
+                    <artifactId>console-server</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
             </dependencies>
             <build>
                 <plugins>

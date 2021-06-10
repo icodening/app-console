@@ -43,5 +43,13 @@
             <source>${project.basedir}/src/main/resources/config.properties</source>
             <outputDirectory>agent/config</outputDirectory>
         </file>
+        <file>
+            <source>${project.basedir}/../console-server/src/main/resources/application.yml</source>
+            <outputDirectory>server</outputDirectory>
+        </file>
+        <file>
+            <source>${project.basedir}/../console-server/target/app-console-server.jar</source>
+            <outputDirectory>server</outputDirectory>
+        </file>
     </files>
 </assembly>
