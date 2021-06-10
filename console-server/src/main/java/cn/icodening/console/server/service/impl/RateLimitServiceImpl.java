@@ -2,9 +2,9 @@ package cn.icodening.console.server.service.impl;
 
 import cn.icodening.console.AppConsoleException;
 import cn.icodening.console.common.entity.RateLimitEntity;
-import cn.icodening.console.server.common.util.BeanPropertyUtil;
 import cn.icodening.console.server.repository.RateLimitRepository;
 import cn.icodening.console.server.service.RateLimitService;
+import cn.icodening.console.server.util.BeanPropertyUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 

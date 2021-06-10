@@ -1,6 +1,6 @@
 package cn.icodening.console.ratelimit;
 
-import cn.icodening.console.ratelimit.supoort.JVMRateLimiter;
+import cn.icodening.console.ratelimit.supoort.LocalRateLimiter;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 
@@ -17,7 +17,7 @@ public class BeanConfiguration {
 
     @Bean
     public RateLimiter jvmRateLimiter() {
-        return new JVMRateLimiter();
+        return new LocalRateLimiter();
     }
 
     @Bean

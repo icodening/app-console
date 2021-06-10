@@ -1,6 +1,6 @@
 package cn.icodening.console.server.service;
 
-import cn.icodening.console.server.common.util.PageResult;
+import cn.icodening.console.server.util.PageResult;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 

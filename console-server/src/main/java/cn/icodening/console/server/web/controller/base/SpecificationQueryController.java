@@ -1,7 +1,7 @@
 package cn.icodening.console.server.web.controller.base;
 
-import cn.icodening.console.server.common.util.ConsoleResponse;
-import cn.icodening.console.server.common.util.PageResult;
+import cn.icodening.console.server.util.ConsoleResponse;
+import cn.icodening.console.server.util.PageResult;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.MultiValueMap;

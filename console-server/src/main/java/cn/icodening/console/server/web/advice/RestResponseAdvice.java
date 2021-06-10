@@ -1,7 +1,7 @@
 package cn.icodening.console.server.web.advice;
 
 import cn.icodening.console.server.annotation.WrapperResponse;
-import cn.icodening.console.server.common.util.ConsoleResponse;
+import cn.icodening.console.server.util.ConsoleResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;

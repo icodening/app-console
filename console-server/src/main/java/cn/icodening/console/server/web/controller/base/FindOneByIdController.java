@@ -1,6 +1,6 @@
 package cn.icodening.console.server.web.controller.base;
 
-import cn.icodening.console.server.common.util.ConsoleResponse;
+import cn.icodening.console.server.util.ConsoleResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 

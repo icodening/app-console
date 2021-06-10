@@ -38,8 +38,9 @@ public class ReceiveConfigServlet extends HttpServlet {
             while ((len = inputStream.read(data)) != -1) {
                 bos.write(data, 0, len);
             }
-            final PushData pushData = objectMapper.readValue(bos.toByteArray(), new TypeReference<PushData>() {
-            });
+            final PushData<Object> pushData = objectMapper.readValue(bos.toByteArray(),
+                    new TypeReference<PushData<Object>>() {
+                    });
             applicationEventPublisher.publishEvent(new PushDataReceivedEvent(pushData));
             outputStream.write("success".getBytes());
         }

@@ -1,9 +1,9 @@
 package cn.icodening.console.server.service.impl;
 
 import cn.icodening.console.common.entity.InstanceEntity;
-import cn.icodening.console.server.common.util.BeanPropertyUtil;
 import cn.icodening.console.server.repository.InstanceRepository;
 import cn.icodening.console.server.service.InstanceService;
+import cn.icodening.console.server.util.BeanPropertyUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;

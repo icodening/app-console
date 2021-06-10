@@ -2,8 +2,8 @@ package cn.icodening.console.server.web.controller;
 
 import cn.icodening.console.common.entity.InstanceEntity;
 import cn.icodening.console.server.annotation.WrapperResponse;
-import cn.icodening.console.server.common.util.ConsoleResponse;
 import cn.icodening.console.server.service.InstanceService;
+import cn.icodening.console.server.util.ConsoleResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

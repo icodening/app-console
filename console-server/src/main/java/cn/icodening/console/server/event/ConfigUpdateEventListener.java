@@ -4,7 +4,7 @@ import cn.icodening.console.common.entity.ConfigurableScopeEntity;
 import cn.icodening.console.common.entity.InstanceEntity;
 import cn.icodening.console.common.model.PushData;
 import cn.icodening.console.server.service.InstanceFinderManager;
-import cn.icodening.console.server.service.NotifyService;
+import cn.icodening.console.server.service.NotifyApplicationInstanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
@@ -25,7 +25,7 @@ public class ConfigUpdateEventListener implements ApplicationListener<ConfigUpda
     private InstanceFinderManager instanceFinderManager;
 
     @Autowired
-    private NotifyService notifyService;
+    private NotifyApplicationInstanceService notifyService;
 
     @Override
     public void onApplicationEvent(ConfigUpdateEvent event) {

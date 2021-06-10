@@ -1,8 +1,10 @@
 package cn.icodening.console.ratelimit;
 
+import cn.icodening.console.common.entity.RateLimitEntity;
 import cn.icodening.console.common.model.PushData;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @author icodening
@@ -10,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface RateLimiter {
 
-    void refresh(PushData pushData);
+    void refresh(PushData<List<RateLimitEntity>> pushData);
 
     boolean isAllow(HttpServletRequest request);
 }

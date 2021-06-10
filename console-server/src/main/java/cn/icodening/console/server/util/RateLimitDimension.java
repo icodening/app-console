@@ -1,4 +1,4 @@
-package cn.icodening.console.server.common.constant;
+package cn.icodening.console.server.util;
 
 /**
  * @author icodening

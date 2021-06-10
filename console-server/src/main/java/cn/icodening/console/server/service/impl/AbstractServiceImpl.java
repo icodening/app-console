@@ -1,8 +1,8 @@
 package cn.icodening.console.server.service.impl;
 
-import cn.icodening.console.server.common.util.PageResult;
 import cn.icodening.console.server.repository.BaseRepository;
 import cn.icodening.console.server.service.IService;
+import cn.icodening.console.server.util.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;

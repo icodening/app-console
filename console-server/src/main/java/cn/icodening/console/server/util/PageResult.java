@@ -1,4 +1,4 @@
-package cn.icodening.console.server.common.util;
+package cn.icodening.console.server.util;
 
 import org.springframework.data.domain.Page;
 
