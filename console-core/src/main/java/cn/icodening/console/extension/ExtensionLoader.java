@@ -203,8 +203,12 @@ public class ExtensionLoader<T> {
                 if (row.startsWith("#")) {
                     continue;
                 }
-                String key = row.substring(0, row.indexOf("="));
-                String value = row.substring(row.indexOf("=") + 1);
+                int equalsIndexOf = row.indexOf("=");
+                String key = row;
+                if (equalsIndexOf > 0) {
+                    key = row.substring(0, equalsIndexOf);
+                }
+                String value = row.substring(equalsIndexOf + 1);
                 Class<?> clz = classLoader.loadClass(value);
                 nameClassMap.put(key, clz);
             }
