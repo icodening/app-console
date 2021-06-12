@@ -10,11 +10,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
 /**
  * @author icodening
  * @date 2021.06.07
@@ -33,11 +28,6 @@ public class RateLimitController implements CrudController<RateLimitEntity> {
 
     @Override
     public Specification<RateLimitEntity> createSpecification(Integer currentPage, Integer pageSize, MultiValueMap<String, String> params) {
-        return new Specification<RateLimitEntity>() {
-            @Override
-            public Predicate toPredicate(Root<RateLimitEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                return query.getGroupRestriction();
-            }
-        };
+        return (Specification<RateLimitEntity>) (root, query, criteriaBuilder) -> query.getGroupRestriction();
     }
 }
