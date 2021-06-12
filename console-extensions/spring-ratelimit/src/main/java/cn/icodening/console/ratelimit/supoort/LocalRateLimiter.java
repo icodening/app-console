@@ -37,6 +37,9 @@ public class LocalRateLimiter implements RateLimiter {
         }
         try {
             for (RateLimitEntity rateLimitEntity : configurations) {
+                if (!rateLimitEntity.getEnable()) {
+                    continue;
+                }
                 Integer frequency = rateLimitEntity.getFrequency();
                 String dimension = rateLimitEntity.getDimension();
                 RateLimitCache rateLimitCache = new RateLimitCache(rateLimitEntity);

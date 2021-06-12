@@ -10,11 +10,13 @@ import cn.icodening.console.server.web.controller.base.SpecificationQueryControl
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Predicate;
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * @author icodening
@@ -50,8 +52,27 @@ public class InstanceController implements SpecificationQueryController<Instance
 
     @Override
     public Specification<InstanceEntity> createSpecification(Integer currentPage, Integer pageSize, MultiValueMap<String, String> params) {
-        //TODO 实现各种条件的查询
-        return (Specification<InstanceEntity>) (root, query, criteriaBuilder) -> query.getGroupRestriction();
+        return (Specification<InstanceEntity>) (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            String keywords = params.getFirst("keywords");
+            if (StringUtils.hasText(keywords)) {
+                Predicate and = Arrays.stream(keywords.split(" "))
+                        .flatMap(kw -> {
+                            Predicate or = criteriaBuilder.or();
+                            List<Expression<Boolean>> expressions = or.getExpressions();
+                            expressions.add(criteriaBuilder.like(root.get("applicationName").as(String.class), "%" + kw + "%"));
+                            expressions.add(criteriaBuilder.like(root.get("identity").as(String.class), "%" + kw + "%"));
+                            expressions.add(criteriaBuilder.like(root.get("ip").as(String.class), "%" + kw + "%"));
+                            return Stream.of(or);
+                        }).reduce(criteriaBuilder.and(), (predicate, predicate2) -> {
+                            predicate.getExpressions().add(predicate2);
+                            return predicate;
+                        });
+                predicates.add(and);
+            }
+            query.where(predicates.toArray(new Predicate[0]));
+            return query.getGroupRestriction();
+        };
     }
 
     @Override
