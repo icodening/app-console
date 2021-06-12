@@ -22,10 +22,7 @@ mvn package
 | |____config
 | | |____config.properties              agent配置文件
 | |____extensions                       agent扩展包
-| | |____spring-register.jar
-| | |____spring-ratelimit.jar
-| | |____console-boot.jar
-| | |____console-common-1.0.0.jar
+| | |____**more**.jar                   
 | |____console-agent.jar                agent
 ````
 
