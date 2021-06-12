@@ -5,9 +5,9 @@ import cn.icodening.console.common.model.ApplicationInstance;
 import cn.icodening.console.event.EventDispatcher;
 import cn.icodening.console.logger.Logger;
 import cn.icodening.console.logger.LoggerFactory;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.lang.management.ManagementFactory;
 import java.net.Inet4Address;
@@ -20,12 +20,12 @@ import java.util.Enumeration;
  * @author icodening
  * @date 2021.06.06
  */
-public class AppConsoleListener implements ApplicationListener<ContextRefreshedEvent> {
+public class AppConsoleListener implements ApplicationListener<ApplicationStartedEvent> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AppConsoleListener.class);
 
     @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
+    public void onApplicationEvent(ApplicationStartedEvent event) {
         String localhost = getLocalhost();
         if (localhost == null) {
             LOGGER.info("localhost is null, dont't register");

@@ -19,7 +19,7 @@ import java.util.Date;
 public class InstanceServiceImpl extends AbstractServiceImpl<InstanceEntity, InstanceRepository> implements InstanceService {
 
     @Override
-    public void register(InstanceEntity instanceEntity) {
+    public InstanceEntity register(InstanceEntity instanceEntity) {
         InstanceEntity entity = baseRepository.findOne((Specification<InstanceEntity>)
                 (root, query, criteriaBuilder) -> {
                     Predicate equal = criteriaBuilder.equal(root.get("identity").as(String.class), instanceEntity.getIdentity());
@@ -32,6 +32,7 @@ public class InstanceServiceImpl extends AbstractServiceImpl<InstanceEntity, Ins
         final String[] fieldNames = BeanPropertyUtil.getNullFieldNames(instanceEntity);
         BeanUtils.copyProperties(instanceEntity, entity, fieldNames);
         save(entity);
+        return entity;
     }
 
     @Override

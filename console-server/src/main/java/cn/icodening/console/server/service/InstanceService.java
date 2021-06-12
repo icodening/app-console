@@ -8,7 +8,7 @@ import cn.icodening.console.common.entity.InstanceEntity;
  */
 public interface InstanceService extends IService<InstanceEntity> {
 
-    void register(InstanceEntity instanceEntity);
+    InstanceEntity register(InstanceEntity instanceEntity);
 
     void deregister(String identity);
 }

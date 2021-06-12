@@ -10,6 +10,7 @@ spring:
     time-zone: GMT+8
     serialization:
       INDENT_OUTPUT: true
+      WRITE_DATES_AS_TIMESTAMPS: true
     default-property-inclusion: non_null
   jpa:
     database: mysql

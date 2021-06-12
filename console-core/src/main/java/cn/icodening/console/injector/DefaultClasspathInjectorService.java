@@ -49,7 +49,9 @@ public class DefaultClasspathInjectorService extends BaseBootService {
                 addUrlMethod.setAccessible(true);
                 List<String> allUrls = classPathRegistry.getAllUrl();
                 for (String u : allUrls) {
-                    LOGGER.debug(u);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug(u);
+                    }
                     URL url = new URL(u);
                     addUrlMethod.invoke(contextClassLoader, url);
                 }

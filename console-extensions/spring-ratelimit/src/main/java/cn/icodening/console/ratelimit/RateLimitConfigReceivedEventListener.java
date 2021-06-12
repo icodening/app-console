@@ -16,7 +16,7 @@ public class RateLimitConfigReceivedEventListener implements ConsoleEventListene
 
     private static final String RECEIVE_TYPE = RateLimitEntity.class.getName();
 
-    private static long lastSendTimestamp = System.currentTimeMillis();
+    private static Long lastSendTimestamp;
 
     @Autowired
     private List<RateLimiter> rateLimiters;
@@ -25,7 +25,10 @@ public class RateLimitConfigReceivedEventListener implements ConsoleEventListene
     public void onEvent(ServerMessageReceivedEvent event) {
         ServerMessage source = event.getSource();
         //简单幂等校验 上次数据包发送时间戳 >= 本次收到的数据包时间戳 则认为数据包过期丢弃
-        if (lastSendTimestamp >= event.getTimestamp()) {
+        if (lastSendTimestamp == null) {
+            lastSendTimestamp = event.getTimestamp();
+        }
+        if (lastSendTimestamp > event.getTimestamp()) {
             return;
         }
         lastSendTimestamp = event.getTimestamp();

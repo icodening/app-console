@@ -1,12 +1,11 @@
 package cn.icodening.console.register.spring;
 
-import cn.icodening.console.common.convert.ClassCasterManager;
 import cn.icodening.console.common.event.ServerMessageReceivedEvent;
 import cn.icodening.console.common.model.InstanceConfigurationCache;
 import cn.icodening.console.common.model.ServerMessage;
+import cn.icodening.console.common.util.BeanMapUtil;
 import cn.icodening.console.event.EventDispatcher;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.ServletException;
@@ -15,10 +14,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.beans.PropertyDescriptor;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -48,30 +45,14 @@ public class ReceiveConfigServlet extends HttpServlet {
                 bos.write(data, 0, len);
             }
             Class type = Class.forName(messageType);
-            PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(type);
-
-            ArrayList arrayList = objectMapper.readValue(bos.toByteArray(), ArrayList.class);
+            ArrayList<Object> arrayList = objectMapper.readValue(bos.toByteArray(), ArrayList.class);
             //FIXME extract common method or util
-            List retList = new ArrayList<>();
+            List<Object> retList = new ArrayList<>();
             for (Object o : arrayList) {
                 if (o instanceof Map) {
-                    Map cast = Map.class.cast(o);
-                    Object target = type.newInstance();
-                    System.out.println(cast);
+                    Map<String, Object> cast = (Map<String, Object>) o;
+                    Object target = BeanMapUtil.mapToBean(cast, type);
                     retList.add(target);
-                    for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-                        String name = propertyDescriptor.getName();
-                        if ("class".equals(name)) {
-                            continue;
-                        }
-                        Object value = cast.get(name);
-                        Method writeMethod = propertyDescriptor.getWriteMethod();
-                        Class<?> propertyType = propertyDescriptor.getPropertyType();
-                        value = ClassCasterManager.cast(value, propertyType);
-                        if (writeMethod != null) {
-                            writeMethod.invoke(target, value);
-                        }
-                    }
                 }
             }
             InstanceConfigurationCache.setConfigs(type, retList);
