@@ -35,3 +35,9 @@ mvn package
 > 5. 在自己的Spring Boot应用中添加一句启动参数 -javaagent:/agent/console-agent.jar 即可，例如  
 >    java -javaagent:/agent/console-agent.jar -jar myapp.jar  
 > 6. 浏览器打开 localhost:28080 即可进入应用控制台，当能在该页面上看到自己的应用时则视为成功
+
+# Agent Config
+````
+#Agent连接的控制台后端地址
+serverAddress=http://127.0.0.1:28080
+````
