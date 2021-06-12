@@ -1,14 +1,15 @@
 package cn.icodening.console.ratelimit;
 
+import cn.icodening.console.common.event.ServerMessageReceivedEvent;
+import cn.icodening.console.event.ConsoleEventListener;
 import cn.icodening.console.ratelimit.supoort.LocalRateLimiter;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 
 /**
  * @author icodening
  * @date 2021.06.09
  */
-public class BeanConfiguration {
+public class RateLimitBeansConfiguration {
 
     @Bean
     public RateLimitInterceptor rateLimitInterceptor() {
@@ -21,7 +22,13 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public ApplicationListener receivedEventListener() {
+    public ConsoleEventListener<ServerMessageReceivedEvent> rateLimitConfigReceivedEventListener() {
         return new RateLimitConfigReceivedEventListener();
     }
+
+    @Bean
+    public RateLimitContextRefreshEventListener rateLimitContextRefreshEventListener() {
+        return new RateLimitContextRefreshEventListener();
+    }
+
 }

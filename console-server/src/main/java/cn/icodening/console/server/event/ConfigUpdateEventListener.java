@@ -1,10 +1,9 @@
 package cn.icodening.console.server.event;
 
-import cn.icodening.console.common.entity.ConfigurableScopeEntity;
 import cn.icodening.console.common.entity.InstanceEntity;
 import cn.icodening.console.common.model.PushData;
 import cn.icodening.console.server.service.InstanceFinderManager;
-import cn.icodening.console.server.service.NotifyApplicationInstanceService;
+import cn.icodening.console.server.service.NotifyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
@@ -25,22 +24,21 @@ public class ConfigUpdateEventListener implements ApplicationListener<ConfigUpda
     private InstanceFinderManager instanceFinderManager;
 
     @Autowired
-    private NotifyApplicationInstanceService notifyService;
+    private NotifyService notifyService;
 
     @Override
     public void onApplicationEvent(ConfigUpdateEvent event) {
-        final ConfigurableScopeEntity configurableScopeEntity = event.getConfigurableScopeEntity();
-        final String scope = configurableScopeEntity.getScope();
-        final String affectTarget = configurableScopeEntity.getAffectTarget();
+        final String scope = event.getScope();
+        final String affectTarget = event.getAffectTarget();
         final List<InstanceEntity> instanceEntities = instanceFinderManager.find(scope, affectTarget);
         final List<String> addresses = instanceEntities
                 .stream()
                 .map(instanceEntity ->
                         "http://" + instanceEntity.getIp() + ":" + instanceEntity.getPort() + INSTANCE_RECEIVER)
                 .collect(Collectors.toList());
-        final PushData pushData = new PushData();
+        final PushData<Object> pushData = new PushData<>();
         pushData.setData(event.getSource());
-        pushData.setType(configurableScopeEntity.getConfigType());
+        pushData.setType(event.getConfigType());
         pushData.setSendTimestamp(System.currentTimeMillis());
         notifyService.notify(pushData, addresses);
     }

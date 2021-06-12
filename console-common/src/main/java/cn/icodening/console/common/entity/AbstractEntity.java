@@ -11,20 +11,16 @@ import java.util.Date;
  * @date 2021.05.24
  */
 @MappedSuperclass
-public abstract class AbstractEntity implements Serializable, Modifiable {
+public abstract class AbstractEntity implements Serializable, Modifiable, ConfigurationType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-//    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     @Column(nullable = false)
-//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-//    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date modifyTime;
 
     public Long getId() {

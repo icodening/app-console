@@ -1,5 +1,7 @@
 package cn.icodening.console.ratelimit.cache;
 
+import cn.icodening.console.common.entity.RateLimitEntity;
+
 import java.util.concurrent.Semaphore;
 
 /**
@@ -7,6 +9,9 @@ import java.util.concurrent.Semaphore;
  * @date 2021.06.09
  */
 public class RateLimitCache {
+
+    private RateLimitEntity rateLimitEntity;
+
     private String endpoint;
 
     private volatile Integer frequency;
@@ -22,6 +27,22 @@ public class RateLimitCache {
     private volatile long addTime;
 
     private volatile Semaphore semaphore;
+
+    public RateLimitCache(RateLimitEntity rateLimitEntity) {
+        this.rateLimitEntity = rateLimitEntity;
+        this.dimension = rateLimitEntity.getDimension();
+        this.enable = rateLimitEntity.getEnable();
+        this.frequency = rateLimitEntity.getFrequency();
+        this.endpoint = rateLimitEntity.getEndpoint();
+    }
+
+    public RateLimitEntity getRateLimitEntity() {
+        return rateLimitEntity;
+    }
+
+    public void setRateLimitEntity(RateLimitEntity rateLimitEntity) {
+        this.rateLimitEntity = rateLimitEntity;
+    }
 
     public String getEndpoint() {
         return endpoint;

@@ -9,6 +9,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -35,7 +37,10 @@ public class ConfigurableScopeEntityAdvice
             //获取影响目标
             final String affectTarget = ((ConfigurableScopeEntity) args[0]).getAffectTarget();
             if (StringUtils.hasText(scope) && StringUtils.hasText(affectTarget)) {
-                CompletableFuture.runAsync(() -> applicationContext.publishEvent(new ConfigUpdateEvent((ConfigurableScopeEntity) args[0])), pushExecutor);
+                List<ConfigurableScopeEntity> entities = new ArrayList<>(1);
+                entities.add((ConfigurableScopeEntity) args[0]);
+                CompletableFuture.runAsync(() ->
+                        applicationContext.publishEvent(new ConfigUpdateEvent(((ConfigurableScopeEntity) args[0]).configType(), scope, affectTarget, entities)), pushExecutor);
             }
         }
     }

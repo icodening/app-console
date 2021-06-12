@@ -1,6 +1,5 @@
 package cn.icodening.console.server.event;
 
-import cn.icodening.console.common.entity.ConfigurableScopeEntity;
 import org.springframework.context.ApplicationEvent;
 
 /**
@@ -9,16 +8,33 @@ import org.springframework.context.ApplicationEvent;
  */
 public class ConfigUpdateEvent extends ApplicationEvent {
 
+    private final String configType;
+
+    private final String scope;
+
+    private final String affectTarget;
+
     /**
      * Create a new ApplicationEvent.
      *
      * @param source the object on which the event initially occurred (never {@code null})
      */
-    public ConfigUpdateEvent(ConfigurableScopeEntity source) {
+    public ConfigUpdateEvent(String configType, String scope, String affectTarget, Object source) {
         super(source);
+        this.configType = configType;
+        this.scope = scope;
+        this.affectTarget = affectTarget;
     }
 
-    public ConfigurableScopeEntity getConfigurableScopeEntity() {
-        return (ConfigurableScopeEntity) getSource();
+    public String getConfigType() {
+        return configType;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public String getAffectTarget() {
+        return affectTarget;
     }
 }

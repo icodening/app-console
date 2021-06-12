@@ -51,6 +51,4 @@ public abstract class ConfigurableScopeEntity extends AbstractEntity {
     public void setEnable(Boolean enable) {
         this.enable = enable;
     }
-
-    public abstract String getConfigType();
 }

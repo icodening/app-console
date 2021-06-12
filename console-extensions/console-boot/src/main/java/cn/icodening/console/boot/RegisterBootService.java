@@ -39,10 +39,10 @@ public class RegisterBootService extends BaseBootService {
                 post.setBody(requestBody);
                 try {
                     HttpUtil.exchange(post);
-                    LOGGER.info("[" + applicationInstance + "] register backend success! backend address is:" + serverAddress);
+                    LOGGER.info("register backend success! backend address is:" + serverAddress + "[" + applicationInstance + "]");
                 } catch (IOException e) {
                     //TODO ignore or retry?
-                    LOGGER.warn("[" + applicationInstance + "] register failed !!!", e.getCause());
+                    LOGGER.warn("register failed !!! [" + applicationInstance + "]", e.getCause());
                 }
             }
         });

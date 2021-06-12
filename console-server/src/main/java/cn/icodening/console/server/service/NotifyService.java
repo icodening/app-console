@@ -18,5 +18,5 @@ public interface NotifyService {
      * @param pushData 推送的数据包
      * @param address  需要推送的实例地址
      */
-    void notify(PushData pushData, List<String> address);
+    void notify(PushData<Object> pushData, List<String> address);
 }

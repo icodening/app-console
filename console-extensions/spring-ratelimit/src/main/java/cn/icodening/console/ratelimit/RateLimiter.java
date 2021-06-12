@@ -1,18 +1,17 @@
 package cn.icodening.console.ratelimit;
 
-import cn.icodening.console.common.entity.RateLimitEntity;
-import cn.icodening.console.common.model.PushData;
+import cn.icodening.console.common.Refreshable;
+import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
  * @author icodening
  * @date 2021.06.08
  */
-public interface RateLimiter {
+public interface RateLimiter extends Refreshable, Ordered {
 
-    void refresh(PushData<List<RateLimitEntity>> pushData);
+    boolean isAvailable();
 
     boolean isAllow(HttpServletRequest request);
 }

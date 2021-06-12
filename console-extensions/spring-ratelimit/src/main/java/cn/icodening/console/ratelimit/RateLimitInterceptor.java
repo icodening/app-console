@@ -21,12 +21,12 @@ public class RateLimitInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //FIXME LOG and foreach
-        System.out.println(RateLimitInterceptor.class.getName() + ": rate limit interceptor enable!!!");
-        System.out.println("ratelimits: " + rateLimiters);
         for (RateLimiter rateLimiter : rateLimiters) {
-            boolean allow = rateLimiter.isAllow(request);
-            if (!allow) {
-                throw new AppConsoleException("当前请求已被限流! 请稍后再试");
+            if (rateLimiter.isAvailable()) {
+                boolean allow = rateLimiter.isAllow(request);
+                if (!allow) {
+                    throw new AppConsoleException("当前请求已被限流! 请稍后再试");
+                }
             }
         }
         return true;

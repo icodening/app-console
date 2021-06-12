@@ -4,11 +4,14 @@ import cn.icodening.console.common.model.PushData;
 import cn.icodening.console.server.service.NotifyService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -27,11 +30,15 @@ public class NotifyServiceImpl implements NotifyService {
     private ObjectMapper objectMapper;
 
     @Override
-    public void notify(PushData pushData, List<String> addresses) {
+    public void notify(PushData<Object> pushData, List<String> addresses) {
         try {
-            final String json = objectMapper.writeValueAsString(pushData);
+            ObjectWriter writer = objectMapper.writer(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+            final String json = writer.writeValueAsString(pushData.getData());
             final HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+            httpHeaders.set("Console-Push-Type", pushData.getType());
+            httpHeaders.set("Console-Push-Action", pushData.getAction());
+            httpHeaders.set("Console-Push-Timestamp", String.valueOf(pushData.getSendTimestamp()));
             final HttpEntity<Object> requestEntity = new HttpEntity<>(json, httpHeaders);
             CompletableFuture.supplyAsync(() -> addresses.stream()
                     .map(address -> {
@@ -42,13 +49,8 @@ public class NotifyServiceImpl implements NotifyService {
                         if (ex != null) {
                             ex.printStackTrace();
                         }
-                        int successCount = 0, failCount = 0;
-                        if (ret.get(Boolean.TRUE) != null) {
-                            successCount = ret.get(Boolean.TRUE).size();
-                        }
-                        if (ret.get(Boolean.FALSE) != null) {
-                            failCount = ret.get(Boolean.FALSE).size();
-                        }
+                        int successCount = ret.getOrDefault(Boolean.TRUE, Collections.emptyList()).size();
+                        int failCount = ret.getOrDefault(Boolean.FALSE, Collections.emptyList()).size();
                         System.out.println("notify instances success: " + successCount + ", fail: " + failCount);
                     });
         } catch (JsonProcessingException e) {
