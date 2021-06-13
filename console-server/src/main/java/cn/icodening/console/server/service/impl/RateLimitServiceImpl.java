@@ -11,10 +11,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -58,29 +55,19 @@ public class RateLimitServiceImpl extends AbstractServiceImpl<RateLimitEntity, R
         }
         String identity = instanceEntity.getIdentity();
         String applicationName = instanceEntity.getApplicationName();
-        List<RateLimitEntity> instanceRateLimits = findBySpecification(new Specification<RateLimitEntity>() {
-            @Override
-            public Predicate toPredicate(Root<RateLimitEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                Predicate and1 = criteriaBuilder.and();
+        return findBySpecification((Specification<RateLimitEntity>) (root, query, criteriaBuilder) -> {
+            Predicate equalApplicationScope = criteriaBuilder.equal(root.get("scope").as(String.class), "APPLICATION");
+            Predicate equalApplicationName = criteriaBuilder.equal(root.get("affectTarget").as(String.class), applicationName);
+            Predicate and1 = criteriaBuilder.and(equalApplicationScope, equalApplicationName);
 
-                Predicate equalApplicationScope = criteriaBuilder.equal(root.get("scope").as(String.class), "APPLICATION");
-                Predicate equalApplicationName = criteriaBuilder.equal(root.get("affectTarget").as(String.class), applicationName);
-                and1.getExpressions().add(equalApplicationScope);
-                and1.getExpressions().add(equalApplicationName);
+            Predicate equalInstanceScope = criteriaBuilder.equal(root.get("scope").as(String.class), "INSTANCE");
+            Predicate equalInstanceIdentity = criteriaBuilder.equal(root.get("affectTarget").as(String.class), identity);
+            Predicate and2 = criteriaBuilder.and(equalInstanceScope, equalInstanceIdentity);
 
-
-                Predicate and2 = criteriaBuilder.and();
-                Predicate equalInstanceScope = criteriaBuilder.equal(root.get("scope").as(String.class), "INSTANCE");
-                Predicate equalInstanceIdentity = criteriaBuilder.equal(root.get("affectTarget").as(String.class), identity);
-                and2.getExpressions().add(equalInstanceScope);
-                and2.getExpressions().add(equalInstanceIdentity);
-
-                Predicate or = criteriaBuilder.or(and1, and2);
-                query.where(or);
-                return query.getRestriction();
-            }
+            Predicate or = criteriaBuilder.or(and1, and2);
+            query.where(or);
+            return query.getRestriction();
         });
-        return instanceRateLimits;
     }
 
     @Override
