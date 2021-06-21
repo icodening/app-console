@@ -39,5 +39,5 @@ mvn package
 # Agent Config
 ````
 #Agent连接的控制台后端地址
-serverAddress=http://127.0.0.1:28080
+serverAddress=http://127.0.0.1:28080 
 ````
