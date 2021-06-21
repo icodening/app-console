@@ -36,12 +36,13 @@ public class InstanceController implements SpecificationQueryController<Instance
     @PostMapping("/register")
     public Object register(@RequestBody InstanceEntity instanceEntity) {
         InstanceEntity registered = instanceService.register(instanceEntity);
-        Map<String, Object> map = new HashMap<>(8);
+        //查询当前注册的实例下所有的配置信息，并汇总成一个map。[configEntityType => configEntityList]
+        Map<String, Object> configs = new HashMap<>(8);
         for (InstanceConfigurationService<?> instanceConfigurationService : instanceConfigurationServices) {
             List<?> instanceConfiguration = instanceConfigurationService.findInstanceConfiguration(registered);
-            map.put(instanceConfigurationService.configType(), instanceConfiguration);
+            configs.put(instanceConfigurationService.configType(), instanceConfiguration);
         }
-        return ConsoleResponse.ok(map);
+        return ConsoleResponse.ok(configs);
     }
 
     @PostMapping("/deregister/{identity}")
@@ -54,6 +55,10 @@ public class InstanceController implements SpecificationQueryController<Instance
     public Specification<InstanceEntity> createSpecification(Integer currentPage, Integer pageSize, MultiValueMap<String, String> params) {
         return (Specification<InstanceEntity>) (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
+            //拼出来的SQL语句为
+            // where (application_name like %kw1% or identity like %kw1% or ip like %kw1%)
+            //   and (application_name like %kw2% or identity like %kw2% or ip like %kw2%)
+            //   and (application_name like %kw3% or identity like %kw3% or ip like %kw3%) ....
             String keywords = params.getFirst("keywords");
             if (StringUtils.hasText(keywords)) {
                 Predicate and = Arrays.stream(keywords.split(" "))
@@ -71,7 +76,7 @@ public class InstanceController implements SpecificationQueryController<Instance
                 predicates.add(and);
             }
             query.where(predicates.toArray(new Predicate[0]));
-            return query.getGroupRestriction();
+            return query.getRestriction();
         };
     }
 

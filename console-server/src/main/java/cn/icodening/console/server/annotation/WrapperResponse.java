@@ -6,6 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * 包装响应.
+ * 用于controller层return任何值时都能统一包装为 {@link cn.icodening.console.server.util.ConsoleResponse}
+ *
  * @author icodening
  * @date 2021.05.31
  */

@@ -14,6 +14,14 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 public interface SpecificationQueryController<T> extends BaseController<T> {
 
+    /**
+     * 查询
+     *
+     * @param currentPage 当前页
+     * @param pageSize    分页大小
+     * @param params      查询参数
+     * @return 查询结果
+     */
     @GetMapping
     default Object query(@RequestParam(defaultValue = "1") Integer currentPage,
                          Integer pageSize,
@@ -28,8 +36,21 @@ public interface SpecificationQueryController<T> extends BaseController<T> {
         return ConsoleResponse.ok(page);
     }
 
+    /**
+     * 构造查询条件
+     *
+     * @param currentPage 当前页
+     * @param pageSize    分页大小
+     * @param params      查询参数
+     * @return 查询条件体
+     */
     Specification<T> createSpecification(Integer currentPage, Integer pageSize, MultiValueMap<String, String> params);
 
+    /**
+     * 查询后置处理
+     *
+     * @param page 当前查询结果集
+     */
     default void afterQuery(PageResult<T> page) {
     }
 

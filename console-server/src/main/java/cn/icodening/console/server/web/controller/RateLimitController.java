@@ -28,6 +28,6 @@ public class RateLimitController implements CrudController<RateLimitEntity> {
 
     @Override
     public Specification<RateLimitEntity> createSpecification(Integer currentPage, Integer pageSize, MultiValueMap<String, String> params) {
-        return (Specification<RateLimitEntity>) (root, query, criteriaBuilder) -> query.getGroupRestriction();
+        return (Specification<RateLimitEntity>) (root, query, criteriaBuilder) -> query.getRestriction();
     }
 }

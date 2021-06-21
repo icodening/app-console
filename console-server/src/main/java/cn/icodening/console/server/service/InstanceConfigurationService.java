@@ -11,6 +11,12 @@ import java.util.List;
  */
 public interface InstanceConfigurationService<T> extends ConfigurationType {
 
+    /**
+     * 查询指定实例下的配置信息
+     *
+     * @param instanceEntity 实例
+     * @return 实例配置
+     */
     List<T> findInstanceConfiguration(InstanceEntity instanceEntity);
 
 }

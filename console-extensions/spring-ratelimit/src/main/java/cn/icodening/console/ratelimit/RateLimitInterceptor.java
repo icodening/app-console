@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class RateLimitInterceptor extends HandlerInterceptorAdapter {
 
-    @Autowired
+    @Autowired(required = false)
     private List<RateLimiter> rateLimiters = Collections.emptyList();
 
     @Override
@@ -27,6 +27,7 @@ public class RateLimitInterceptor extends HandlerInterceptorAdapter {
                 if (!allow) {
                     throw new AppConsoleException("当前请求已被限流! 请稍后再试");
                 }
+                break;
             }
         }
         return true;

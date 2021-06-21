@@ -26,6 +26,9 @@ public class ConfigurableScopeEntityAdvice
     @Autowired
     private ThreadPoolTaskExecutor pushExecutor;
 
+    /**
+     * 方法返回后，当入参为 ConfigurableScopeEntity时，向应用上下文发布配置更新事件
+     */
     @Override
     public void afterReturning(Object returnValue, Method method, Object[] args, Object target) throws Throwable {
         if (args.length != 1) {

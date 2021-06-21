@@ -6,6 +6,8 @@ import org.springframework.aop.support.StaticMethodMatcherPointcut;
 import java.lang.reflect.Method;
 
 /**
+ * DAO层中 {@link BaseRepository#save(Object)} save方法的切点
+ *
  * @author icodening
  * @date 2021.06.08
  */

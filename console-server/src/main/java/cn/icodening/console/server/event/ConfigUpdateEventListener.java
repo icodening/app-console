@@ -30,6 +30,8 @@ public class ConfigUpdateEventListener implements ApplicationListener<ConfigUpda
     public void onApplicationEvent(ConfigUpdateEvent event) {
         final String scope = event.getScope();
         final String affectTarget = event.getAffectTarget();
+        //根据该配置规则的作用范围，查询受影响的实例列表，仅通知受印象的实例列表
+        //例如配置scope为 APPLICATION, affectTarget为app，那么将会通知应用名为app下的所有实例
         final List<InstanceEntity> instanceEntities = instanceFinderManager.find(scope, affectTarget);
         final List<String> addresses = instanceEntities
                 .stream()

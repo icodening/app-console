@@ -55,6 +55,7 @@ public class RateLimitServiceImpl extends AbstractServiceImpl<RateLimitEntity, R
         }
         String identity = instanceEntity.getIdentity();
         String applicationName = instanceEntity.getApplicationName();
+        //查询限流规则配置中，根据"应用"范围生效的限流规则，或根据"实例"范围生效的限流规则
         return findBySpecification((Specification<RateLimitEntity>) (root, query, criteriaBuilder) -> {
             Predicate equalApplicationScope = criteriaBuilder.equal(root.get("scope").as(String.class), "APPLICATION");
             Predicate equalApplicationName = criteriaBuilder.equal(root.get("affectTarget").as(String.class), applicationName);
