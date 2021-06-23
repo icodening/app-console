@@ -21,7 +21,7 @@ public class AppConsoleAgent {
             BootServiceManager.initBootServices(agentArgs);
             BootServiceManager.startBootServices();
         } catch (Exception e) {
-            LOGGER.warn(e.getMessage());
+            LOGGER.warn(e.getMessage(), e);
         }
 
         // TODO Extension
@@ -31,7 +31,7 @@ public class AppConsoleAgent {
             try {
                 BootServiceManager.destroyBootServices();
             } catch (Exception e) {
-                LOGGER.warn(e.getMessage());
+                LOGGER.warn(e.getMessage(), e);
             }
         }));
     }
