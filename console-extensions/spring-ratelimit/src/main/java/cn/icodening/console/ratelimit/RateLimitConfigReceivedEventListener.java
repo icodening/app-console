@@ -6,6 +6,7 @@ import cn.icodening.console.common.model.ServerMessage;
 import cn.icodening.console.event.ConsoleEventListener;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ public class RateLimitConfigReceivedEventListener implements ConsoleEventListene
     private static Long lastSendTimestamp;
 
     @Autowired
-    private List<RateLimiter> rateLimiters;
+    private List<RateLimiter> rateLimiters = Collections.emptyList();
 
     @Override
     public void onEvent(ServerMessageReceivedEvent event) {

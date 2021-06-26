@@ -1,4 +1,4 @@
-package cn.icodening.console.ratelimit.supoort;
+package cn.icodening.console.ratelimit.support;
 
 import cn.icodening.console.common.entity.RateLimitEntity;
 import cn.icodening.console.common.model.InstanceConfigurationCache;
@@ -31,6 +31,7 @@ public class LocalRateLimiter implements RateLimiter {
     @Override
     public synchronized void refresh() {
         List<RateLimitEntity> configurations = InstanceConfigurationCache.getConfigs(RateLimitEntity.class);
+        LOGGER.debug("refresh ratelimit config list is: " + configurations);
         if (configurations == null || configurations.isEmpty()) {
             rateLimitCacheMap.clear();
             return;
