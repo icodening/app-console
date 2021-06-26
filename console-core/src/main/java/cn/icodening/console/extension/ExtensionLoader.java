@@ -1,14 +1,11 @@
 package cn.icodening.console.extension;
 
-import cn.icodening.console.AgentPath;
 import cn.icodening.console.ObjectFactory;
-import cn.icodening.console.util.Holder;
-import cn.icodening.console.util.MessageManager;
-import cn.icodening.console.util.ReflectUtil;
-import cn.icodening.console.util.StringUtil;
+import cn.icodening.console.logger.Logger;
+import cn.icodening.console.logger.LoggerFactory;
+import cn.icodening.console.util.*;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -26,7 +23,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class ExtensionLoader<T> {
 
-//    private static final Logger LOGGER = Logger.getLogger(ExtensionLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExtensionLoader.class);
 
     public static final String DEFAULT_LOAD_PATH = "META-INF/console/";
 
@@ -56,6 +53,10 @@ public class ExtensionLoader<T> {
         ExtensionLoader.getExtensionLoader(ExtensionLoadedPostProcessor.class);
     }
 
+    public Class<T> getType() {
+        return type;
+    }
+
     @SuppressWarnings("unchecked")
     private void loadExtensions() {
         try {
@@ -69,25 +70,29 @@ public class ExtensionLoader<T> {
                 });
             }
             Enumeration<URL> resources = classLoader.getResources(DEFAULT_LOAD_PATH + type.getName());
+            List<Scope> scopeList = new ArrayList<>(nameScopeMap.values());
+            Collections.sort(scopeList);
+            Scope defaultScope = scopeList.get(0);
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
                 Map<String, Class<?>> nameClassMap = readFile(classLoader, url.openStream());
                 nameClassMap.forEach((name, clazz) -> {
                     Extension meta = clazz.getAnnotation(Extension.class);
-                    String scope = Scope.SINGLETON;
+                    String scope = defaultScope.toString();
                     ObjectFactory<T> objectFactory = () -> ReflectUtil.newInstance((Class<T>) clazz);
                     if (meta != null) {
                         scope = meta.scope();
                     }
                     if (!nameScopeMap.containsKey(scope)) {
                         String scopeNotExist = MessageManager.get("scope.not.exist", scope);
-//                        LOGGER.warn(scopeNotExist);
-                        scope = Scope.SINGLETON;
+                        LOGGER.warn(scopeNotExist);
+                        scope = defaultScope.toString();
                     }
                     ExtensionDefinition<T> extensionDefinition = new ExtensionDefinition<>(name,
                             (Class<T>) clazz,
                             nameScopeMap.get(scope),
-                            objectFactory);
+                            objectFactory,
+                            this);
                     nameExtensionWrapperMap.putIfAbsent(name, extensionDefinition);
                     clazzExtensionWrapperMap.putIfAbsent((Class<T>) clazz, extensionDefinition);
                 });
@@ -100,9 +105,7 @@ public class ExtensionLoader<T> {
 
     public ExtensionLoader(Class<T> type) {
         this.type = type;
-        ExtensionClassLoader classLoader = new ExtensionClassLoader(type.getClassLoader());
-        classLoader.addPath(new File(AgentPath.INSTANCE.getPath() + "/extensions"));
-        this.classLoader = classLoader;
+        this.classLoader = ExtensionClassLoaderHolder.get();
     }
 
     private static <T> boolean withExtensionAnnotation(Class<T> type) {
@@ -190,7 +193,7 @@ public class ExtensionLoader<T> {
             result = getExtension(annotation.value());
         }
         if (null == result) {
-//            LOGGER.warn(MessageManager.get("default.extension.not.exist", type));
+            LOGGER.warn(MessageManager.get("default.extension.not.exist", type));
         }
         return result;
     }
