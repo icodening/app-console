@@ -215,7 +215,6 @@ public class DelayAutowireBeanPostProcessor extends AutowiredAnnotationBeanPostP
                 public void onEvent(ApplicationInstanceStartedEvent event) {
                     try {
                         if (!cached && beanFactory != null) {
-                            System.out.println("inject .....");
                             DependencyDescriptor desc = new DependencyDescriptor(field, true);
                             desc.setContainingClass(bean.getClass());
                             Set<String> autowiredBeanNames = new LinkedHashSet<>(1);
@@ -289,10 +288,16 @@ public class DelayAutowireBeanPostProcessor extends AutowiredAnnotationBeanPostP
                                         break;
                                     }
                                     arguments[i] = arg;
+
                                 } catch (BeansException ex) {
                                     throw new UnsatisfiedDependencyException(null, beanName, new InjectionPoint(methodParam), ex);
                                 }
                             }
+                            if (arguments != null) {
+                                ReflectionUtils.makeAccessible(method);
+                                method.invoke(bean, arguments);
+                            }
+                            cached = true;
                         }
 
                     } catch (Exception e) {
