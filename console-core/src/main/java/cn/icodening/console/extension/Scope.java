@@ -2,13 +2,14 @@ package cn.icodening.console.extension;
 
 
 import cn.icodening.console.ObjectFactory;
+import cn.icodening.console.Sortable;
 
 /**
  * @author icodening
  * @date 2021.01.01
  */
 @Extensible("singleton")
-public interface Scope {
+public interface Scope extends Sortable {
 
     String SINGLETON = "singleton";
 

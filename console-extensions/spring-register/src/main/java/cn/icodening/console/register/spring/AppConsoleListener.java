@@ -50,6 +50,10 @@ public class AppConsoleListener implements ApplicationListener<ApplicationStarte
                 .applicationName(applicationName)
                 .identity(localhost + ":" + portString)
                 .build();
+        //使用Spring Context接管所有Extension，享有Spring DI特性
+        AppConsoleSpringContext appConsoleSpringContext = SpringScope.getContext();
+        appConsoleSpringContext.setParent(event.getApplicationContext());
+        EventDispatcher.dispatch(new SpringContextRefreshedEvent(event.getApplicationContext()));
         EventDispatcher.dispatch(new ApplicationInstanceStartedEvent(instance));
     }
 
