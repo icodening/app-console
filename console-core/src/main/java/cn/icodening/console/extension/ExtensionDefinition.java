@@ -15,11 +15,18 @@ public class ExtensionDefinition<T> {
 
     private ObjectFactory<T> objectFactory;
 
-    ExtensionDefinition(String name, Class<T> clazz, Scope scope, ObjectFactory<T> objectFactory) {
+    private final ExtensionLoader<T> extensionLoader;
+
+    ExtensionDefinition(String name, Class<T> clazz, Scope scope, ObjectFactory<T> objectFactory, ExtensionLoader<T> extensionLoader) {
         this.name = name;
         this.clazz = clazz;
         this.scope = scope;
         this.objectFactory = objectFactory;
+        this.extensionLoader = extensionLoader;
+    }
+
+    public ExtensionLoader<T> getExtensionLoader() {
+        return extensionLoader;
     }
 
     @SuppressWarnings("unchecked")
@@ -51,7 +58,7 @@ public class ExtensionDefinition<T> {
         return objectFactory;
     }
 
-    public void setObjectFactory(ObjectFactory<T> objectFactory) {
+    public void setObjectFactory(ObjectFactory objectFactory) {
         this.objectFactory = objectFactory;
     }
 }
