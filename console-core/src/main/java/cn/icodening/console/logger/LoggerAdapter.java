@@ -3,6 +3,8 @@ package cn.icodening.console.logger;
 import java.io.File;
 
 /**
+ * 此处参考自Dubbo Logger
+ *
  * @author icodening
  * @date 2021.06.09
  */

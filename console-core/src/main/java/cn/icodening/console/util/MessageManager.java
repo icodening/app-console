@@ -1,5 +1,8 @@
 package cn.icodening.console.util;
 
+import cn.icodening.console.logger.Logger;
+import cn.icodening.console.logger.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,7 +22,7 @@ public class MessageManager {
 
     private static final String MESSAGE_FILE_SUFFIX = ".properties";
 
-//    private static final Logger LOGGER = Logger.getLogger(cn.icodening.rpc.core.util.MessageManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageManager.class);
 
     private static final String LOCALE_LANGUAGE = Locale.getDefault().toString();
 
@@ -83,7 +86,7 @@ public class MessageManager {
                             }
                         }
                     } catch (IOException e) {
-//                        LOGGER.error(e);
+                        LOGGER.error(e);
                     } finally {
                         if (!DEFAULT_LANGUAGE.equals(messageManager.language)
                                 && messageManager.messageMap.isEmpty()) {

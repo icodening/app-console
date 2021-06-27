@@ -15,11 +15,6 @@ public class SpringScope implements Scope {
 
     private static final AppConsoleSpringContext APP_CONSOLE_SPRING_CONTEXT = new AppConsoleSpringContext();
 
-    static {
-        //需要注意的是防止直接使用系统加载器导致无法读取到自身的SpringFactories
-        APP_CONSOLE_SPRING_CONTEXT.refresh();
-    }
-
     @Override
     public Object getObject(Class<?> clz, ObjectFactory<?> objectFactory) {
         Object ret = null;

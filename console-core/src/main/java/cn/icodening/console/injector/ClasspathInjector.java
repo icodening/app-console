@@ -1,14 +1,11 @@
 package cn.icodening.console.injector;
 
-import cn.icodening.console.extension.Extensible;
-
 /**
  * classpath注入器
  *
  * @author icodening
  * @date 2021.06.06
  */
-@Extensible
 public interface ClasspathInjector {
 
     /**

@@ -3,7 +3,10 @@ package cn.icodening.console.extension;
 import cn.icodening.console.ObjectFactory;
 import cn.icodening.console.logger.Logger;
 import cn.icodening.console.logger.LoggerFactory;
-import cn.icodening.console.util.*;
+import cn.icodening.console.util.Holder;
+import cn.icodening.console.util.MessageManager;
+import cn.icodening.console.util.ReflectUtil;
+import cn.icodening.console.util.StringUtil;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -105,7 +108,7 @@ public class ExtensionLoader<T> {
 
     public ExtensionLoader(Class<T> type) {
         this.type = type;
-        this.classLoader = ExtensionClassLoaderHolder.get();
+        this.classLoader = Thread.currentThread().getContextClassLoader();
     }
 
     private static <T> boolean withExtensionAnnotation(Class<T> type) {

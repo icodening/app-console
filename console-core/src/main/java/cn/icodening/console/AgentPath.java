@@ -17,7 +17,7 @@ public enum AgentPath {
      */
     INSTANCE;
 
-    private File path = null;
+    private File path;
 
     AgentPath() {
         path = findPath();
