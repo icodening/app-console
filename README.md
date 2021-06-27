@@ -42,4 +42,5 @@ mvn package
 serverAddress=http://127.0.0.1:28080 
 ````
 # PS
-在Spring环境下, 标识有@Extension接口的实现将被Spring容器接管，将享有Spring的特性。
+1. 在Spring环境下, 标识有@Extension接口的实现将被Spring容器接管，将享有Spring的特性。
+2. 不适用于传统基于Tomcat直接部署war包类型的项目

@@ -5,9 +5,9 @@ import cn.icodening.console.common.model.ApplicationInstance;
 import cn.icodening.console.event.EventDispatcher;
 import cn.icodening.console.logger.Logger;
 import cn.icodening.console.logger.LoggerFactory;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.lang.management.ManagementFactory;
 import java.net.Inet4Address;
@@ -20,19 +20,37 @@ import java.util.Enumeration;
  * @author icodening
  * @date 2021.06.06
  */
-public class AppConsoleListener implements ApplicationListener<ApplicationStartedEvent> {
+public class AppConsoleListener implements ApplicationListener<ContextRefreshedEvent> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AppConsoleListener.class);
 
     @Override
-    public void onApplicationEvent(ApplicationStartedEvent event) {
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        //1.启动agent
+        startAgent(event);
+
+        //2.将当前应用注册到application console
+        registerInstance(event);
+    }
+
+    private void startAgent(ContextRefreshedEvent event) {
+        ApplicationContext applicationContext = event.getApplicationContext();
+        if (applicationContext instanceof AppConsoleSpringContext) {
+            return;
+        }
+        SpringScope.getContext().setParent(applicationContext);
+        SpringScope.getContext().refresh();
+        EventDispatcher.dispatch(SpringStartAgentEventProvider.getSpringStartAgentEvent());
+    }
+
+    private void registerInstance(ContextRefreshedEvent event) {
+        ApplicationContext userApplicationContext = event.getApplicationContext();
         String localhost = getLocalhost();
         if (localhost == null) {
             LOGGER.info("localhost is null, dont't register");
             return;
         }
-        ApplicationContext applicationContext = event.getApplicationContext();
-        String portString = applicationContext.getEnvironment().getProperty("server.port");
+        String portString = userApplicationContext.getEnvironment().getProperty("server.port");
         if (portString == null) {
             portString = "8080";
         }
@@ -40,7 +58,7 @@ public class AppConsoleListener implements ApplicationListener<ApplicationStarte
         ApplicationInstance.Builder builder = ApplicationInstance.newBuilder();
         String name = ManagementFactory.getRuntimeMXBean().getName();
         String pid = name.substring(0, name.indexOf("@"));
-        String applicationName = applicationContext.getEnvironment().getProperty("spring.application.name");
+        String applicationName = userApplicationContext.getEnvironment().getProperty("spring.application.name");
         if (applicationName == null) {
             applicationName = localhost + ":" + portString + "@pid=" + pid;
         }
@@ -50,10 +68,6 @@ public class AppConsoleListener implements ApplicationListener<ApplicationStarte
                 .applicationName(applicationName)
                 .identity(localhost + ":" + portString)
                 .build();
-        //使用Spring Context接管所有Extension，享有Spring DI特性
-        AppConsoleSpringContext appConsoleSpringContext = SpringScope.getContext();
-        appConsoleSpringContext.setParent(event.getApplicationContext());
-        EventDispatcher.dispatch(new SpringContextRefreshedEvent(event.getApplicationContext()));
         EventDispatcher.dispatch(new ApplicationInstanceStartedEvent(instance));
     }
 

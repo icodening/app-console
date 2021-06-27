@@ -1,6 +1,9 @@
 package cn.icodening.console.agent;
 
+import cn.icodening.console.AgentStartEventProvider;
 import cn.icodening.console.boot.BootServiceManager;
+import cn.icodening.console.event.AgentStartEvent;
+import cn.icodening.console.event.EventDispatcher;
 import cn.icodening.console.extension.ExtensionClassLoader;
 import cn.icodening.console.injector.ClasspathInjector;
 import cn.icodening.console.injector.ClasspathRegistry;
@@ -26,8 +29,35 @@ public class AppConsoleAgent {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppConsoleAgent.class);
 
     public static void premain(String agentArgs, Instrumentation instrumentation) {
-        LOGGER.info("app console agent start");
         addRequiredDependency();
+        List<AgentStartEvent> agentStartEvents = getAgentStartEventList();
+        if (agentStartEvents.isEmpty()) {
+            //直接启动
+            startAgent(agentArgs, instrumentation);
+            return;
+        }
+        //回调启动
+        EventDispatcher.registerOnceEvent(agentStartEvents.get(0).getClass(), event -> {
+            ((AgentStartEvent) event).invoke(agentArgs, instrumentation);
+            startAgent(agentArgs, instrumentation);
+        });
+    }
+
+    private static List<AgentStartEvent> getAgentStartEventList() {
+        ExtensionClassLoader classLoader = ExtensionClassLoaderHolder.get();
+        ServiceLoader<AgentStartEventProvider> load = ServiceLoader.load(AgentStartEventProvider.class, classLoader);
+        Iterator<AgentStartEventProvider> iterator = load.iterator();
+        List<AgentStartEvent> agentStartEvents = new ArrayList<>(4);
+        iterator.forEachRemaining(event -> {
+            if (event.get() != null) {
+                agentStartEvents.add(event.get());
+            }
+        });
+        return agentStartEvents;
+    }
+
+    private static void startAgent(String agentArgs, Instrumentation instrumentation) {
+        LOGGER.info("app console agent start");
         // 启动所有服务扩展点
         try {
             BootServiceManager.initBootServices(agentArgs);
