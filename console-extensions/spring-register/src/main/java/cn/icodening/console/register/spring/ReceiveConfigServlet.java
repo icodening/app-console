@@ -5,9 +5,11 @@ import cn.icodening.console.common.model.InstanceConfigurationCache;
 import cn.icodening.console.common.model.ServerMessage;
 import cn.icodening.console.common.util.BeanMapUtil;
 import cn.icodening.console.event.EventDispatcher;
+import cn.icodening.console.logger.Logger;
+import cn.icodening.console.logger.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletOutputStream;
@@ -27,14 +29,15 @@ import java.util.concurrent.CompletableFuture;
  */
 public class ReceiveConfigServlet extends HttpServlet {
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReceiveConfigServlet.class);
 
+    @Resource
+    private ObjectMapper objectMapper;
 
     @Override
     @SuppressWarnings("unchecked")
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println(ReceiveConfigServlet.class.getName() + ": receive message from: " + req.getRemoteAddr());
+        LOGGER.debug("receive message from: " + req.getRemoteAddr());
         try (ServletInputStream inputStream = req.getInputStream();
              ServletOutputStream outputStream = resp.getOutputStream();
              ByteArrayOutputStream bos = new ByteArrayOutputStream(512)) {
@@ -59,7 +62,7 @@ public class ReceiveConfigServlet extends HttpServlet {
             ServerMessage serverMessage = new ServerMessage();
             serverMessage.setType(messageType);
             CompletableFuture.runAsync(() -> EventDispatcher.dispatch(new ServerMessageReceivedEvent(serverMessage)))
-                    .whenCompleteAsync((ret, ex) -> System.out.println("publish server message received event success"));
+                    .whenCompleteAsync((ret, ex) -> LOGGER.debug("publish server message received event success"));
             outputStream.write("success".getBytes());
         } catch (Exception e) {
             e.printStackTrace();

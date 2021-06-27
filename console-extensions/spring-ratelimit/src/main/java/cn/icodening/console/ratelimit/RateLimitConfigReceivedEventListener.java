@@ -4,8 +4,8 @@ import cn.icodening.console.common.entity.RateLimitEntity;
 import cn.icodening.console.common.event.ServerMessageReceivedEvent;
 import cn.icodening.console.common.model.ServerMessage;
 import cn.icodening.console.event.ConsoleEventListener;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,7 +17,7 @@ public class RateLimitConfigReceivedEventListener implements ConsoleEventListene
 
     private static final String RECEIVE_TYPE = RateLimitEntity.class.getName();
 
-    @Autowired
+    @Resource
     private List<RateLimiter> rateLimiters = Collections.emptyList();
 
     @Override
