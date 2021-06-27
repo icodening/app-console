@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 
 /**
+ * FIXME 设计简单粗暴，限流粒度大，后续改造
  * 实例限流器
  *
  * @author icodening
