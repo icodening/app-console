@@ -1,9 +1,9 @@
 package cn.icodening.console.event;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author icodening
@@ -11,17 +11,30 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class EventDispatcher {
 
-    private static final Map<Class<? extends AppConsoleEvent>, List<ConsoleEventListener<? extends AppConsoleEvent>>>
-            EVENT_LISTENERS = new ConcurrentHashMap<>();
+    private static final Map<Class<? extends AppConsoleEvent>, EventListenerInvoker>
+            EVENT_LISTENER_INVOKERS = new ConcurrentHashMap<>();
 
     public static void register(Class<? extends AppConsoleEvent> eventClazz,
                                 ConsoleEventListener<? extends AppConsoleEvent> eventListener) {
-        List<ConsoleEventListener<? extends AppConsoleEvent>> listeners = EVENT_LISTENERS.get(eventClazz);
-        if (listeners == null) {
-            EVENT_LISTENERS.putIfAbsent(eventClazz, new ArrayList<>());
-            listeners = EVENT_LISTENERS.get(eventClazz);
+        register(eventClazz, eventListener, false);
+    }
+
+    public static void registerOnceEvent(Class<? extends AppConsoleEvent> eventClazz,
+                                         ConsoleEventListener<? extends AppConsoleEvent> eventListener) {
+        register(eventClazz, eventListener, true);
+    }
+
+    private static void register(Class<? extends AppConsoleEvent> eventClazz,
+                                 ConsoleEventListener<? extends AppConsoleEvent> eventListener, boolean once) {
+        EventListenerInvoker eventListenerInvoker = EVENT_LISTENER_INVOKERS.get(eventClazz);
+        if (eventListenerInvoker == null) {
+            EVENT_LISTENER_INVOKERS.putIfAbsent(eventClazz, new EventListenerInvoker());
+            eventListenerInvoker = EVENT_LISTENER_INVOKERS.get(eventClazz);
+            eventListenerInvoker.event = eventClazz;
+            eventListenerInvoker.listeners = new CopyOnWriteArrayList<>();
+            eventListenerInvoker.once = once;
         }
-        listeners.add(eventListener);
+        eventListenerInvoker.listeners.add(eventListener);
     }
 
     public static void dispatch(AppConsoleEvent event) {
@@ -29,12 +42,21 @@ public class EventDispatcher {
             return;
         }
         Class<? extends AppConsoleEvent> eventClazz = event.getClass();
-        List<ConsoleEventListener<? extends AppConsoleEvent>> listeners = EVENT_LISTENERS.get(eventClazz);
-        if (listeners == null) {
+        EventListenerInvoker eventListenerInvoker = EVENT_LISTENER_INVOKERS.get(eventClazz);
+        if (eventListenerInvoker == null || eventListenerInvoker.listeners == null) {
             return;
         }
-        for (ConsoleEventListener listener : listeners) {
+        if (eventListenerInvoker.once) {
+            EVENT_LISTENER_INVOKERS.remove(eventClazz);
+        }
+        for (ConsoleEventListener listener : eventListenerInvoker.listeners) {
             listener.onEvent(event);
         }
+    }
+
+    private static class EventListenerInvoker {
+        private Class<? extends AppConsoleEvent> event;
+        private List<ConsoleEventListener<? extends AppConsoleEvent>> listeners;
+        private boolean once;
     }
 }
