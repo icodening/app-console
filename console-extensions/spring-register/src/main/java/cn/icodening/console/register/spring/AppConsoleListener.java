@@ -27,13 +27,6 @@ public class AppConsoleListener implements ApplicationListener<ContextRefreshedE
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         //1.启动agent
-        startAgent(event);
-
-        //2.将当前应用注册到application console
-        registerInstance(event);
-    }
-
-    private void startAgent(ContextRefreshedEvent event) {
         ApplicationContext applicationContext = event.getApplicationContext();
         if (applicationContext instanceof AppConsoleSpringContext) {
             return;
@@ -41,6 +34,9 @@ public class AppConsoleListener implements ApplicationListener<ContextRefreshedE
         SpringScope.getContext().setParent(applicationContext);
         SpringScope.getContext().refresh();
         EventDispatcher.dispatch(SpringStartAgentEventProvider.getSpringStartAgentEvent());
+
+        //2.将当前应用注册到application console
+        registerInstance(event);
     }
 
     private void registerInstance(ContextRefreshedEvent event) {

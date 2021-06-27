@@ -57,7 +57,7 @@ public class AppConsoleAgent {
     }
 
     private static void startAgent(String agentArgs, Instrumentation instrumentation) {
-        LOGGER.info("app console agent start");
+        LOGGER.info("app console agent start, version is v" + AppConsoleAgent.class.getPackage().getImplementationVersion());
         // 启动所有服务扩展点
         try {
             BootServiceManager.initBootServices(agentArgs);

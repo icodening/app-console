@@ -39,7 +39,7 @@ public class RegisterBootService extends BaseBootService {
     @Override
     public void start() throws AppConsoleException {
         String serverAddress = ConfigurationManager.INSTANCE.get("serverAddress");
-        EventDispatcher.register(ApplicationInstanceStartedEvent.class, (ConsoleEventListener<ApplicationInstanceStartedEvent>) event -> {
+        EventDispatcher.registerOnceEvent(ApplicationInstanceStartedEvent.class, (ConsoleEventListener<ApplicationInstanceStartedEvent>) event -> {
             ApplicationInstance applicationInstance = event.getApplicationInstance();
             if (applicationInstance != null) {
                 RegisterBootService.this.applicationInstance = applicationInstance;
