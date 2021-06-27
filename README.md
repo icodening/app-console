@@ -41,3 +41,5 @@ mvn package
 #Agent连接的控制台后端地址
 serverAddress=http://127.0.0.1:28080 
 ````
+# PS
+在Spring环境下, 标识有@Extension接口的实现将被Spring容器接管，将享有Spring的特性。
