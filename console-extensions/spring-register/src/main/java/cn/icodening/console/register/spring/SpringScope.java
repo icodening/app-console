@@ -8,6 +8,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 
 /**
+ * 扩展Extension作用域对接Spring，此后所有Extension将享有Spring的所有特性
+ *
  * @author icodening
  * @date 2021.06.25
  */
