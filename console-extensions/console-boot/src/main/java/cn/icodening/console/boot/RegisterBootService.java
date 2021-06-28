@@ -49,6 +49,9 @@ public class RegisterBootService extends BaseBootService {
                 post.setBody(requestBody);
                 try {
                     Response exchange = HttpUtil.exchange(post);
+                    //实例注册接口响应内容为当前注册实例中所有的配置信息.
+                    //其中 "data" 的数据结构为一个map， config class -> config list
+                    //例子 {"data":{"cn.icodening.Config1":[],"cn.icodening.Config2":[]}, "success": true}
                     byte[] data = exchange.getData();
                     JSONObject json = JSON.parseObject(new String(data));
                     String dataJsonString = json.getString("data");
@@ -70,14 +73,14 @@ public class RegisterBootService extends BaseBootService {
                             //FIXME setAction?
                             ServerMessageReceivedEvent serverMessageReceivedEvent = new ServerMessageReceivedEvent(serverMessage);
                             EventDispatcher.dispatch(serverMessageReceivedEvent);
-                        } catch (Exception ignore) {
-                            ignore.printStackTrace();
+                        } catch (Exception e) {
+                            LOGGER.warn(e.getMessage(), e);
                         }
                     });
-                    LOGGER.info("register backend success! backend address is:" + serverAddress + "[" + applicationInstance + "]");
+                    LOGGER.info("register backend success! backend address is:" + serverAddress + ". " + applicationInstance);
                 } catch (IOException e) {
                     //TODO ignore or retry?
-                    LOGGER.warn("register failed !!! [" + applicationInstance + "]", e.getCause());
+                    LOGGER.warn("register failed !!! " + applicationInstance, e.getCause());
                 }
             }
         });

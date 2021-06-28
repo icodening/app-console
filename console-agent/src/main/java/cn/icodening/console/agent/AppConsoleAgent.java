@@ -6,7 +6,6 @@ import cn.icodening.console.event.AgentStartEvent;
 import cn.icodening.console.event.EventDispatcher;
 import cn.icodening.console.extension.ExtensionClassLoader;
 import cn.icodening.console.injector.ClasspathInjector;
-import cn.icodening.console.injector.ClasspathRegistry;
 import cn.icodening.console.logger.Logger;
 import cn.icodening.console.logger.LoggerFactory;
 import cn.icodening.console.util.ExtensionClassLoaderHolder;
@@ -83,31 +82,20 @@ public class AppConsoleAgent {
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         ServiceLoader<ClasspathInjector> load = ServiceLoader.load(ClasspathInjector.class, classLoader);
         Iterator<ClasspathInjector> iterator = load.iterator();
-        ArrayList<ClasspathInjector> classPathConfigurers = new ArrayList<>();
-        while (iterator.hasNext()) {
-            classPathConfigurers.add(iterator.next());
-        }
-        ClasspathRegistry classPathRegistry = new ClasspathRegistry();
-        for (ClasspathInjector classPathConfigurer : classPathConfigurers) {
-            String jarPathByClass = classLoader.getJarPathByClass(classPathConfigurer.getClass().getName().replace('.', '/').concat(".class"));
-            if (jarPathByClass != null
-                    && classPathConfigurer.shouldInject()) {
-                classPathRegistry.addUrl("file:" + jarPathByClass);
-            }
-        }
         try {
             Method addUrlMethod = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
             addUrlMethod.setAccessible(true);
-            List<String> allUrls = classPathRegistry.getAllUrl();
-            for (String u : allUrls) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(u);
+            while (iterator.hasNext()) {
+                ClasspathInjector classpathInjector = iterator.next();
+                String jarPathByClass = classLoader.getJarPathByClass(classpathInjector.getClass().getName().replace('.', '/').concat(".class"));
+                if (jarPathByClass != null
+                        && classpathInjector.shouldInject()) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("[" + jarPathByClass + "] enable");
+                    }
+                    URL url = new URL("file:" + jarPathByClass);
+                    addUrlMethod.invoke(contextClassLoader, url);
                 }
-                URL url = new URL(u);
-                addUrlMethod.invoke(contextClassLoader, url);
-            }
-            if (allUrls.isEmpty()) {
-                LOGGER.warn("no jar to add to the class path");
             }
         } catch (Exception e) {
             LOGGER.warn(e);
