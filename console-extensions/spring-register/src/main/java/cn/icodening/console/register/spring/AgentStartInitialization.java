@@ -23,7 +23,7 @@ import java.util.Enumeration;
  */
 public class AgentStartInitialization implements InitializingBean, ApplicationContextAware {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AppConsoleListener.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AgentStartInitialization.class);
 
     private static final String SERVER_PORT_KEY = "server.port";
     private static final String APPLICATION_NAME_KEY = "spring.application.name";
