@@ -79,6 +79,7 @@
                                         <Premain-Class>${premain.class}</Premain-Class>
                                         <Can-Redefine-Classes>${can.redefine.classes}</Can-Redefine-Classes>
                                         <Can-Retransform-Classes>${can.retransform.classes}</Can-Retransform-Classes>
+                                        <Implementation-Version>${project.version}</Implementation-Version>
                                     </manifestEntries>
                                 </transformer>
                             </transformers>
