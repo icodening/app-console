@@ -5,9 +5,10 @@ import cn.icodening.console.common.model.ApplicationInstance;
 import cn.icodening.console.event.EventDispatcher;
 import cn.icodening.console.logger.Logger;
 import cn.icodening.console.logger.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.ApplicationContextAware;
 
 import java.lang.management.ManagementFactory;
 import java.net.Inet4Address;
@@ -18,36 +19,41 @@ import java.util.Enumeration;
 
 /**
  * @author icodening
- * @date 2021.06.06
+ * @date 2021.06.29
  */
-public class AppConsoleListener implements ApplicationListener<ContextRefreshedEvent> {
+public class AgentStartInitialization implements InitializingBean, ApplicationContextAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AppConsoleListener.class);
-//org.springframework.context.ApplicationListener=\
-//  cn.icodening.console.register.spring.AppConsoleListener
-@Override
-public void onApplicationEvent(ContextRefreshedEvent event) {
-    //1.启动agent
-    ApplicationContext applicationContext = event.getApplicationContext();
-    if (applicationContext instanceof AppConsoleSpringContext) {
-        return;
+
+    private static final String SERVER_PORT_KEY = "server.port";
+    private static final String APPLICATION_NAME_KEY = "spring.application.name";
+
+    private ApplicationContext applicationContext;
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
-    SpringScope.getContext().setParent(applicationContext);
-    SpringScope.getContext().refresh();
-    EventDispatcher.dispatch(SpringStartAgentEventProvider.getSpringStartAgentEvent());
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        //1.启动agent
+        SpringScope.getContext().setParent(applicationContext);
+        SpringScope.getContext().refresh();
+        EventDispatcher.dispatch(SpringStartAgentEventProvider.getSpringStartAgentEvent());
 
         //2.将当前应用注册到application console
-        registerInstance(event);
+        registerInstance();
     }
 
-    private void registerInstance(ContextRefreshedEvent event) {
-        ApplicationContext userApplicationContext = event.getApplicationContext();
+
+    private void registerInstance() {
         String localhost = getLocalhost();
         if (localhost == null) {
             LOGGER.info("localhost is null, dont't register");
             return;
         }
-        String portString = userApplicationContext.getEnvironment().getProperty("server.port");
+        String portString = applicationContext.getEnvironment().getProperty(SERVER_PORT_KEY);
         if (portString == null) {
             portString = "8080";
         }
@@ -55,7 +61,7 @@ public void onApplicationEvent(ContextRefreshedEvent event) {
         ApplicationInstance.Builder builder = ApplicationInstance.newBuilder();
         String name = ManagementFactory.getRuntimeMXBean().getName();
         String pid = name.substring(0, name.indexOf("@"));
-        String applicationName = userApplicationContext.getEnvironment().getProperty("spring.application.name");
+        String applicationName = applicationContext.getEnvironment().getProperty(APPLICATION_NAME_KEY);
         if (applicationName == null) {
             applicationName = localhost + ":" + portString + "@pid=" + pid;
         }

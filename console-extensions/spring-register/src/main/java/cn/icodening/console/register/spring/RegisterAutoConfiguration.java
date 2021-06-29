@@ -20,4 +20,9 @@ public class RegisterAutoConfiguration {
     public ReceiveConfigServlet receiveConfigServlet() {
         return new ReceiveConfigServlet();
     }
+
+    @Bean
+    public AgentStartInitialization agentStartInitialization() {
+        return new AgentStartInitialization();
+    }
 }

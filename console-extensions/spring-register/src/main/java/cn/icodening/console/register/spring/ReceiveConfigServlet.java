@@ -65,7 +65,7 @@ public class ReceiveConfigServlet extends HttpServlet {
                     .whenCompleteAsync((ret, ex) -> LOGGER.debug("publish server message received event success"));
             outputStream.write("success".getBytes());
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.warn(e.getMessage(), e);
         }
     }
 }
