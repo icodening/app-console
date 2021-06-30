@@ -29,6 +29,8 @@ public class AppConsoleAgent {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AppConsoleAgent.class);
 
+    private static final String[] REQUIRED_MODULES = {"console-common", "console-boot"};
+
     public static void premain(String agentArgs, Instrumentation instrumentation) {
         addRequiredDependency();
         List<AgentStartEvent> agentStartEvents = getAgentStartEventList();
@@ -110,8 +112,9 @@ public class AppConsoleAgent {
      * 注册必备模块
      */
     private static void registerRequiredModule(ModuleRegistry moduleRegistry) {
-        moduleRegistry.registerWithModuleName("console-common");
-        moduleRegistry.registerWithModuleName("console-boot");
+        for (String requiredModule : REQUIRED_MODULES) {
+            moduleRegistry.registerWithModuleName(requiredModule);
+        }
     }
 
     private static ModuleRegistry buildLoadedModuleRegistry() {
