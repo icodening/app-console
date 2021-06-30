@@ -29,6 +29,9 @@ public class AppConsoleAgent {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AppConsoleAgent.class);
 
+    /**
+     * 必备模块名
+     */
     private static final String[] REQUIRED_MODULES = {"console-common", "console-boot"};
 
     public static void premain(String agentArgs, Instrumentation instrumentation) {
