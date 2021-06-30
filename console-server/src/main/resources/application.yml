@@ -1,21 +1,17 @@
 server:
   port: 28080
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/console-server?characterEncoding=utf8&serverTimezone=Asia/Shanghai
-    username: root
-    password: admin
+  profiles:
+    active: mysql
   jackson:
     time-zone: GMT+8
     serialization:
       INDENT_OUTPUT: true
       WRITE_DATES_AS_TIMESTAMPS: true
     default-property-inclusion: non_null
-  jpa:
-    database: mysql
-    show-sql: true
-    generate-ddl: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL55Dialect
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.engine.QueryParameters: debug
+    org.hibernate.engine.query.HQLQueryPlan: debug
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
