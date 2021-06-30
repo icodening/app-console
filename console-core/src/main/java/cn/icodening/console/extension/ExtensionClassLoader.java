@@ -10,8 +10,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
 /**
  * @author icodening
@@ -53,6 +55,19 @@ public class ExtensionClassLoader extends ClassLoader {
                     }
                     data = baos.toByteArray();
                 }
+                Attributes mainAttributes = jar.jarFile.getManifest().getMainAttributes();
+                String specTitle = mainAttributes.getValue(Attributes.Name.SPECIFICATION_TITLE);
+                String specVersion = mainAttributes.getValue(Attributes.Name.SPECIFICATION_VERSION);
+                String specVendor = mainAttributes.getValue(Attributes.Name.SPECIFICATION_VENDOR);
+                String implTitle = mainAttributes.getValue(Attributes.Name.IMPLEMENTATION_TITLE);
+                String implVersion = mainAttributes.getValue(Attributes.Name.IMPLEMENTATION_VERSION);
+                String implVendor = mainAttributes.getValue(Attributes.Name.IMPLEMENTATION_VENDOR);
+                String pkgName = null;
+                int pos = name.lastIndexOf('.');
+                if (pos != -1) {
+                    pkgName = name.substring(0, pos);
+                }
+                definePackage(pkgName, specTitle, specVersion, specVendor, implTitle, implVersion, implVendor, null);
                 return defineClass(name, data, 0, data.length);
             } catch (IOException e) {
                 System.out.println(e.getMessage());
@@ -96,6 +111,13 @@ public class ExtensionClassLoader extends ClassLoader {
             }
         }
         return null;
+    }
+
+    public List<JarFile> getLoadedJars() {
+        return getAllJars()
+                .stream()
+                .map(jf -> jf.jarFile)
+                .collect(Collectors.toList());
     }
 
     private List<Jar> getAllJars() {

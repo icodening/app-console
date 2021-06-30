@@ -5,19 +5,21 @@ import cn.icodening.console.boot.BootServiceManager;
 import cn.icodening.console.event.AgentStartEvent;
 import cn.icodening.console.event.EventDispatcher;
 import cn.icodening.console.extension.ExtensionClassLoader;
-import cn.icodening.console.injector.ClasspathInjector;
+import cn.icodening.console.injector.ModuleRegistry;
+import cn.icodening.console.injector.ModuleRegistryConfigurer;
 import cn.icodening.console.logger.Logger;
 import cn.icodening.console.logger.LoggerFactory;
 import cn.icodening.console.util.ExtensionClassLoaderHolder;
+import cn.icodening.console.util.ReflectUtil;
 
+import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ServiceLoader;
+import java.util.*;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
 
 /**
  * @author icodening
@@ -80,25 +82,49 @@ public class AppConsoleAgent {
     private static void addRequiredDependency() {
         ExtensionClassLoader classLoader = ExtensionClassLoaderHolder.get();
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        ServiceLoader<ClasspathInjector> load = ServiceLoader.load(ClasspathInjector.class, classLoader);
-        Iterator<ClasspathInjector> iterator = load.iterator();
-        try {
-            Method addUrlMethod = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-            addUrlMethod.setAccessible(true);
-            while (iterator.hasNext()) {
-                ClasspathInjector classpathInjector = iterator.next();
-                String jarPathByClass = classLoader.getJarPathByClass(classpathInjector.getClass().getName().replace('.', '/').concat(".class"));
-                if (jarPathByClass != null
-                        && classpathInjector.shouldInject()) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("[" + jarPathByClass + "] enable");
-                    }
-                    URL url = new URL("file:" + jarPathByClass);
-                    addUrlMethod.invoke(contextClassLoader, url);
-                }
-            }
-        } catch (Exception e) {
-            LOGGER.warn(e);
+        ServiceLoader<ModuleRegistryConfigurer> load = ServiceLoader.load(ModuleRegistryConfigurer.class, classLoader);
+        Iterator<ModuleRegistryConfigurer> iterator = load.iterator();
+        Method addUrlMethod = ReflectUtil.findMethod(URLClassLoader.class, "addURL", URL.class);
+        addUrlMethod.setAccessible(true);
+        ModuleRegistry moduleRegistry = buildLoadedModuleRegistry();
+        registerRequiredModule(moduleRegistry);
+        while (iterator.hasNext()) {
+            ModuleRegistryConfigurer registryConfigurer = iterator.next();
+            registryConfigurer.configureRegistry(moduleRegistry);
         }
+        Map<String, JarFile> registeredModule = moduleRegistry.getRegisteredModule();
+        registeredModule.forEach((module, jar) -> {
+            try {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("[" + jar.getName() + "] enable");
+                }
+                URL url = new URL("file:" + jar.getName());
+                addUrlMethod.invoke(contextClassLoader, url);
+            } catch (Exception e) {
+                LOGGER.warn("install module error [" + module + "]");
+            }
+        });
+    }
+
+    /**
+     * 注册必备模块
+     */
+    private static void registerRequiredModule(ModuleRegistry moduleRegistry) {
+        moduleRegistry.registerWithModuleName("console-common");
+        moduleRegistry.registerWithModuleName("console-boot");
+    }
+
+    private static ModuleRegistry buildLoadedModuleRegistry() {
+        List<JarFile> loadedJars = ExtensionClassLoaderHolder.get().getLoadedJars();
+        Map<String, JarFile> loaded = new HashMap<>();
+        for (JarFile loadedJar : loadedJars) {
+            try {
+                String moduleName = loadedJar.getManifest().getMainAttributes().getValue(Attributes.Name.IMPLEMENTATION_TITLE);
+                loaded.putIfAbsent(moduleName, loadedJar);
+            } catch (IOException e) {
+                LOGGER.warn(e.getMessage(), e);
+            }
+        }
+        return new ModuleRegistry(loaded);
     }
 }

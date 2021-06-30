@@ -1,5 +1,7 @@
 package cn.icodening.console.util;
 
+import cn.icodening.console.AppConsoleException;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
@@ -36,7 +38,7 @@ public class ReflectUtil {
             }
             searchType = searchType.getSuperclass();
         }
-        return null;
+        throw AppConsoleException.wrapperException(new NoSuchMethodException());
     }
 
     public static List<Method> findAnnotationMethods(Class<?> clazz, Class<? extends Annotation> annotationClass) {
