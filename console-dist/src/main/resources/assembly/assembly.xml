@@ -32,6 +32,14 @@
             </includes>
             <outputDirectory>agent/extensions</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../console-server/src/main/resources</directory>
+            <includes>
+                <include>application*.yml</include>
+                <include>application*.properties</include>
+            </includes>
+            <outputDirectory>server</outputDirectory>
+        </fileSet>
     </fileSets>
 
     <files>
@@ -42,10 +50,6 @@
         <file>
             <source>${project.basedir}/src/main/resources/config.properties</source>
             <outputDirectory>agent/config</outputDirectory>
-        </file>
-        <file>
-            <source>${project.basedir}/../console-server/src/main/resources/application.yml</source>
-            <outputDirectory>server</outputDirectory>
         </file>
         <file>
             <source>${project.basedir}/../console-server/target/app-console-server.jar</source>

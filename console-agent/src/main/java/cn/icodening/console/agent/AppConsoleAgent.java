@@ -101,7 +101,7 @@ public class AppConsoleAgent {
         registeredModule.forEach((module, jar) -> {
             try {
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("[" + jar.getName() + "] enable");
+                    LOGGER.debug("[" + module + "] is enable");
                 }
                 URL url = new URL("file:" + jar.getName());
                 addUrlMethod.invoke(contextClassLoader, url);
