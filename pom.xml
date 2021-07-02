@@ -48,6 +48,7 @@
 
     <build>
         <plugins>
+            <!--统一给所有module添加 MANIFEST.MF start-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -62,6 +63,7 @@
                     </archive>
                 </configuration>
             </plugin>
+            <!--统一给所有module添加 MANIFEST.MF end-->
             <plugin>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>${maven-shade-plugin.version}</version>

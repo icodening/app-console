@@ -27,6 +27,7 @@
         <base.dir>${project.basedir}</base.dir>
         <extensions.dest.dir>${base.dir}/../../console-extension-jars</extensions.dest.dir>
         <agent.extensions.dest.dir>${extensions.dest.dir}/../console-agent/target/extensions</agent.extensions.dest.dir>
+        <source.dest.dir>${base.dir}/../../source-jars</source.dest.dir>
     </properties>
 
     <dependencies>
@@ -56,6 +57,13 @@
                                 </copy>
                                 <copy todir="${agent.extensions.dest.dir}" overwrite="true">
                                     <fileset dir="${extensions.dest.dir}" erroronmissingdir="false">
+                                        <include name="*.jar"/>
+                                        <exclude name="*-sources.jar"/>
+                                    </fileset>
+                                </copy>
+
+                                <copy todir="${source.dest.dir}" overwrite="true">
+                                    <fileset dir="${project.build.directory}" erroronmissingdir="false">
                                         <include name="*.jar"/>
                                         <exclude name="*-sources.jar"/>
                                     </fileset>

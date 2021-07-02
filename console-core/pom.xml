@@ -11,7 +11,9 @@
 
     <artifactId>console-core</artifactId>
 
-
+    <properties>
+        <source.dest.dir>${project.basedir}/../source-jars</source.dest.dir>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -36,4 +38,32 @@
             <artifactId>log4j-jcl</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <finalName>console-core</finalName>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+                                <copy todir="${source.dest.dir}" overwrite="true">
+                                    <fileset dir="${project.build.directory}" erroronmissingdir="false">
+                                        <include name="*.jar"/>
+                                        <exclude name="*-sources.jar"/>
+                                    </fileset>
+                                </copy>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
