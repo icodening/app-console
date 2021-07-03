@@ -1,5 +1,6 @@
 package cn.icodening.console.register.spring;
 
+import cn.icodening.console.common.constants.URLConstants;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 
@@ -10,9 +11,9 @@ import org.springframework.context.annotation.Bean;
 public class RegisterAutoConfiguration {
 
     @Bean
-    public ServletRegistrationBean<ReceiveConfigServlet> receiveConfigServletServletRegistrationBean(ReceiveConfigServlet receiveConfigServlet) {
+    public ServletRegistrationBean<ReceiveConfigServlet> receiveConfigServletRegistrationBean(ReceiveConfigServlet receiveConfigServlet) {
         final ServletRegistrationBean<ReceiveConfigServlet> registrationBean = new ServletRegistrationBean<>(receiveConfigServlet);
-        registrationBean.addUrlMappings("/configReceiver");
+        registrationBean.addUrlMappings(URLConstants.INSTANCE_RECEIVE_URL);
         return registrationBean;
     }
 
@@ -25,4 +26,5 @@ public class RegisterAutoConfiguration {
     public AgentStartInitialization agentStartInitialization() {
         return new AgentStartInitialization();
     }
+
 }

@@ -1,5 +1,6 @@
 package cn.icodening.console.server.event;
 
+import cn.icodening.console.common.constants.URLConstants;
 import cn.icodening.console.common.entity.InstanceEntity;
 import cn.icodening.console.common.model.PushData;
 import cn.icodening.console.server.service.InstanceFinderManager;
@@ -18,8 +19,6 @@ import java.util.stream.Collectors;
 @Component
 public class ConfigUpdateEventListener implements ApplicationListener<ConfigUpdateEvent> {
 
-    private static final String INSTANCE_RECEIVER = "/configReceiver";
-
     @Autowired
     private InstanceFinderManager instanceFinderManager;
 
@@ -36,7 +35,7 @@ public class ConfigUpdateEventListener implements ApplicationListener<ConfigUpda
         final List<String> addresses = instanceEntities
                 .stream()
                 .map(instanceEntity ->
-                        "http://" + instanceEntity.getIp() + ":" + instanceEntity.getPort() + INSTANCE_RECEIVER)
+                        "http://" + instanceEntity.getIp() + ":" + instanceEntity.getPort() + URLConstants.INSTANCE_RECEIVE_URL)
                 .collect(Collectors.toList());
         final PushData<Object> pushData = new PushData<>();
         pushData.setData(event.getSource());

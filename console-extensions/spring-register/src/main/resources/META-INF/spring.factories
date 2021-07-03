@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  cn.icodening.console.register.spring.RegisterAutoConfiguration
+  cn.icodening.console.register.spring.RegisterAutoConfiguration,\
+  cn.icodening.console.register.spring.SpringRegisterExecutorPoolConfiguration
