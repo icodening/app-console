@@ -25,7 +25,7 @@ public class RateLimitConfigReceivedEventListener implements ConsoleEventListene
         ServerMessage source = event.getSource();
         if (RECEIVE_TYPE.equalsIgnoreCase(source.getType())) {
             for (RateLimiter rateLimiter : rateLimiters) {
-                rateLimiter.refresh();
+                rateLimiter.refresh(source);
             }
         }
     }

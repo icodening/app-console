@@ -1,7 +1,9 @@
 package cn.icodening.console.ratelimit.support;
 
+import cn.icodening.console.common.constants.ServerMessageAction;
 import cn.icodening.console.common.entity.RateLimitEntity;
 import cn.icodening.console.common.model.InstanceConfigurationCache;
+import cn.icodening.console.common.model.ServerMessage;
 import cn.icodening.console.common.util.CalendarUtil;
 import cn.icodening.console.logger.Logger;
 import cn.icodening.console.logger.LoggerFactory;
@@ -13,6 +15,7 @@ import org.springframework.web.servlet.HandlerMapping;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 
@@ -30,7 +33,7 @@ public class LocalRateLimiter implements RateLimiter {
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalRateLimiter.class);
 
     @Override
-    public synchronized void refresh() {
+    public synchronized void refresh(ServerMessage serverMessage) {
         List<RateLimitEntity> configurations = InstanceConfigurationCache.getConfigs(RateLimitEntity.class);
         LOGGER.debug("refresh ratelimit config list is: " + configurations);
         if (configurations == null || configurations.isEmpty()) {
@@ -38,6 +41,15 @@ public class LocalRateLimiter implements RateLimiter {
             return;
         }
         try {
+            if (ServerMessageAction.DELETE.equals(serverMessage.getAction())) {
+                for (RateLimitEntity configuration : configurations) {
+                    Long id = configuration.getId();
+                    Set<Map.Entry<String, RateLimitCache>> entries = rateLimitCacheMap.entrySet();
+                    entries.removeIf(entry -> id != null && id.equals(entry.getValue().getRateLimitEntity().getId()));
+                }
+                return;
+            }
+
             for (RateLimitEntity rateLimitEntity : configurations) {
                 if (!rateLimitEntity.getEnable()) {
                     continue;
