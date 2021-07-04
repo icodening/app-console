@@ -25,6 +25,9 @@ public class InstanceEntity extends AbstractEntity {
     @Column(name = "identity", nullable = true, length = 32)
     private String identity;
 
+    @Column(name = "pid", nullable = true, length = 10)
+    private String pid;
+
     public String getApplicationName() {
         return applicationName;
     }
@@ -55,6 +58,14 @@ public class InstanceEntity extends AbstractEntity {
 
     public void setIdentity(String identity) {
         this.identity = identity;
+    }
+
+    public String getPid() {
+        return pid;
+    }
+
+    public void setPid(String pid) {
+        this.pid = pid;
     }
 
     @Override
