@@ -6,7 +6,7 @@ spring:
     password: admin
   jpa:
     database: mysql
-    show-sql: true
+    show-sql: false
     generate-ddl: true
     properties:
       hibernate:

@@ -9,9 +9,11 @@ spring:
       INDENT_OUTPUT: true
       WRITE_DATES_AS_TIMESTAMPS: true
     default-property-inclusion: non_null
-logging:
-  level:
-    org.hibernate.SQL: debug
-    org.hibernate.engine.QueryParameters: debug
-    org.hibernate.engine.query.HQLQueryPlan: debug
-    org.hibernate.type.descriptor.sql.BasicBinder: trace
+
+# 开启SQL参数显示
+#logging:
+#  level:
+#    org.hibernate.SQL: debug
+#    org.hibernate.engine.QueryParameters: debug
+#    org.hibernate.engine.query.HQLQueryPlan: debug
+#    org.hibernate.type.descriptor.sql.BasicBinder: trace
