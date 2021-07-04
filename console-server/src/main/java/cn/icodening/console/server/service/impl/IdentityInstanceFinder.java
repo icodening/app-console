@@ -24,7 +24,7 @@ public class IdentityInstanceFinder implements InstanceFinder {
 
     @Override
     public String classify() {
-        return "IDENTITY";
+        return "INSTANCE";
     }
 
     @Override
