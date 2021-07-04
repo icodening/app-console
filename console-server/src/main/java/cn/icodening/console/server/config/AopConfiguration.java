@@ -1,8 +1,6 @@
 package cn.icodening.console.server.config;
 
-import cn.icodening.console.server.aop.BaseRepositoryPointcut;
-import cn.icodening.console.server.aop.ConfigurableScopeEntityAdvice;
-import cn.icodening.console.server.aop.ModifyEntityAdvice;
+import cn.icodening.console.server.aop.*;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,6 +31,23 @@ public class AopConfiguration {
     @Bean
     public BaseRepositoryPointcut repositoryPointcut() {
         return new BaseRepositoryPointcut();
+    }
+
+
+    @Bean
+    public DeleteConfigurableScopeEntityAdvice deleteConfigurableScopeEntityAdvice() {
+        return new DeleteConfigurableScopeEntityAdvice();
+    }
+
+    @Bean
+    public DeleteRepositoryPointcut deleteRepositoryPointcut() {
+        return new DeleteRepositoryPointcut();
+    }
+
+    @Bean
+    public DefaultPointcutAdvisor jpaDeleteMethodAfterPointcutAdvisor(DeleteRepositoryPointcut deleteRepositoryPointcut
+            , DeleteConfigurableScopeEntityAdvice deleteConfigurableScopeEntityAdvice) {
+        return new DefaultPointcutAdvisor(deleteRepositoryPointcut, deleteConfigurableScopeEntityAdvice);
     }
 
 }

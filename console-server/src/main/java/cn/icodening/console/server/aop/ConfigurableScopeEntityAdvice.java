@@ -1,5 +1,6 @@
 package cn.icodening.console.server.aop;
 
+import cn.icodening.console.common.constants.ServerMessageAction;
 import cn.icodening.console.common.entity.ConfigurableScopeEntity;
 import cn.icodening.console.server.event.ConfigUpdateEvent;
 import org.springframework.aop.AfterReturningAdvice;
@@ -43,7 +44,7 @@ public class ConfigurableScopeEntityAdvice
                 List<ConfigurableScopeEntity> entities = new ArrayList<>(1);
                 entities.add((ConfigurableScopeEntity) args[0]);
                 CompletableFuture.runAsync(() ->
-                        applicationContext.publishEvent(new ConfigUpdateEvent(((ConfigurableScopeEntity) args[0]).configType(), scope, affectTarget, entities)), pushExecutor);
+                        applicationContext.publishEvent(new ConfigUpdateEvent(ServerMessageAction.UPDATE, ((ConfigurableScopeEntity) args[0]).configType(), scope, affectTarget, entities)), pushExecutor);
             }
         }
     }

@@ -49,11 +49,13 @@ public class ReceiveConfigServlet extends FrameworkServlet {
             String dataString = StreamUtils.copyToString(inputStream, Charset.forName(charsetEncoding));
             LOGGER.debug("receive message data: \n" + dataString);
             String messageType = req.getHeader("Console-Push-Type");
+            String messageAction = req.getHeader("Console-Push-Action");
             Class type = Class.forName(messageType);
             List<Object> retList = convertToConfigList(dataString, type);
             InstanceConfigurationCache.setConfigs(type, retList);
             ServerMessage serverMessage = new ServerMessage();
             serverMessage.setType(messageType);
+            serverMessage.setAction(messageAction);
             CompletableFuture.runAsync(() -> EventDispatcher.dispatch(new ServerMessageReceivedEvent(serverMessage)), dispatcherExecutor)
                     .whenCompleteAsync((ret, ex) -> LOGGER.debug("publish server message received event success"));
         } catch (Exception e) {

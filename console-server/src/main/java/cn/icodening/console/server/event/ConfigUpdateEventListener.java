@@ -41,6 +41,7 @@ public class ConfigUpdateEventListener implements ApplicationListener<ConfigUpda
         pushData.setData(event.getSource());
         pushData.setType(event.getConfigType());
         pushData.setSendTimestamp(System.currentTimeMillis());
+        pushData.setAction(event.getAction());
         notifyService.notify(pushData, addresses);
     }
 }
