@@ -1,5 +1,6 @@
 package cn.icodening.console.logger;
 
+import cn.icodening.console.logger.jdk.JDKLoggerAdapter;
 import cn.icodening.console.logger.log4j2.Log4j2LoggerAdapter;
 
 import java.util.Arrays;
@@ -18,14 +19,19 @@ public class LoggerFactory {
     private static volatile LoggerAdapter LOGGER_ADAPTER;
 
     static {
-        String logger = System.getProperty("application.console.logger", "");
+        String logger = System.getProperty("application.console.logger", "jdk");
         switch (logger) {
-            case "log4j2":
+            case "log4j2": {
                 setLoggerAdapter(new Log4j2LoggerAdapter());
                 break;
+            }
+            case "jdk": {
+                setLoggerAdapter(new JDKLoggerAdapter());
+                break;
+            }
             default:
                 List<Class<? extends LoggerAdapter>> candidates = Arrays.asList(
-                        Log4j2LoggerAdapter.class
+                        Log4j2LoggerAdapter.class, JDKLoggerAdapter.class
                 );
                 for (Class<? extends LoggerAdapter> clazz : candidates) {
                     try {
