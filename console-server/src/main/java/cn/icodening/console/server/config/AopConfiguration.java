@@ -11,28 +11,26 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class AopConfiguration {
-
     @Bean
-    public DefaultPointcutAdvisor jpaSaveMethodBeforePointcutAdvisor(BaseRepositoryPointcut repositoryPointcut) {
-        return new DefaultPointcutAdvisor(repositoryPointcut, new ModifyEntityAdvice());
+    public SaveRepositoryPointcut saveRepositoryPointcut() {
+        return new SaveRepositoryPointcut();
     }
 
     @Bean
-    public ConfigurableScopeEntityAdvice configurableScopeEntityAdvice() {
-        return new ConfigurableScopeEntityAdvice();
+    public DefaultPointcutAdvisor jpaSaveMethodBeforePointcutAdvisor(SaveRepositoryPointcut saveRepositoryPointcut) {
+        return new DefaultPointcutAdvisor(saveRepositoryPointcut, new ModifyEntityAdvice());
     }
 
     @Bean
-    public DefaultPointcutAdvisor jpaSaveMethodAfterPointcutAdvisor(BaseRepositoryPointcut repositoryPointcut
-            , ConfigurableScopeEntityAdvice configurableScopeEntityAdvice) {
-        return new DefaultPointcutAdvisor(repositoryPointcut, configurableScopeEntityAdvice);
+    public SaveConfigurableScopeEntityAdvice saveConfigurableScopeEntityAdvice() {
+        return new SaveConfigurableScopeEntityAdvice();
     }
 
     @Bean
-    public BaseRepositoryPointcut repositoryPointcut() {
-        return new BaseRepositoryPointcut();
+    public DefaultPointcutAdvisor jpaSaveMethodAfterPointcutAdvisor(SaveRepositoryPointcut saveRepositoryPointcut
+            , SaveConfigurableScopeEntityAdvice configurableScopeEntityAdvice) {
+        return new DefaultPointcutAdvisor(saveRepositoryPointcut, configurableScopeEntityAdvice);
     }
-
 
     @Bean
     public DeleteConfigurableScopeEntityAdvice deleteConfigurableScopeEntityAdvice() {
@@ -40,14 +38,8 @@ public class AopConfiguration {
     }
 
     @Bean
-    public DeleteRepositoryPointcut deleteRepositoryPointcut() {
-        return new DeleteRepositoryPointcut();
-    }
-
-    @Bean
-    public DefaultPointcutAdvisor jpaDeleteMethodAfterPointcutAdvisor(DeleteRepositoryPointcut deleteRepositoryPointcut
-            , DeleteConfigurableScopeEntityAdvice deleteConfigurableScopeEntityAdvice) {
-        return new DefaultPointcutAdvisor(deleteRepositoryPointcut, deleteConfigurableScopeEntityAdvice);
+    public DefaultPointcutAdvisor jpaDeleteMethodAfterPointcutAdvisor(DeleteConfigurableScopeEntityAdvice deleteConfigurableScopeEntityAdvice) {
+        return new DefaultPointcutAdvisor(new DeleteRepositoryPointcut(), deleteConfigurableScopeEntityAdvice);
     }
 
 }

@@ -3,8 +3,6 @@ package cn.icodening.console.server.aop;
 import cn.icodening.console.common.constants.ServerMessageAction;
 import cn.icodening.console.common.entity.ConfigurableScopeEntity;
 import cn.icodening.console.server.event.ConfigUpdateEvent;
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,10 +17,9 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * @author icodening
- * @date 2021.06.08
+ * @date 2021.07.08
  */
-public class DeleteConfigurableScopeEntityAdvice
-        implements MethodInterceptor {
+public class DeleteConfigurableScopeEntityAdvice extends AbstractConfigurableScopeEntityAdvice {
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -30,12 +27,21 @@ public class DeleteConfigurableScopeEntityAdvice
     @Autowired
     private ThreadPoolTaskExecutor pushExecutor;
 
-    private final ThreadLocal<List<ConfigurableScopeEntity>> configListLocal = ThreadLocal.withInitial(() -> new ArrayList<>());
-
-    public void before(Method method, Object[] args, Object target) throws Throwable {
+    /**
+     * delete方法调用前获取即将被删除的记录信息，获取其影响范围、影响实例，用以预备通知受影响的实例
+     *
+     * @param method 方法
+     * @param args   方法参数
+     * @param target this
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public List<ConfigurableScopeEntity> beforeMethod(Method method, Object[] args, Object target) throws Throwable {
         if (args.length != 1) {
-            return;
+            return null;
         }
+        List<ConfigurableScopeEntity> entities = new ArrayList<>(1);
         if (args[0] instanceof Number
                 && target instanceof JpaRepository) {
             Optional byId = ((JpaRepository) target).findById(args[0]);
@@ -44,45 +50,19 @@ public class DeleteConfigurableScopeEntityAdvice
                     String scope = ((ConfigurableScopeEntity) entity).getScope();
                     String affectTarget = ((ConfigurableScopeEntity) entity).getAffectTarget();
                     if (StringUtils.hasText(scope) && StringUtils.hasText(affectTarget)) {
-                        List<ConfigurableScopeEntity> entities = new ArrayList<>(1);
                         entities.add((ConfigurableScopeEntity) entity);
-                        configListLocal.set(entities);
                     }
                 }
             });
         }
-    }
-
-    public void afterReturning(Object returnValue, Method method, Object[] args, Object target) throws Throwable {
-        if (args.length != 1) {
-            return;
-        }
-        List<ConfigurableScopeEntity> configurableScopeEntities = configListLocal.get();
-        if (configurableScopeEntities == null || configurableScopeEntities.isEmpty()) {
-            return;
-        }
-        ConfigurableScopeEntity configurableScopeEntity = configurableScopeEntities.get(0);
-        //获取作用域
-        final String scope = configurableScopeEntity.getScope();
-        //获取影响目标
-        final String affectTarget = configurableScopeEntity.getAffectTarget();
-        if (StringUtils.hasText(scope) && StringUtils.hasText(affectTarget)) {
-            CompletableFuture.runAsync(() ->
-                    applicationContext.publishEvent(new ConfigUpdateEvent(ServerMessageAction.DELETE,
-                            configurableScopeEntity.configType(), scope, affectTarget, configurableScopeEntities)), pushExecutor);
-        }
+        //TODO 批量删除的情况
+        return entities;
     }
 
     @Override
-    public Object invoke(MethodInvocation mi) throws Throwable {
-        Object ret;
-        try {
-            this.before(mi.getMethod(), mi.getArguments(), mi.getThis());
-            ret = mi.proceed();
-            this.afterReturning(ret, mi.getMethod(), mi.getArguments(), mi.getThis());
-        } finally {
-            configListLocal.remove();
-        }
-        return ret;
+    protected void processScopeTarget(String configType, String scope, String affectTarget, List<ConfigurableScopeEntity> source) {
+        CompletableFuture.runAsync(() ->
+                applicationContext.publishEvent(new ConfigUpdateEvent(ServerMessageAction.DELETE,
+                        configType, scope, affectTarget, source)), pushExecutor);
     }
 }

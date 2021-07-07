@@ -52,6 +52,9 @@ public class LocalRateLimiter implements RateLimiter {
 
             for (RateLimitEntity rateLimitEntity : configurations) {
                 if (!rateLimitEntity.getEnable()) {
+                    Long id = rateLimitEntity.getId();
+                    Set<Map.Entry<String, RateLimitCache>> entries = rateLimitCacheMap.entrySet();
+                    entries.removeIf(entry -> id != null && id.equals(entry.getValue().getRateLimitEntity().getId()));
                     continue;
                 }
                 Integer frequency = rateLimitEntity.getFrequency();

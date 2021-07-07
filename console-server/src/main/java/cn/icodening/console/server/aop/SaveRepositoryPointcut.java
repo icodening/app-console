@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
  * @author icodening
  * @date 2021.06.08
  */
-public class BaseRepositoryPointcut extends StaticMethodMatcherPointcut {
+public class SaveRepositoryPointcut extends StaticMethodMatcherPointcut {
 
     private static final String JPA_SAVE_METHOD_NAME = "save";
 
