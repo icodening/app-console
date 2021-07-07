@@ -84,6 +84,9 @@ public class AppConsoleAgent {
         }));
     }
 
+    /**
+     * 添加必须依赖
+     */
     private static void addRequiredDependency() {
         ExtensionClassLoader classLoader = ExtensionClassLoaderHolder.get();
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
@@ -98,17 +101,19 @@ public class AppConsoleAgent {
             registryConfigurer.configureRegistry(moduleRegistry);
         }
         Map<String, JarFile> registeredModule = moduleRegistry.getRegisteredModule();
+        StringBuilder enableModules = new StringBuilder();
         registeredModule.forEach((module, jar) -> {
             try {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("[" + module + "] is enable");
-                }
+                enableModules.append("[").append(module).append("] ");
                 URL url = new URL("file:" + jar.getName());
                 addUrlMethod.invoke(contextClassLoader, url);
             } catch (Exception e) {
                 LOGGER.warn("install module error [" + module + "]");
             }
         });
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("enable modules: " + enableModules.toString());
+        }
     }
 
     /**
