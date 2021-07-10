@@ -15,6 +15,8 @@
         <module>console-boot</module>
         <module>spring-register</module>
         <module>spring-ratelimit</module>
+        <module>dynamic-config-common</module>
+        <module>dynamic-config-springboot-adapter</module>
     </modules>
 
     <properties>

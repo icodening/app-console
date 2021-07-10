@@ -24,8 +24,8 @@
         <maven-shade-plugin.version>3.1.1</maven-shade-plugin.version>
         <maven-assembly-plugin.version>3.1.0</maven-assembly-plugin.version>
         <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
-        <springboot.version>2.1.9.RELEASE</springboot.version>
-        <fastjson.version>1.2.75</fastjson.version>
+        <springboot.version>2.3.12.RELEASE</springboot.version>
+        <spring-cloud.version>Hoxton.SR10</spring-cloud.version>
     </properties>
 
 
@@ -39,10 +39,13 @@
                 <version>${springboot.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>fastjson</artifactId>
-                <version>${fastjson.version}</version>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 
