@@ -46,7 +46,7 @@ public class ConfigController implements CrudController<ConfigEntity> {
                             List<Expression<Boolean>> expressions = or.getExpressions();
                             expressions.add(criteriaBuilder.like(root.get("scope").as(String.class), "%" + kw + "%"));
                             expressions.add(criteriaBuilder.like(root.get("affectTarget").as(String.class), "%" + kw + "%"));
-                            expressions.add(criteriaBuilder.like(root.get("endpoint").as(String.class), "%" + kw + "%"));
+                            expressions.add(criteriaBuilder.like(root.get("content").as(String.class), "%" + kw + "%"));
                             return Stream.of(or);
                         }).reduce(criteriaBuilder.and(), (predicate, predicate2) -> {
                             predicate.getExpressions().add(predicate2);
