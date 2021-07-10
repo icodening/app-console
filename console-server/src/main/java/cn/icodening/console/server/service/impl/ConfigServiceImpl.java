@@ -3,7 +3,6 @@ package cn.icodening.console.server.service.impl;
 import cn.icodening.console.AppConsoleException;
 import cn.icodening.console.common.entity.ConfigEntity;
 import cn.icodening.console.common.entity.InstanceEntity;
-import cn.icodening.console.common.entity.RateLimitEntity;
 import cn.icodening.console.server.repository.ConfigRepository;
 import cn.icodening.console.server.service.ConfigService;
 import cn.icodening.console.server.service.InstanceConfigurationService;
@@ -54,7 +53,7 @@ public class ConfigServiceImpl extends AbstractServiceImpl<ConfigEntity, ConfigR
 
     @Override
     public String configType() {
-        return RateLimitEntity.class.getName();
+        return ConfigEntity.class.getName();
     }
 
     @Override
