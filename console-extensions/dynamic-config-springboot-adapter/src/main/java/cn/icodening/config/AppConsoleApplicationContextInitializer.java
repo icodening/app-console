@@ -54,8 +54,8 @@ public class AppConsoleApplicationContextInitializer implements ApplicationConte
             e.printStackTrace();
         }
 
-        Map<String, Object> propertyMap = new HashMap<>(32);
         Set<String> set = properties.stringPropertyNames();
+        Map<String, Object> propertyMap = new HashMap<>(set.size());
         for (String key : set) {
             propertyMap.put(key, properties.get(key));
         }
