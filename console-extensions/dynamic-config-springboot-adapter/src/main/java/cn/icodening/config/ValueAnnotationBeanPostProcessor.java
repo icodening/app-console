@@ -2,7 +2,11 @@ package cn.icodening.config;
 
 import cn.icodening.console.config.ConfigChangeEvent;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.TypeConverter;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.springframework.context.ApplicationListener;
 import org.springframework.util.PropertyPlaceholderHelper;
@@ -23,13 +27,14 @@ import static org.springframework.core.annotation.AnnotationUtils.getAnnotation;
  * @date 2021.07.10
  */
 public class ValueAnnotationBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter
-        implements ApplicationListener<ConfigChangeEvent> {
+        implements ApplicationListener<ConfigChangeEvent>, BeanFactoryAware {
 
     private final PropertyPlaceholderHelper propertyPlaceholderHelper =
             new PropertyPlaceholderHelper("${", "}", ":", true);
 
-
     private final Map<String, List<ValueTarget>> placeholderValueTargetMap = new HashMap<>();
+
+    private ConfigurableBeanFactory beanFactory;
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, final String beanName)
@@ -123,11 +128,11 @@ public class ValueAnnotationBeanPostProcessor extends InstantiationAwareBeanPost
             for (ValueTarget valueTarget : valueTargets) {
                 if (valueTarget.method != null) {
                     ReflectionUtils.makeAccessible(valueTarget.method);
-                    ReflectionUtils.invokeMethod(valueTarget.method, valueTarget.bean, newValue);
+                    ReflectionUtils.invokeMethod(valueTarget.method, valueTarget.bean, convertIfNecessary(valueTarget.field, newValue));
                 } else {
                     try {
                         ReflectionUtils.makeAccessible(valueTarget.field);
-                        valueTarget.field.set(valueTarget.bean, newValue);
+                        valueTarget.field.set(valueTarget.bean, convertIfNecessary(valueTarget.field, newValue));
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     }
@@ -135,6 +140,16 @@ public class ValueAnnotationBeanPostProcessor extends InstantiationAwareBeanPost
             }
         }
 
+    }
+
+    private Object convertIfNecessary(Field field, Object value) {
+        TypeConverter converter = beanFactory.getTypeConverter();
+        return converter.convertIfNecessary(value, field.getType(), field);
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = (ConfigurableBeanFactory) beanFactory;
     }
 
     private static class ValueTarget {
