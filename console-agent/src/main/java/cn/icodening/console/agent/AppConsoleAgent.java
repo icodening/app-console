@@ -75,7 +75,6 @@ public class AppConsoleAgent {
         LOGGER.info("app console agent start, version is v" + AppConsoleAgent.class.getPackage().getImplementationVersion());
         // 启动所有服务扩展点
         try {
-            BootServiceManager.initBootServices(agentArgs);
             BootServiceManager.startBootServices();
         } catch (Exception e) {
             LOGGER.warn(e.getMessage(), e);
