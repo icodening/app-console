@@ -1,2 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   cn.icodening.config.DynamicConfigBeanConfiguration
+org.springframework.context.ApplicationContextInitializer=\
+  cn.icodening.config.AppConsoleApplicationContextInitializer

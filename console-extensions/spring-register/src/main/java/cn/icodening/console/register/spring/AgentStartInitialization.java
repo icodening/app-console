@@ -5,17 +5,13 @@ import cn.icodening.console.common.model.ApplicationInstance;
 import cn.icodening.console.event.EventDispatcher;
 import cn.icodening.console.logger.Logger;
 import cn.icodening.console.logger.LoggerFactory;
+import cn.icodening.console.util.NetUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import java.lang.management.ManagementFactory;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Enumeration;
 
 /**
  * @author icodening
@@ -48,7 +44,7 @@ public class AgentStartInitialization implements InitializingBean, ApplicationCo
 
 
     private void registerInstance() {
-        String localhost = getLocalhost();
+        String localhost = NetUtil.getLocalhost();
         if (localhost == null) {
             LOGGER.info("localhost is null, dont't register");
             return;
@@ -72,29 +68,5 @@ public class AgentStartInitialization implements InitializingBean, ApplicationCo
                 .identity(localhost + ":" + portString)
                 .build();
         EventDispatcher.dispatch(new ApplicationInstanceStartedEvent(instance));
-    }
-
-    private String getLocalhost() {
-        Enumeration<NetworkInterface> networkInterfaces;
-        try {
-            networkInterfaces = NetworkInterface.getNetworkInterfaces();
-            if (networkInterfaces == null) {
-                return null;
-            }
-            while (networkInterfaces.hasMoreElements()) {
-                final NetworkInterface networkInterface = networkInterfaces.nextElement();
-                final Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
-                while (inetAddresses.hasMoreElements()) {
-                    final InetAddress inetAddress = inetAddresses.nextElement();
-                    if (!inetAddress.isLoopbackAddress()
-                            && inetAddress instanceof Inet4Address) {
-                        return inetAddress.getHostAddress();
-                    }
-                }
-            }
-        } catch (SocketException ignore) {
-
-        }
-        return null;
     }
 }

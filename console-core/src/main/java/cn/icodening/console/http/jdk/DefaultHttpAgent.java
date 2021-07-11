@@ -24,7 +24,6 @@ public class DefaultHttpAgent implements HttpAgent {
 
         URL url = new URL(uri);
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        urlConnection.setDoOutput(true);
         urlConnection.setReadTimeout(timeout);
         urlConnection.setRequestMethod(request.getMethod().toUpperCase());
         urlConnection.setConnectTimeout(300);
@@ -34,9 +33,10 @@ public class DefaultHttpAgent implements HttpAgent {
             headers.firstForeach(urlConnection::setRequestProperty);
         }
 
-        try (OutputStream outputStream = urlConnection.getOutputStream()) {
-            byte[] requestBody = request.getBody();
-            if (requestBody != null) {
+        byte[] requestBody = request.getBody();
+        if (requestBody != null && requestBody.length != 0) {
+            urlConnection.setDoOutput(true);
+            try (OutputStream outputStream = urlConnection.getOutputStream()) {
                 outputStream.write(requestBody);
                 outputStream.flush();
             }

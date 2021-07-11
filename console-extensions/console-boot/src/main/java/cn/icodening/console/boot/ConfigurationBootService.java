@@ -20,7 +20,7 @@ public class ConfigurationBootService extends BaseBootService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationBootService.class);
 
     @Override
-    public void start() {
+    public void initialize(String agentArgs) {
         // load local config
         LOGGER.info("load " + ConfigurationManager.DEFAULT_CONFIG_PATH);
         try {

@@ -1,3 +1,0 @@
-config=cn.icodening.console.boot.ConfigurationBootService
-register=cn.icodening.console.boot.RegisterBootService
-eventListener=cn.icodening.console.boot.ConsoleEventListenerBootService

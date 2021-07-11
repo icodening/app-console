@@ -1,9 +1,8 @@
 package cn.icodening.console.boot;
 
-import cn.icodening.console.extension.ExtensionLoader;
+import cn.icodening.console.util.ExtensionClassLoaderHolder;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -39,8 +38,12 @@ public class BootServiceManager {
 
     private static List<BootService> getBootServices() {
         if (null == bootServices) {
-            bootServices = ExtensionLoader.getExtensionLoader(BootService.class).getAllExtension();
-            Collections.sort(bootServices);
+            ServiceLoader<BootService> load = ServiceLoader.load(BootService.class, ExtensionClassLoaderHolder.get());
+            Iterator<BootService> iterator = load.iterator();
+            ArrayList<BootService> bootServices = new ArrayList<>();
+            iterator.forEachRemaining(bootServices::add);
+            BootServiceManager.bootServices = bootServices;
+            Collections.sort(BootServiceManager.bootServices);
         }
         return bootServices;
     }

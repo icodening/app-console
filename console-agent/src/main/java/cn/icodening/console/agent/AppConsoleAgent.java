@@ -36,6 +36,7 @@ public class AppConsoleAgent {
 
     public static void premain(String agentArgs, Instrumentation instrumentation) {
         addRequiredDependency();
+        agentInitializer(agentArgs);
         List<AgentStartEvent> agentStartEvents = getAgentStartEventList();
         if (agentStartEvents.isEmpty()) {
             //直接启动
@@ -60,6 +61,14 @@ public class AppConsoleAgent {
             }
         });
         return agentStartEvents;
+    }
+
+    private static void agentInitializer(String agentArgs) {
+        try {
+            BootServiceManager.initBootServices(agentArgs);
+        } catch (Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
     }
 
     private static void startAgent(String agentArgs, Instrumentation instrumentation) {

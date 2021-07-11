@@ -54,6 +54,16 @@ public class ConfigController implements CrudController<ConfigEntity> {
                         });
                 predicates.add(and);
             }
+            String scope = params.getFirst("scope");
+            if (StringUtils.hasText(scope)) {
+                Predicate and = criteriaBuilder.and(criteriaBuilder.equal(root.get("scope").as(String.class), scope));
+                predicates.add(and);
+            }
+            String affectTarget = params.getFirst("affectTarget");
+            if (StringUtils.hasText(affectTarget)) {
+                Predicate and = criteriaBuilder.and(criteriaBuilder.equal(root.get("affectTarget").as(String.class), affectTarget));
+                predicates.add(and);
+            }
             query.where(predicates.toArray(new Predicate[0]));
             return query.getRestriction();
         };
