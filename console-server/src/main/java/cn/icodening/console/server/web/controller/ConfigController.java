@@ -37,6 +37,7 @@ public class ConfigController implements CrudController<ConfigEntity> {
     @Override
     public Specification<ConfigEntity> createSpecification(Integer currentPage, Integer pageSize, MultiValueMap<String, String> params) {
         return (Specification<ConfigEntity>) (root, query, criteriaBuilder) -> {
+            //FIXME 代码重复率高 后续优化
             List<Predicate> predicates = new ArrayList<>();
             String keywords = params.getFirst("keywords");
             if (StringUtils.hasText(keywords)) {
@@ -62,6 +63,11 @@ public class ConfigController implements CrudController<ConfigEntity> {
             String affectTarget = params.getFirst("affectTarget");
             if (StringUtils.hasText(affectTarget)) {
                 Predicate and = criteriaBuilder.and(criteriaBuilder.equal(root.get("affectTarget").as(String.class), affectTarget));
+                predicates.add(and);
+            }
+            String enable = params.getFirst("enable");
+            if (StringUtils.hasText(affectTarget)) {
+                Predicate and = criteriaBuilder.and(criteriaBuilder.equal(root.get("enable").as(Boolean.class), Boolean.valueOf(enable)));
                 predicates.add(and);
             }
             query.where(predicates.toArray(new Predicate[0]));

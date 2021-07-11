@@ -31,6 +31,10 @@ public class DynamicConfigEventListener implements ConsoleEventListener<ServerMe
             List<ConfigEntity> configs = InstanceConfigurationCache.getConfigs(ConfigEntity.class);
             Properties properties = new Properties();
             for (ConfigEntity config : configs) {
+                if (Boolean.FALSE.equals(config.getEnable())) {
+                    //忽略禁用项
+                    continue;
+                }
                 String content = config.getContent();
                 try {
                     properties.load(new StringReader(content));

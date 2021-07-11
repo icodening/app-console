@@ -75,7 +75,11 @@ public class ConfigServiceImpl extends AbstractServiceImpl<ConfigEntity, ConfigR
             Predicate and2 = criteriaBuilder.and(equalInstanceScope, equalInstanceIdentity);
 
             Predicate or = criteriaBuilder.or(and1, and2);
-            query.where(or);
+
+            Predicate isEnable = criteriaBuilder.equal(root.get("enable").as(Boolean.class), Boolean.TRUE);
+            Predicate where = criteriaBuilder.and(or, isEnable);
+
+            query.where(where);
             return query.getRestriction();
         });
     }

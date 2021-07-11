@@ -41,6 +41,7 @@ public class AppConsoleApplicationContextInitializer implements ApplicationConte
             Request get = Request.of(serverAddress + "/config", "GET");
             get.getQueryParams().put("scope", "APPLICATION");
             get.getQueryParams().put("affectTarget", applicationName);
+            get.getQueryParams().put("enable", Boolean.TRUE.toString());
             Response applicationConfig = HttpUtil.exchange(get);
             JsonNode jsonNode = objectMapper.readTree(applicationConfig.getData());
             JsonNode data = jsonNode.get("data");
