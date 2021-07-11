@@ -17,6 +17,8 @@ import java.util.*;
 import static org.springframework.core.annotation.AnnotationUtils.getAnnotation;
 
 /**
+ * reference:NacosValueAnnotationBeanPostProcessor
+ *
  * @author icodening
  * @date 2021.07.10
  */
@@ -41,22 +43,16 @@ public class ValueAnnotationBeanPostProcessor extends InstantiationAwareBeanPost
     }
 
     private void doWithFields(final Object bean, final String beanName) {
-        ReflectionUtils.doWithFields(bean.getClass(), new ReflectionUtils.FieldCallback() {
-            @Override
-            public void doWith(Field field) throws IllegalArgumentException {
-                Value annotation = getAnnotation(field, Value.class);
-                doWithAnnotation(beanName, bean, annotation, field.getModifiers(), null, field);
-            }
+        ReflectionUtils.doWithFields(bean.getClass(), field -> {
+            Value annotation = getAnnotation(field, Value.class);
+            doWithAnnotation(beanName, bean, annotation, field.getModifiers(), null, field);
         });
     }
 
     private void doWithMethods(final Object bean, final String beanName) {
-        ReflectionUtils.doWithMethods(bean.getClass(), new ReflectionUtils.MethodCallback() {
-            @Override
-            public void doWith(Method method) throws IllegalArgumentException {
-                Value annotation = getAnnotation(method, Value.class);
-                doWithAnnotation(beanName, bean, annotation, method.getModifiers(), method, null);
-            }
+        ReflectionUtils.doWithMethods(bean.getClass(), method -> {
+            Value annotation = getAnnotation(method, Value.class);
+            doWithAnnotation(beanName, bean, annotation, method.getModifiers(), method, null);
         });
     }
 
@@ -81,7 +77,7 @@ public class ValueAnnotationBeanPostProcessor extends InstantiationAwareBeanPost
     private <K, V> void put2ListMap(Map<K, List<V>> map, K key, V value) {
         List<V> valueList = map.get(key);
         if (valueList == null) {
-            valueList = new ArrayList<V>();
+            valueList = new ArrayList<>();
         }
         valueList.add(value);
         map.put(key, valueList);
