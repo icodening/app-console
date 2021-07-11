@@ -1,8 +1,8 @@
 package cn.icodening.console.server.aop;
 
 import cn.icodening.console.server.repository.BaseRepository;
+import cn.icodening.console.server.service.IService;
 import org.springframework.aop.support.StaticMethodMatcherPointcut;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.lang.reflect.Method;
 
@@ -18,7 +18,7 @@ public class DeleteRepositoryPointcut extends StaticMethodMatcherPointcut {
 
     @Override
     public boolean matches(Method method, Class<?> targetClass) {
-        if (!JpaRepository.class.isAssignableFrom(targetClass)) {
+        if (!IService.class.isAssignableFrom(targetClass)) {
             return false;
         }
         return method.getName().startsWith(JPA_SAVE_METHOD_NAME);

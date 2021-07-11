@@ -11,14 +11,15 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class AopConfiguration {
+
     @Bean
-    public SaveRepositoryPointcut saveRepositoryPointcut() {
-        return new SaveRepositoryPointcut();
+    public IServicePointcut servicePointcut() {
+        return new IServicePointcut();
     }
 
     @Bean
-    public DefaultPointcutAdvisor jpaSaveMethodBeforePointcutAdvisor(SaveRepositoryPointcut saveRepositoryPointcut) {
-        return new DefaultPointcutAdvisor(saveRepositoryPointcut, new ModifyEntityAdvice());
+    public DefaultPointcutAdvisor jpaSaveMethodBeforePointcutAdvisor() {
+        return new DefaultPointcutAdvisor(new SaveRepositoryPointcut(), new ModifyEntityAdvice());
     }
 
     @Bean
@@ -27,9 +28,8 @@ public class AopConfiguration {
     }
 
     @Bean
-    public DefaultPointcutAdvisor jpaSaveMethodAfterPointcutAdvisor(SaveRepositoryPointcut saveRepositoryPointcut
-            , SaveConfigurableScopeEntityAdvice configurableScopeEntityAdvice) {
-        return new DefaultPointcutAdvisor(saveRepositoryPointcut, configurableScopeEntityAdvice);
+    public DefaultPointcutAdvisor serviceSaveMethodAfterPointcutAdvisor(SaveConfigurableScopeEntityAdvice configurableScopeEntityAdvice) {
+        return new DefaultPointcutAdvisor(new IServicePointcut(), configurableScopeEntityAdvice);
     }
 
     @Bean

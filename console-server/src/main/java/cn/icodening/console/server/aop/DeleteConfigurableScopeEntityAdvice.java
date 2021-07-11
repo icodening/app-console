@@ -3,16 +3,15 @@ package cn.icodening.console.server.aop;
 import cn.icodening.console.common.constants.ServerMessageAction;
 import cn.icodening.console.common.entity.ConfigurableScopeEntity;
 import cn.icodening.console.server.event.ConfigUpdateEvent;
+import cn.icodening.console.server.service.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -43,17 +42,15 @@ public class DeleteConfigurableScopeEntityAdvice extends AbstractConfigurableSco
         }
         List<ConfigurableScopeEntity> entities = new ArrayList<>(1);
         if (args[0] instanceof Number
-                && target instanceof JpaRepository) {
-            Optional byId = ((JpaRepository) target).findById(args[0]);
-            byId.ifPresent(entity -> {
-                if (entity instanceof ConfigurableScopeEntity) {
-                    String scope = ((ConfigurableScopeEntity) entity).getScope();
-                    String affectTarget = ((ConfigurableScopeEntity) entity).getAffectTarget();
-                    if (StringUtils.hasText(scope) && StringUtils.hasText(affectTarget)) {
-                        entities.add((ConfigurableScopeEntity) entity);
-                    }
+                && target instanceof IService) {
+            Object entity = ((IService) target).findById((Long) args[0]);
+            if (entity != null && entity instanceof ConfigurableScopeEntity) {
+                String scope = ((ConfigurableScopeEntity) entity).getScope();
+                String affectTarget = ((ConfigurableScopeEntity) entity).getAffectTarget();
+                if (StringUtils.hasText(scope) && StringUtils.hasText(affectTarget)) {
+                    entities.add((ConfigurableScopeEntity) entity);
                 }
-            });
+            }
         }
         //TODO 批量删除的情况
         return entities;
