@@ -2,8 +2,7 @@ package cn.icodening.console.ratelimit;
 
 import cn.icodening.console.injector.ModuleRegistry;
 import cn.icodening.console.injector.ModuleRegistryConfigurer;
-import cn.icodening.console.logger.Logger;
-import cn.icodening.console.logger.LoggerFactory;
+import cn.icodening.console.util.ClassUtil;
 
 /**
  * @author icodening
@@ -13,15 +12,11 @@ public class SpringRateLimitConfigurer implements ModuleRegistryConfigurer {
 
     private static final String SPRING_INTERCEPTOR_CLASS = "org.springframework.web.servlet.HandlerInterceptor";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SpringRateLimitConfigurer.class);
-
     @Override
     public void configureRegistry(ModuleRegistry moduleRegistry) {
-        try {
-            Class.forName(SPRING_INTERCEPTOR_CLASS);
+        boolean existsSpringHandlerInterceptor = ClassUtil.exists(SPRING_INTERCEPTOR_CLASS);
+        if (existsSpringHandlerInterceptor) {
             moduleRegistry.registerCurrentModule();
-        } catch (ClassNotFoundException e) {
-            LOGGER.warn(e.getMessage());
         }
     }
 }

@@ -35,16 +35,10 @@ public class RegisterBootService extends BaseBootService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisterBootService.class);
 
-    private ObjectMapper objectMapper;
-
-    @Override
-    public void initialize(String agentArgs) {
-        this.objectMapper = new ObjectMapper();
-    }
-
     @Override
     public void start() throws AppConsoleException {
         //FIXME magic number
+        ObjectMapper objectMapper = new ObjectMapper();
         String serverAddress = ConfigurationManager.INSTANCE.get("serverAddress");
         EventDispatcher.registerOnceEvent(ApplicationInstanceStartedEvent.class, (ConsoleEventListener<ApplicationInstanceStartedEvent>) event -> {
             ApplicationInstance applicationInstance = event.getApplicationInstance();

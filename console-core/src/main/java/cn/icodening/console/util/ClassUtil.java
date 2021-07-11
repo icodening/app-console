@@ -14,7 +14,7 @@ public class ClassUtil {
         try {
             classLoader.loadClass(className);
             return true;
-        } catch (ClassNotFoundException e) {
+        } catch (Throwable e) {
             return false;
         }
     }
@@ -23,7 +23,7 @@ public class ClassUtil {
         try {
             Thread.currentThread().getContextClassLoader().loadClass(className);
             return true;
-        } catch (ClassNotFoundException e) {
+        } catch (Throwable e) {
             return false;
         }
     }

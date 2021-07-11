@@ -14,11 +14,14 @@ public class DynamicConfigModuleConfigurer implements ModuleRegistryConfigurer {
 
     private static final String SPRING_BOOT_CONFIG_CLASS_NAME = "org.springframework.boot.SpringApplication";
 
+    private static final String SPRING_SERVLET_CONTEXT = "org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext";
+
     @Override
     public void configureRegistry(ModuleRegistry moduleRegistry) {
         boolean existsCloudConfig = ClassUtil.exists(SPRING_CLOUD_CONFIG_CLASS_NAME);
         boolean existsSpringBoot = ClassUtil.exists(SPRING_BOOT_CONFIG_CLASS_NAME);
-        if (!existsSpringBoot) {
+        boolean existsSpringServletContext = ClassUtil.exists(SPRING_SERVLET_CONTEXT);
+        if (!existsSpringBoot || !existsSpringServletContext) {
             return;
         }
         moduleRegistry.registerCurrentModule();
