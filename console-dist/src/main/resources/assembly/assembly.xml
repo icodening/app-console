@@ -33,7 +33,7 @@
             <outputDirectory>agent/extensions</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>${project.basedir}/../console-server/src/main/resources</directory>
+            <directory>${project.basedir}/src/main/resources/server</directory>
             <includes>
                 <include>application*.yml</include>
                 <include>application*.properties</include>

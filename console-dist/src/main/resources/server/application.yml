@@ -1,0 +1,19 @@
+server:
+  port: 28080
+spring:
+  profiles:
+    active: h2 #可选值 h2、mysql, 使用H2可以免去连接数据库繁琐操作 临时体验管控台
+  jackson:
+    time-zone: GMT+8
+    serialization:
+      INDENT_OUTPUT: true
+      WRITE_DATES_AS_TIMESTAMPS: true
+    default-property-inclusion: non_null
+
+# 开启SQL参数显示
+#logging:
+#  level:
+#    org.hibernate.SQL: debug
+#    org.hibernate.engine.QueryParameters: debug
+#    org.hibernate.engine.query.HQLQueryPlan: debug
+#    org.hibernate.type.descriptor.sql.BasicBinder: trace
