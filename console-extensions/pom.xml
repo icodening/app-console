@@ -17,6 +17,7 @@
         <module>spring-ratelimit</module>
         <module>dynamic-config-common</module>
         <module>dynamic-config-springboot-adapter</module>
+        <module>instance-log</module>
     </modules>
 
     <properties>
