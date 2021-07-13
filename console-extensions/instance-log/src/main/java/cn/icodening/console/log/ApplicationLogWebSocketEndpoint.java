@@ -24,15 +24,11 @@ public class ApplicationLogWebSocketEndpoint {
     @OnOpen
     public void onOpen(Session session) throws Exception {
         session.setMaxBinaryMessageBufferSize(Integer.MAX_VALUE);
-        SystemPrintStreamDecorator systemPrintStreamDecorator = SystemOutputStreamHolder.getSystemPrintStreamDecorator();
         FileInputStream fileInputStream = new FileInputStream(new File(ConfigurationManager.INSTANCE.get(InstanceLogBootService.TEMP_LOG_PATH_KEY)));
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
         final RemoteEndpoint.Basic basicRemote = session.getBasicRemote();
-        while (true) {
-            String line = bufferedReader.readLine();
-            if (line == null) {
-                break;
-            }
+        String line;
+        while ((line = bufferedReader.readLine()) != null) {
             line += "\n";
             ByteBuffer wrap = ByteBuffer.wrap(line.getBytes());
             basicRemote.sendBinary(wrap);
@@ -54,12 +50,13 @@ public class ApplicationLogWebSocketEndpoint {
                 }
             };
             LOG_BYTES_FLUSH_CONSUMER_MAP.putIfAbsent(session.getId(), logBytesFlushConsumer);
+            SystemPrintStreamDecorator systemPrintStreamDecorator = SystemOutputStreamHolder.getSystemPrintStreamDecorator();
             systemPrintStreamDecorator.registerFlushCallback(logBytesFlushConsumer);
         }
     }
 
     @OnClose
-    public void onClose(Session session) throws IOException {
+    public void onClose(Session session) {
         String id = session.getId();
         BytesConsumer bytesConsumer = LOG_BYTES_FLUSH_CONSUMER_MAP.remove(id);
         if (bytesConsumer != null) {
