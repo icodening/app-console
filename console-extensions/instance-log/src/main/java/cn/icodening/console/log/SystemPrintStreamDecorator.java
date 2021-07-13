@@ -7,7 +7,6 @@ import java.io.PrintStream;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Consumer;
 
 /**
  * @author icodening
@@ -15,11 +14,15 @@ import java.util.function.Consumer;
  */
 public class SystemPrintStreamDecorator extends PrintStream {
 
+    private static final int DEFAULT_MAX_BUFFER_SIZE = 8 * 1024;
+
+    private static final int DEFAULT_INIT_BUFFER_SIZE = 1024;
+
     private final OutputStream delegate;
 
-    private final ByteArrayOutputStream bos = new ByteArrayOutputStream(512);
-
     private final Set<BytesConsumer> flushCallbacks = Collections.synchronizedSet(new HashSet<>());
+
+    private volatile ByteArrayOutputStream bos = new ByteArrayOutputStream(DEFAULT_INIT_BUFFER_SIZE);
 
     public SystemPrintStreamDecorator(OutputStream systemOut, OutputStream delegate) {
         super(systemOut);
@@ -50,10 +53,13 @@ public class SystemPrintStreamDecorator extends PrintStream {
         super.flush();
         try {
             delegate.flush();
-            for (Consumer<byte[]> flushCallback : flushCallbacks) {
+            for (BytesConsumer flushCallback : flushCallbacks) {
                 flushCallback.accept(bos.toByteArray());
             }
-            bos.reset();
+            if (DEFAULT_MAX_BUFFER_SIZE < bos.size()) {
+                bos = null;
+                bos = new ByteArrayOutputStream(DEFAULT_INIT_BUFFER_SIZE);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
