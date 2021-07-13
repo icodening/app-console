@@ -4,7 +4,6 @@ import cn.icodening.console.common.entity.InstanceEntity;
 import cn.icodening.console.server.service.InstanceService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.BinaryMessage;
-import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.handler.BinaryWebSocketHandler;
@@ -56,11 +55,6 @@ public class LogWebSocketEndpoint {
 
                 @Override
                 protected void handleBinaryMessage(WebSocketSession webSocketSession, BinaryMessage message) throws Exception {
-                    if (!session.isOpen()) {
-                        TextMessage textMessage = new TextMessage("close");
-                        webSocketSession.sendMessage(textMessage);
-                        return;
-                    }
                     session.getBasicRemote().sendBinary(message.getPayload());
                 }
             }, url);
@@ -77,9 +71,7 @@ public class LogWebSocketEndpoint {
     public void onClose(Session session) throws IOException {
         WebSocketSession webSocketSession = webSocketSessionMap.remove(session.getId());
         if (webSocketSession != null) {
-            TextMessage textMessage = new TextMessage("close");
-            webSocketSession.sendMessage(textMessage);
+            webSocketSession.close();
         }
-        session.close();
     }
 }
