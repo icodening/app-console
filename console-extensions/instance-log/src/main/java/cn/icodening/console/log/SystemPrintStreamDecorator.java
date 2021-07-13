@@ -56,6 +56,7 @@ public class SystemPrintStreamDecorator extends PrintStream {
             for (BytesConsumer flushCallback : flushCallbacks) {
                 flushCallback.accept(bos.toByteArray());
             }
+            bos.reset();
             if (DEFAULT_MAX_BUFFER_SIZE < bos.size()) {
                 bos = null;
                 bos = new ByteArrayOutputStream(DEFAULT_INIT_BUFFER_SIZE);
