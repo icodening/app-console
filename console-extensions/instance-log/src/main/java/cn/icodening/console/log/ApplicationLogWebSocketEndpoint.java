@@ -27,8 +27,7 @@ public class ApplicationLogWebSocketEndpoint {
         FileInputStream fileInputStream = new FileInputStream(new File(ConfigurationManager.INSTANCE.get(InstanceLogBootService.TEMP_LOG_PATH_KEY)));
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
         final RemoteEndpoint.Basic basicRemote = session.getBasicRemote();
-        String line;
-        while ((line = bufferedReader.readLine()) != null) {
+        for (String line; (line = bufferedReader.readLine()) != null; ) {
             line += "\n";
             ByteBuffer wrap = ByteBuffer.wrap(line.getBytes());
             basicRemote.sendBinary(wrap);
