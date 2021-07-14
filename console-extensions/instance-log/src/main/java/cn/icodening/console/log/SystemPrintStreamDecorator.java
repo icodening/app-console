@@ -31,8 +31,8 @@ public class SystemPrintStreamDecorator extends PrintStream {
 
     @Override
     public void write(byte[] buf, int off, int len) {
-        super.write(buf, off, len);
         try {
+            super.write(buf, off, len);
             delegate.write(buf, off, len);
             bos.write(buf, off, len);
         } catch (IOException e) {
@@ -50,19 +50,22 @@ public class SystemPrintStreamDecorator extends PrintStream {
 
     @Override
     public void flush() {
-        super.flush();
         try {
+            super.flush();
             delegate.flush();
             for (BytesConsumer flushCallback : flushCallbacks) {
                 flushCallback.accept(bos.toByteArray());
             }
-            bos.reset();
             if (DEFAULT_MAX_BUFFER_SIZE < bos.size()) {
                 bos = null;
                 bos = new ByteArrayOutputStream(DEFAULT_INIT_BUFFER_SIZE);
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (bos != null) {
+                bos.reset();
+            }
         }
     }
 }
