@@ -7,6 +7,9 @@ import cn.icodening.console.util.ReflectUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 /**
  * 扩展Extension作用域对接Spring，此后所有Extension将享有Spring的所有特性
  *
@@ -16,6 +19,8 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 public class SpringScope implements Scope {
 
     private static final AppConsoleSpringContext APP_CONSOLE_SPRING_CONTEXT = new AppConsoleSpringContext();
+
+    private static final List<Object> SPRING_BEANS = new CopyOnWriteArrayList<>();
 
     @Override
     public Object getObject(Class<?> clz, ObjectFactory<?> objectFactory) {
@@ -34,6 +39,7 @@ public class SpringScope implements Scope {
             }
             ret = APP_CONSOLE_SPRING_CONTEXT.getBean(name);
         }
+        SPRING_BEANS.add(ret);
         return ret;
     }
 
@@ -45,6 +51,10 @@ public class SpringScope implements Scope {
     @Override
     public int getPriority() {
         return MAX_PRIORITY;
+    }
+
+    public static List<Object> getSpringBeans() {
+        return SPRING_BEANS;
     }
 
     public static AppConsoleSpringContext getContext() {

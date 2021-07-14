@@ -8,8 +8,10 @@ import cn.icodening.console.logger.LoggerFactory;
 import cn.icodening.console.util.NetUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.AnnotationConfigUtils;
 
 import java.lang.management.ManagementFactory;
 
@@ -33,10 +35,15 @@ public class AgentStartInitialization implements InitializingBean, ApplicationCo
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        //1.启动agent
-        SpringScope.getContext().setParent(applicationContext);
-        SpringScope.getContext().refresh();
-        EventDispatcher.dispatch(SpringStartAgentEventProvider.getSpringStartAgentEvent());
+        //1.刷新ExtensionLoader并回调依赖注入
+        AppConsoleSpringContext appConsoleSpringContext = SpringScope.getContext();
+        appConsoleSpringContext.registerCustomizeDefaultListableBeanFactory(AnnotationConfigUtils::registerAnnotationConfigProcessors);
+        appConsoleSpringContext.setParent(applicationContext);
+        appConsoleSpringContext.refresh();
+        AutowireCapableBeanFactory autowireCapableBeanFactory = appConsoleSpringContext.getParent().getAutowireCapableBeanFactory();
+        for (Object bean : SpringScope.getSpringBeans()) {
+            autowireCapableBeanFactory.autowireBean(bean);
+        }
 
         //2.将当前应用注册到application console
         registerInstance();
