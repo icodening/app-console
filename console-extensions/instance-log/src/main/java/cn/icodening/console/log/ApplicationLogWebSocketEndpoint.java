@@ -11,7 +11,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -26,14 +25,13 @@ public class ApplicationLogWebSocketEndpoint {
 
     @OnOpen
     public void onOpen(Session session) throws Exception {
-        session.setMaxBinaryMessageBufferSize(Integer.MAX_VALUE);
         FileInputStream fileInputStream = new FileInputStream(new File(ConfigurationManager.INSTANCE.get(InstanceLogBootService.TEMP_LOG_PATH_KEY)));
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
         final RemoteEndpoint.Basic basicRemote = session.getBasicRemote();
         for (String line; (line = bufferedReader.readLine()) != null; ) {
             line += "\n";
-            ByteBuffer wrap = ByteBuffer.wrap(line.getBytes());
-            basicRemote.sendBinary(wrap);
+            byte[] lineBytes = line.getBytes();
+            WebSocketUtil.fragmentTransmission(session, lineBytes);
         }
         BytesConsumer logBytesFlushConsumer = LOG_BYTES_FLUSH_CONSUMER_MAP.get(session.getId());
         if (logBytesFlushConsumer == null) {

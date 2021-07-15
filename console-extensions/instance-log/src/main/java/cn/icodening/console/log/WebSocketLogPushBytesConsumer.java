@@ -1,8 +1,6 @@
 package cn.icodening.console.log;
 
 import javax.websocket.Session;
-import java.io.IOException;
-import java.nio.ByteBuffer;
 
 /**
  * @author icodening
@@ -17,15 +15,7 @@ class WebSocketLogPushBytesConsumer extends BytesConsumer {
     }
 
     @Override
-    public void accept(byte[] bytes) {
-        try {
-            if (!session.isOpen()) {
-                return;
-            }
-            ByteBuffer wrap = ByteBuffer.wrap(bytes);
-            session.getBasicRemote().sendBinary(wrap);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void accept(byte[] lineBytes) {
+        WebSocketUtil.fragmentTransmission(session, lineBytes);
     }
 }
