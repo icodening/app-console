@@ -49,7 +49,11 @@ public class CaseInsensitiveKeyMap<V> implements Map<String, V> {
     public V get(Object key) {
         if (key instanceof String) {
             String originKey = caseInsensitiveKeys.get(convertKey((String) key));
-            return delegate.get(originKey);
+            try {
+                return delegate.get(originKey);
+            } catch (Exception exception) {
+                return null;
+            }
         }
         return delegate.get(key);
     }
