@@ -2,6 +2,7 @@ package cn.icodening.console.cloud.router;
 
 import cn.icodening.console.cloud.router.ribbon.RibbonLoadBalancerWrapper;
 import com.netflix.client.config.IClientConfig;
+import com.netflix.loadbalancer.BaseLoadBalancer;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.IRule;
 import com.netflix.loadbalancer.Server;
@@ -42,6 +43,9 @@ public class RouterBeanPostProcessor extends InstantiationAwareBeanPostProcessor
                     map.put(loadBalancePreFilter.name(), loadBalancePreFilter);
                 }
                 ribbonLoadBalancerWrapper = new RibbonLoadBalancerWrapper((ILoadBalancer) bean, map, clientConfig, routerFilterConfigSource);
+            }
+            if (BaseLoadBalancer.class.isAssignableFrom(bean.getClass())) {
+                ((BaseLoadBalancer) bean).getRule().setLoadBalancer(ribbonLoadBalancerWrapper);
             }
             rule.setLoadBalancer(ribbonLoadBalancerWrapper);
             return ribbonLoadBalancerWrapper;

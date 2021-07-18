@@ -49,9 +49,6 @@ public class SpringCloudRouterInterceptor implements ClientHttpRequestIntercepto
     @Resource
     private RouterConfigSource routerConfigSource;
 
-    @Resource
-    private RouterFilterConfigSource routerFilterConfigSource;
-
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
         final URI originalUri = request.getURI();

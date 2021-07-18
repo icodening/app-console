@@ -1,6 +1,7 @@
 package cn.icodening.console.cloud.router;
 
 import cn.icodening.console.cloud.router.config.EurekaSupportAutoConfiguration;
+import cn.icodening.console.cloud.router.config.FeignSupportAutoConfiguration;
 import cn.icodening.console.cloud.router.config.NacosSupportAutoConfiguration;
 import cn.icodening.console.cloud.router.ribbon.HostServerFilter;
 import cn.icodening.console.cloud.router.ribbon.RibbonRouterClientSpecification;
@@ -13,6 +14,7 @@ import org.springframework.cloud.client.loadbalancer.LoadBalancerInterceptor;
 import org.springframework.cloud.client.loadbalancer.RestTemplateCustomizer;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ import java.util.List;
  * @date 2021.07.17
  */
 @ImportAutoConfiguration({NacosSupportAutoConfiguration.class, EurekaSupportAutoConfiguration.class})
+@Import({FeignSupportAutoConfiguration.class})
 public class RouterAutoConfiguration {
 
     @Bean
