@@ -13,7 +13,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
 import java.util.regex.Pattern;
 
 /**
@@ -21,10 +20,6 @@ import java.util.regex.Pattern;
  * @date 2021.07.16
  */
 public class RibbonLoadBalancerWrapper extends BaseLoadBalancer implements ILoadBalancer {
-
-    private static final BiPredicate<String, String> equalsFunction = String::equals;
-
-    private static final BiPredicate<String, String> regexFunction = Pattern::matches;
 
     private static final BiFunction<HttpRequest, String, String> headerSourceGetter = (httpRequest, key) -> httpRequest.getHeaders().getFirst(key);
 
