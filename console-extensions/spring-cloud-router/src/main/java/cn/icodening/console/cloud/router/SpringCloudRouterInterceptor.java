@@ -7,11 +7,15 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 
 /**
@@ -22,6 +26,24 @@ import java.util.regex.Pattern;
  * @date 2021.07.16
  */
 public class SpringCloudRouterInterceptor implements ClientHttpRequestInterceptor {
+
+    private static final BiFunction<HttpRequest, String, String> headerSourceGetter = (httpRequest, key) -> httpRequest.getHeaders().getFirst(key);
+
+    private static final BiFunction<HttpRequest, String, String> querySourceGetter = (httpRequest, key) -> {
+        String query = httpRequest.getURI().getQuery();
+        Map<String, String> map = new HashMap<>();
+        String[] split = query.split("&");
+        for (String kv : split) {
+            int index = kv.indexOf("=");
+            if (index == -1) {
+                continue;
+            }
+            String k = kv.substring(0, index);
+            String v = kv.substring(index + 1);
+            map.put(k, v);
+        }
+        return map.get(key);
+    };
 
     @Resource
     private RouterConfigSource routerConfigSource;
@@ -43,17 +65,22 @@ public class SpringCloudRouterInterceptor implements ClientHttpRequestIntercepto
             if (!request.getHeaders().containsKey(key)) {
                 continue;
             }
-            String value = request.getHeaders().getFirst(key);
-            if (value == null) {
+            String value = null;
+            if ("HEADER".equalsIgnoreCase(keySource)) {
+                value = headerSourceGetter.apply(request, config.getKeyName());
+            } else if ("QUERY".equalsIgnoreCase(keySource)) {
+                value = querySourceGetter.apply(request, config.getKeyName());
+            }
+            if (!StringUtils.hasText(value)) {
                 continue;
             }
             String expression = config.getExpression();
-            if ("equals".equals(matchType)) {
+            if ("equals".equalsIgnoreCase(matchType)) {
                 if (value.equals(expression)) {
                     targetService = config.getTargetService();
                     break;
                 }
-            } else if ("regex".equals(matchType)) {
+            } else if ("regex".equalsIgnoreCase(matchType)) {
                 if (Pattern.matches(expression, value)) {
                     targetService = config.getTargetService();
                     break;

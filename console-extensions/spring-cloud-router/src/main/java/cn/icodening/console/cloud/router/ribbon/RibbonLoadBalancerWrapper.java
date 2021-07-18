@@ -11,10 +11,7 @@ import com.netflix.loadbalancer.Server;
 import org.springframework.http.HttpRequest;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.regex.Pattern;
@@ -30,6 +27,22 @@ public class RibbonLoadBalancerWrapper extends BaseLoadBalancer implements ILoad
     private static final BiPredicate<String, String> regexFunction = Pattern::matches;
 
     private static final BiFunction<HttpRequest, String, String> headerSourceGetter = (httpRequest, key) -> httpRequest.getHeaders().getFirst(key);
+
+    private static final BiFunction<HttpRequest, String, String> querySourceGetter = (httpRequest, key) -> {
+        String query = httpRequest.getURI().getQuery();
+        Map<String, String> map = new HashMap<>();
+        String[] split = query.split("&");
+        for (String kv : split) {
+            int index = kv.indexOf("=");
+            if (index == -1) {
+                continue;
+            }
+            String k = kv.substring(0, index);
+            String v = kv.substring(index + 1);
+            map.put(k, v);
+        }
+        return map.get(key);
+    };
 
     private final ILoadBalancer originLoadBalancer;
 
@@ -81,7 +94,13 @@ public class RibbonLoadBalancerWrapper extends BaseLoadBalancer implements ILoad
             if (!containsKey) {
                 continue;
             }
-            String value = headerSourceGetter.apply(request, config.getKeyName());
+            String keySource = config.getKeySource();
+            String value = null;
+            if ("HEADER".equalsIgnoreCase(keySource)) {
+                value = headerSourceGetter.apply(request, config.getKeyName());
+            } else if ("QUERY".equalsIgnoreCase(keySource)) {
+                value = querySourceGetter.apply(request, config.getKeyName());
+            }
             if (!StringUtils.hasText(value)) {
                 continue;
             }
