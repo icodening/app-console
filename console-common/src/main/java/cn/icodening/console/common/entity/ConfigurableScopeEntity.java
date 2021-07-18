@@ -26,7 +26,7 @@ public abstract class ConfigurableScopeEntity extends AbstractEntity {
      * 功能开关，启用、禁用
      */
     @Column(name = "enable", nullable = false)
-    private Boolean enable;
+    private Boolean enable = Boolean.TRUE;
 
     public String getScope() {
         return scope;

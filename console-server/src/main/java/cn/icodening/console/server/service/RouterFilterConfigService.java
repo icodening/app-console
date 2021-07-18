@@ -1,0 +1,11 @@
+package cn.icodening.console.server.service;
+
+import cn.icodening.console.common.entity.RouterFilterConfigEntity;
+
+/**
+ * @author icodening
+ * @date 2021.07.18
+ */
+public interface RouterFilterConfigService extends IService<RouterFilterConfigEntity> {
+
+}
