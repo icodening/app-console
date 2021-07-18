@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
  */
 public class SpringCloudRouterInterceptor implements ClientHttpRequestInterceptor {
 
+    //FIXME duplicated code
     private static final BiFunction<HttpRequest, String, String> headerSourceGetter = (httpRequest, key) -> httpRequest.getHeaders().getFirst(key);
 
     private static final BiFunction<HttpRequest, String, String> querySourceGetter = (httpRequest, key) -> {
