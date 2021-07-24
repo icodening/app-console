@@ -1,50 +1,46 @@
 package cn.icodening.console.cloud.router.ribbon.openfeign;
 
-import cn.icodening.console.cloud.router.RouterConfigSource;
+import cn.icodening.console.cloud.router.*;
 import cn.icodening.console.common.entity.RouterConfigEntity;
+import cn.icodening.console.util.CaseInsensitiveKeyMap;
 import cn.icodening.console.util.ThreadContextUtil;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.net.URI;
-import java.util.*;
-import java.util.function.BiFunction;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author icodening
  * @date 2021.07.18
  */
-public class FeignRequestInterceptor implements RequestInterceptor {
+@Order(Ordered.LOWEST_PRECEDENCE)
+public class FeignRouterInterceptor implements RequestInterceptor {
 
-    //FIXME duplicated code
-    private static final BiFunction<RequestTemplate, String, String> headerSourceGetter = (httpRequest, key) -> {
-        Collection<String> strings = httpRequest.headers().get(key);
-        if (strings != null && strings.size() > 0) {
-            Iterator<String> iterator = strings.iterator();
-            return iterator.next();
-        }
-        return null;
-    };
-
-    private static final BiFunction<RequestTemplate, String, String> querySourceGetter = (httpRequest, key) -> {
-        Map<String, Collection<String>> queries = httpRequest.queries();
-        Collection<String> values = queries.get(key);
-        if (values != null && values.size() > 0) {
-            String next = values.iterator().next();
-            if (StringUtils.hasText(next)) {
-                return next;
-            }
-        }
-        return null;
-    };
+    private final Map<String, KeySourceExtractor<RequestTemplate>> feignExtractor = new CaseInsensitiveKeyMap<>();
+    private final Map<String, ExpressionMatcher> expressionMatcherMap = new CaseInsensitiveKeyMap<>();
 
     @Resource
     private RouterConfigSource routerConfigSource;
+
+    @PostConstruct
+    public void initialization() {
+        feignExtractor.putIfAbsent("header", new FeignRequestHeaderExtractor());
+        feignExtractor.putIfAbsent("query", new FeignRequestQueryExtractor());
+
+        expressionMatcherMap.putIfAbsent("regex", new ExpressionRegexMatcher());
+        expressionMatcherMap.putIfAbsent("equals", new ExpressionEqualsMatcher());
+    }
 
     @Override
     public void apply(RequestTemplate template) {
@@ -63,31 +59,21 @@ public class FeignRequestInterceptor implements RequestInterceptor {
         Map<String, Collection<String>> headers = template.headers();
         for (RouterConfigEntity config : configs) {
             String keySource = config.getKeySource();
-            String matchType = config.getMatchType();
             String key = config.getKeyName();
             if (!headers.containsKey(key)) {
                 continue;
             }
-            String value = null;
-            if ("HEADER".equalsIgnoreCase(keySource)) {
-                value = headerSourceGetter.apply(template, config.getKeyName());
-            } else if ("QUERY".equalsIgnoreCase(keySource)) {
-                value = querySourceGetter.apply(template, config.getKeyName());
-            }
+            KeySourceExtractor<RequestTemplate> requestTemplateKeySourceExtractor = feignExtractor.get(keySource);
+            String value = requestTemplateKeySourceExtractor.getValue(template, config.getKeyName());
             if (!StringUtils.hasText(value)) {
                 continue;
             }
             String expression = config.getExpression();
-            if ("equals".equalsIgnoreCase(matchType)) {
-                if (value.equals(expression)) {
-                    targetService = config.getTargetService();
-                    break;
-                }
-            } else if ("regex".equalsIgnoreCase(matchType)) {
-                if (Pattern.matches(expression, value)) {
-                    targetService = config.getTargetService();
-                    break;
-                }
+            String matchType = config.getMatchType();
+            ExpressionMatcher expressionMatcher = expressionMatcherMap.get(matchType);
+            if (expressionMatcher.match(expression, value)) {
+                targetService = config.getTargetService();
+                break;
             }
         }
         String newUrl = url.replace(serviceName, targetService);

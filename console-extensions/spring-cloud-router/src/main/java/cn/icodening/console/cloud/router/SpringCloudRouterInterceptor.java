@@ -1,6 +1,7 @@
 package cn.icodening.console.cloud.router;
 
 import cn.icodening.console.common.entity.RouterConfigEntity;
+import cn.icodening.console.util.CaseInsensitiveKeyMap;
 import cn.icodening.console.util.ThreadContextUtil;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
@@ -9,14 +10,12 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.regex.Pattern;
 
 /**
  * Spring Cloud
@@ -27,24 +26,17 @@ import java.util.regex.Pattern;
  */
 public class SpringCloudRouterInterceptor implements ClientHttpRequestInterceptor {
 
-    //FIXME duplicated code
-    private static final BiFunction<HttpRequest, String, String> headerSourceGetter = (httpRequest, key) -> httpRequest.getHeaders().getFirst(key);
+    private final Map<String, KeySourceExtractor<HttpRequest>> httpExtractorMap = new CaseInsensitiveKeyMap<>();
+    private final Map<String, ExpressionMatcher> expressionMatcherMap = new CaseInsensitiveKeyMap<>();
 
-    private static final BiFunction<HttpRequest, String, String> querySourceGetter = (httpRequest, key) -> {
-        String query = httpRequest.getURI().getQuery();
-        Map<String, String> map = new HashMap<>();
-        String[] split = query.split("&");
-        for (String kv : split) {
-            int index = kv.indexOf("=");
-            if (index == -1) {
-                continue;
-            }
-            String k = kv.substring(0, index);
-            String v = kv.substring(index + 1);
-            map.put(k, v);
-        }
-        return map.get(key);
-    };
+    @PostConstruct
+    public void initialization() {
+        httpExtractorMap.putIfAbsent("header", new HttpRequestHeaderExtractor());
+        httpExtractorMap.putIfAbsent("query", new HttpRequestQueryExtractor());
+
+        expressionMatcherMap.putIfAbsent("regex", new ExpressionRegexMatcher());
+        expressionMatcherMap.putIfAbsent("equals", new ExpressionEqualsMatcher());
+    }
 
     @Resource
     private RouterConfigSource routerConfigSource;
@@ -57,32 +49,27 @@ public class SpringCloudRouterInterceptor implements ClientHttpRequestIntercepto
         String targetService = serviceName;
         //FIXME 按照优先级排序
         for (RouterConfigEntity config : configs) {
+            if (config.getEnable() == null || !config.getEnable()) {
+                continue;
+            }
+            config.getEnable();
+            Boolean.valueOf(config.getEnable());
             String keySource = config.getKeySource();
             String matchType = config.getMatchType();
             String key = config.getKeyName();
             if (!request.getHeaders().containsKey(key)) {
                 continue;
             }
-            String value = null;
-            if ("HEADER".equalsIgnoreCase(keySource)) {
-                value = headerSourceGetter.apply(request, config.getKeyName());
-            } else if ("QUERY".equalsIgnoreCase(keySource)) {
-                value = querySourceGetter.apply(request, config.getKeyName());
-            }
+            KeySourceExtractor<HttpRequest> httpRequestKeySourceExtractor = httpExtractorMap.get(keySource);
+            String value = httpRequestKeySourceExtractor.getValue(request, config.getKeyName());
             if (!StringUtils.hasText(value)) {
                 continue;
             }
             String expression = config.getExpression();
-            if ("equals".equalsIgnoreCase(matchType)) {
-                if (value.equals(expression)) {
-                    targetService = config.getTargetService();
-                    break;
-                }
-            } else if ("regex".equalsIgnoreCase(matchType)) {
-                if (Pattern.matches(expression, value)) {
-                    targetService = config.getTargetService();
-                    break;
-                }
+            ExpressionMatcher expressionMatcher = expressionMatcherMap.get(matchType);
+            if (expressionMatcher.match(expression, value)) {
+                targetService = config.getTargetService();
+                break;
             }
         }
         HttpRequest newRequest = request;
