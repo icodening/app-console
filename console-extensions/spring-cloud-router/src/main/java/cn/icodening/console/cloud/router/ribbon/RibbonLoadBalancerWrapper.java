@@ -1,8 +1,8 @@
 package cn.icodening.console.cloud.router.ribbon;
 
-import cn.icodening.console.cloud.router.LoadBalancePreFilter;
-import cn.icodening.console.cloud.router.RouterFilterConfigSource;
+import cn.icodening.console.cloud.router.*;
 import cn.icodening.console.common.entity.RouterFilterConfigEntity;
+import cn.icodening.console.util.CaseInsensitiveKeyMap;
 import cn.icodening.console.util.ThreadContextUtil;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.BaseLoadBalancer;
@@ -11,9 +11,10 @@ import com.netflix.loadbalancer.Server;
 import org.springframework.http.HttpRequest;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
-import java.util.function.BiFunction;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author icodening
@@ -21,23 +22,23 @@ import java.util.regex.Pattern;
  */
 public class RibbonLoadBalancerWrapper extends BaseLoadBalancer implements ILoadBalancer {
 
-    private static final BiFunction<HttpRequest, String, String> headerSourceGetter = (httpRequest, key) -> httpRequest.getHeaders().getFirst(key);
-
-    private static final BiFunction<HttpRequest, String, String> querySourceGetter = (httpRequest, key) -> {
-        String query = httpRequest.getURI().getQuery();
-        Map<String, String> map = new HashMap<>();
-        String[] split = query.split("&");
-        for (String kv : split) {
-            int index = kv.indexOf("=");
-            if (index == -1) {
-                continue;
-            }
-            String k = kv.substring(0, index);
-            String v = kv.substring(index + 1);
-            map.put(k, v);
-        }
-        return map.get(key);
-    };
+//    private static final BiFunction<HttpRequest, String, String> headerSourceGetter = (httpRequest, key) -> httpRequest.getHeaders().getFirst(key);
+//
+//    private static final BiFunction<HttpRequest, String, String> querySourceGetter = (httpRequest, key) -> {
+//        String query = httpRequest.getURI().getQuery();
+//        Map<String, String> map = new HashMap<>();
+//        String[] split = query.split("&");
+//        for (String kv : split) {
+//            int index = kv.indexOf("=");
+//            if (index == -1) {
+//                continue;
+//            }
+//            String k = kv.substring(0, index);
+//            String v = kv.substring(index + 1);
+//            map.put(k, v);
+//        }
+//        return map.get(key);
+//    };
 
     private final ILoadBalancer originLoadBalancer;
 
@@ -50,6 +51,7 @@ public class RibbonLoadBalancerWrapper extends BaseLoadBalancer implements ILoad
                                      RouterFilterConfigSource routerFilterConfigSource) {
         this(originLoadBalancer, Collections.emptyMap(), clientConfig, routerFilterConfigSource);
         initWithNiwsConfig(clientConfig);
+        initialization();
     }
 
     public RibbonLoadBalancerWrapper(ILoadBalancer originLoadBalancer,
@@ -60,6 +62,18 @@ public class RibbonLoadBalancerWrapper extends BaseLoadBalancer implements ILoad
         this.namedLoadBalancePreFilter = namedLoadBalancePreFilter;
         this.routerFilterConfigSource = routerFilterConfigSource;
         initWithNiwsConfig(clientConfig);
+        initialization();
+    }
+
+    private final Map<String, KeySourceExtractor<HttpRequest>> httpExtractorMap = new CaseInsensitiveKeyMap<>();
+    private final Map<String, ExpressionMatcher> expressionMatcherMap = new CaseInsensitiveKeyMap<>();
+
+    public void initialization() {
+        httpExtractorMap.putIfAbsent("header", new HttpRequestHeaderExtractor());
+        httpExtractorMap.putIfAbsent("query", new HttpRequestQueryExtractor());
+
+        expressionMatcherMap.putIfAbsent("regex", new ExpressionRegexMatcher());
+        expressionMatcherMap.putIfAbsent("equals", new ExpressionEqualsMatcher());
     }
 
     @Override
@@ -84,33 +98,25 @@ public class RibbonLoadBalancerWrapper extends BaseLoadBalancer implements ILoad
             if (config.getEnable() != null && !config.getEnable()) {
                 continue;
             }
-            //1.根据key源(header、query)从请求中查对应的key 如不存在则忽略
-            boolean containsKey = request.getHeaders().containsKey(config.getKeyName());
-            if (!containsKey) {
-                continue;
-            }
             String keySource = config.getKeySource();
-            String value = null;
-            if ("HEADER".equalsIgnoreCase(keySource)) {
-                value = headerSourceGetter.apply(request, config.getKeyName());
-            } else if ("QUERY".equalsIgnoreCase(keySource)) {
-                value = querySourceGetter.apply(request, config.getKeyName());
-            }
-            if (!StringUtils.hasText(value)) {
+            KeySourceExtractor<HttpRequest> httpRequestKeySourceExtractor = httpExtractorMap.get(keySource);
+            //1.根据key源(header、query)从请求中查对应的key 如不存在则忽略
+            boolean containsKey = httpRequestKeySourceExtractor.contains(request, config.getKeyName());
+            if (!containsKey) {
                 continue;
             }
             //2.根据配置的匹配类型(正则匹配、精确匹配)做对应的比较 如比较失败则忽略
             String matchType = config.getMatchType();
-            String expression = config.getExpression();
-            if (!("equals".equals(matchType))) {
-                if (!value.equalsIgnoreCase(expression)) {
-                    continue;
-                }
-            } else {
-                if (!Pattern.matches(expression, value)) {
-                    continue;
-                }
+            String value = httpRequestKeySourceExtractor.getValue(request, config.getKeyName());
+            if (!StringUtils.hasText(value)) {
+                continue;
             }
+            String expression = config.getExpression();
+            ExpressionMatcher expressionMatcher = expressionMatcherMap.get(matchType);
+            if (!expressionMatcher.match(expression, value)) {
+                continue;
+            }
+
             //3.根据配置的过滤类型选择对应的过滤器
             String filterType = config.getFilterType();
             LoadBalancePreFilter<Server> serverLoadBalancePreFilter = namedLoadBalancePreFilter.get(filterType);

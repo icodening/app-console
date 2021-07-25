@@ -14,6 +14,12 @@ import java.util.Map;
 public class FeignRequestQueryExtractor implements KeySourceExtractor<RequestTemplate> {
 
     @Override
+    public boolean contains(RequestTemplate target, String name) {
+        Map<String, Collection<String>> queries = target.queries();
+        return queries.containsKey(name);
+    }
+
+    @Override
     public String getValue(RequestTemplate target, String name) {
         Map<String, Collection<String>> queries = target.queries();
         Collection<String> values = queries.get(name);

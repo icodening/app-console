@@ -12,6 +12,11 @@ import java.util.Collection;
 public class FeignRequestHeaderExtractor implements KeySourceExtractor<RequestTemplate> {
 
     @Override
+    public boolean contains(RequestTemplate target, String name) {
+        return target.headers().containsKey(name);
+    }
+
+    @Override
     public String getValue(RequestTemplate target, String name) {
         Collection<String> values = target.headers().get(name);
         return values != null && values.size() > 0 ? values.iterator().next() : null;

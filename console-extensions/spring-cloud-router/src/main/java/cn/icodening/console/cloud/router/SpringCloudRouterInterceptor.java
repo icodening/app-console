@@ -57,10 +57,11 @@ public class SpringCloudRouterInterceptor implements ClientHttpRequestIntercepto
             String keySource = config.getKeySource();
             String matchType = config.getMatchType();
             String key = config.getKeyName();
-            if (!request.getHeaders().containsKey(key)) {
+            KeySourceExtractor<HttpRequest> httpRequestKeySourceExtractor = httpExtractorMap.get(keySource);
+            boolean contains = httpRequestKeySourceExtractor.contains(request, key);
+            if (!contains) {
                 continue;
             }
-            KeySourceExtractor<HttpRequest> httpRequestKeySourceExtractor = httpExtractorMap.get(keySource);
             String value = httpRequestKeySourceExtractor.getValue(request, config.getKeyName());
             if (!StringUtils.hasText(value)) {
                 continue;
