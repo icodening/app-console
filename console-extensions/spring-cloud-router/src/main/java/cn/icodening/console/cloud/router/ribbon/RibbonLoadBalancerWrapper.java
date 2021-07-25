@@ -22,23 +22,9 @@ import java.util.Map;
  */
 public class RibbonLoadBalancerWrapper extends BaseLoadBalancer implements ILoadBalancer {
 
-//    private static final BiFunction<HttpRequest, String, String> headerSourceGetter = (httpRequest, key) -> httpRequest.getHeaders().getFirst(key);
-//
-//    private static final BiFunction<HttpRequest, String, String> querySourceGetter = (httpRequest, key) -> {
-//        String query = httpRequest.getURI().getQuery();
-//        Map<String, String> map = new HashMap<>();
-//        String[] split = query.split("&");
-//        for (String kv : split) {
-//            int index = kv.indexOf("=");
-//            if (index == -1) {
-//                continue;
-//            }
-//            String k = kv.substring(0, index);
-//            String v = kv.substring(index + 1);
-//            map.put(k, v);
-//        }
-//        return map.get(key);
-//    };
+    private final Map<String, KeySourceExtractor<HttpRequest>> httpExtractorMap = new CaseInsensitiveKeyMap<>();
+
+    private final Map<String, ExpressionMatcher> expressionMatcherMap = new CaseInsensitiveKeyMap<>();
 
     private final ILoadBalancer originLoadBalancer;
 
@@ -64,9 +50,6 @@ public class RibbonLoadBalancerWrapper extends BaseLoadBalancer implements ILoad
         initWithNiwsConfig(clientConfig);
         initialization();
     }
-
-    private final Map<String, KeySourceExtractor<HttpRequest>> httpExtractorMap = new CaseInsensitiveKeyMap<>();
-    private final Map<String, ExpressionMatcher> expressionMatcherMap = new CaseInsensitiveKeyMap<>();
 
     public void initialization() {
         httpExtractorMap.putIfAbsent("header", new HttpRequestHeaderExtractor());
