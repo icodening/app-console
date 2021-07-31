@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  cn.icodening.console.monitor.sql.config.MonitorSQLAutoConfiguration

@@ -1,0 +1,5 @@
+cn.icodening.console.monitor.sql.filter.HikariDataSourceProxyFilter
+cn.icodening.console.monitor.sql.filter.DruidDataSourceProxyFilter
+cn.icodening.console.monitor.sql.filter.DataSourceProxyFilter
+cn.icodening.console.monitor.sql.filter.ConnectionProxyFilter
+cn.icodening.console.monitor.sql.filter.PreparedStatementProxyFilter
