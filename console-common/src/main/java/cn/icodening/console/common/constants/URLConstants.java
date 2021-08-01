@@ -7,4 +7,6 @@ package cn.icodening.console.common.constants;
 public interface URLConstants {
 
     String INSTANCE_RECEIVE_URL = "/configReceiver";
+
+    String INSTANCE_SQLMONITOR_URL = "/sqlMonitor";
 }

@@ -1,5 +1,7 @@
 package cn.icodening.console.monitor.sql;
 
+import cn.icodening.console.common.vo.SQLMonitorData;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,17 +19,29 @@ public class PreparedStatementProxy extends PreparedStatementProxyAdapter {
 
     @Override
     public int executeUpdate() throws SQLException {
-        return super.executeUpdate();
+        long begin = System.currentTimeMillis();
+        int execute = super.executeUpdate();
+        long end = System.currentTimeMillis();
+        postExecuteSQL(end - begin);
+        return execute;
     }
 
     @Override
     public boolean execute() throws SQLException {
-        return super.execute();
+        long begin = System.currentTimeMillis();
+        boolean execute = super.execute();
+        long end = System.currentTimeMillis();
+        postExecuteSQL(end - begin);
+        return execute;
     }
 
     @Override
     public long executeLargeUpdate() throws SQLException {
-        return super.executeLargeUpdate();
+        long begin = System.currentTimeMillis();
+        long execute = super.executeLargeUpdate();
+        long end = System.currentTimeMillis();
+        postExecuteSQL(end - begin);
+        return execute;
     }
 
     @Override
@@ -35,13 +49,19 @@ public class PreparedStatementProxy extends PreparedStatementProxyAdapter {
         long begin = System.currentTimeMillis();
         ResultSet resultSet = super.executeQuery();
         long end = System.currentTimeMillis();
+        postExecuteSQL(end - begin);
+        return resultSet;
+    }
+
+    private void postExecuteSQL(long costTime) {
         String sql = getDynamicField().getSql();
         List<Object> parameters = getDynamicField().getParameters();
         String jdbcUrl = getConnectionProxy().getDataSourceProxy().getDynamicField().getJdbcUrl();
-        System.out.println("本次连接为:" + jdbcUrl);
-        System.out.println("sql:" + sql);
-        System.out.println("参数:" + parameters);
-        System.out.println("耗时:" + (end - begin) + " ms");
-        return resultSet;
+        SQLMonitorData sqlMonitorData = new SQLMonitorData();
+        sqlMonitorData.setSql(sql);
+        sqlMonitorData.setCostTime(costTime);
+        sqlMonitorData.setJdbcUrl(jdbcUrl);
+        sqlMonitorData.setParameters(parameters);
+        SQLMonitorDataRepository.addMonitorData(sqlMonitorData);
     }
 }
