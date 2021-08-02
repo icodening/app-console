@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public interface HttpAgent {
 
-    int DEFAULT_READ_TIMEOUT = 15000;
+    int DEFAULT_READ_TIMEOUT = 5000;
 
     default Response get(String url, Map<String, String> queryParam, HttpHeaders httpHeaders) throws IOException {
         Request get = Request.of(url, "GET", queryParam, httpHeaders);
