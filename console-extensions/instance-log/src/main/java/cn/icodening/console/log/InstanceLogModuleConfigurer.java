@@ -2,11 +2,7 @@ package cn.icodening.console.log;
 
 import cn.icodening.console.injector.ModuleRegistry;
 import cn.icodening.console.injector.ModuleRegistryConfigurer;
-import cn.icodening.console.logger.Logger;
-import cn.icodening.console.logger.LoggerFactory;
-
-import javax.websocket.ContainerProvider;
-import javax.websocket.WebSocketContainer;
+import cn.icodening.console.util.ClassUtil;
 
 /**
  * @author icodening
@@ -14,20 +10,13 @@ import javax.websocket.WebSocketContainer;
  */
 public class InstanceLogModuleConfigurer implements ModuleRegistryConfigurer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InstanceLogModuleConfigurer.class);
+    private static final String CONTAINER_PROVIDER_CLASSNAME = "javax.websocket.ContainerProvider";
 
     @Override
     public void configureRegistry(ModuleRegistry moduleRegistry) {
-        try {
-            WebSocketContainer webSocketContainer = ContainerProvider.getWebSocketContainer();
-            //如取不到websocket容器则忽略
-            if (webSocketContainer == null) {
-                LOGGER.warn("no websocket dependency, can't use log viewer online !");
-                return;
-            }
+        boolean exists = ClassUtil.exists(CONTAINER_PROVIDER_CLASSNAME);
+        if (exists) {
             moduleRegistry.registerCurrentModule();
-        } catch (Throwable e) {
-            e.printStackTrace();
         }
     }
 }
