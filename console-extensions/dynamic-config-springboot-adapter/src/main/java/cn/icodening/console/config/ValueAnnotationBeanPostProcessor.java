@@ -1,6 +1,5 @@
-package cn.icodening.config;
+package cn.icodening.console.config;
 
-import cn.icodening.console.config.ConfigChangeEvent;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.TypeConverter;
 import org.springframework.beans.factory.BeanFactory;

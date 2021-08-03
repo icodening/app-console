@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
@@ -42,8 +43,13 @@ public class NotifyServiceImpl implements NotifyService {
             final HttpEntity<Object> requestEntity = new HttpEntity<>(json, httpHeaders);
             CompletableFuture.supplyAsync(() -> addresses.stream()
                     .map(address -> {
-                        final ResponseEntity<String> exchange = restTemplate.exchange(address, HttpMethod.POST, requestEntity, String.class);
-                        return exchange.getStatusCode().is2xxSuccessful();
+                        final ResponseEntity<String> exchange;
+                        try {
+                            exchange = restTemplate.exchange(address, HttpMethod.POST, requestEntity, String.class);
+                            return exchange.getStatusCode().is2xxSuccessful();
+                        } catch (RestClientException e) {
+                            return false;
+                        }
                     }).collect(Collectors.groupingBy(bool -> bool)))
                     .whenComplete((ret, ex) -> {
                         if (ex != null) {

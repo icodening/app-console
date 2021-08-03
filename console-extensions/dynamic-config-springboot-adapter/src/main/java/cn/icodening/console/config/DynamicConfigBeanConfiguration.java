@@ -1,4 +1,4 @@
-package cn.icodening.config;
+package cn.icodening.console.config;
 
 import org.springframework.context.annotation.Bean;
 

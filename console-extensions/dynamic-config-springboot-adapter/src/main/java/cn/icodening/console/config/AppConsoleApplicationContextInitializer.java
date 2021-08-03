@@ -1,7 +1,6 @@
-package cn.icodening.config;
+package cn.icodening.console.config;
 
 import cn.icodening.console.common.entity.ConfigEntity;
-import cn.icodening.console.config.ConfigurationManager;
 import cn.icodening.console.http.Request;
 import cn.icodening.console.http.Response;
 import cn.icodening.console.util.HttpUtil;
