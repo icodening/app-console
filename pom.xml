@@ -29,6 +29,7 @@
         <!--        <springboot.version>2.3.12.RELEASE</springboot.version>-->
         <spring-cloud.version>Hoxton.SR10</spring-cloud.version>
         <spring-cloud-alibaba.version>2.2.1.RELEASE</spring-cloud-alibaba.version>
+        <springboot-nacos.version>0.2.2</springboot-nacos.version>
     </properties>
 
 
@@ -54,6 +55,11 @@
                 <version>${spring-cloud-alibaba.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.boot</groupId>
+                <artifactId>nacos-config-spring-boot-starter</artifactId>
+                <version>${springboot-nacos.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

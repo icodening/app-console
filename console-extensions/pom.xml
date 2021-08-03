@@ -20,6 +20,7 @@
         <module>instance-log</module>
         <module>spring-cloud-router</module>
         <module>monitor-sql</module>
+        <module>dynamic-config-nacos-adapter</module>
     </modules>
 
     <properties>

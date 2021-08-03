@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  cn.icodening.console.config.nacos.NacosSpringBootAutoConfiguration
+org.springframework.cloud.bootstrap.BootstrapConfiguration=\
+  cn.icodening.console.config.nacos.NacosSpringCloudAutoConfiguration
