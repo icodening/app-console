@@ -23,6 +23,7 @@
         <module>spring-cloud-router-common</module>
         <module>spring-cloud-router-ribbon</module>
         <module>spring-cloud-router-openfeign</module>
+        <module>spring-cloud-router-loadbalancer</module>
     </modules>
 
     <properties>

@@ -3,6 +3,7 @@ package cn.icodening.console.cloud.router.common;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestTemplate;
 
@@ -41,5 +42,19 @@ public class SpringCloudRouterCommonAutoConfiguration {
                 restTemplate.setInterceptors(interceptors);
             }
         };
+    }
+
+    @Conditional(OnNoRibbonDefaultCondition.class)
+    public static class NoRibbonFilterConfiguration {
+
+        @Bean
+        public ServiceInstanceHostFilter serviceInstanceHostFilter() {
+            return new ServiceInstanceHostFilter();
+        }
+
+        @Bean
+        public ServiceInstanceMetaFilter serviceInstanceMetaFilter() {
+            return new ServiceInstanceMetaFilter();
+        }
     }
 }

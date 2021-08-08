@@ -8,15 +8,14 @@ import cn.icodening.console.cloud.router.ribbon.RibbonRouterClientSpecification;
 import com.netflix.loadbalancer.Server;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-
-//import cn.icodening.console.cloud.router.config.FeignSupportAutoConfiguration;
+import org.springframework.context.annotation.Conditional;
 
 /**
  * @author icodening
  * @date 2021.07.17
  */
 @ImportAutoConfiguration({NacosSupportAutoConfiguration.class, EurekaSupportAutoConfiguration.class})
-//@Import({FeignSupportAutoConfiguration.class})
+@Conditional(OnHasRibbonCondition.class)
 public class RouterAutoConfiguration {
 
     @Bean
@@ -24,35 +23,8 @@ public class RouterAutoConfiguration {
         return new RibbonRouterClientSpecification();
     }
 
-//    @Bean
-//    public RouterConfigSource routerConfigSource() {
-//        return new RouterConfigSource();
-//    }
-//
-//    @Bean
-//    public RouterFilterConfigSource routerFilterConfigSource() {
-//        return new RouterFilterConfigSource();
-//    }
-
     @Bean
     public LoadBalancePreFilter<Server> hostServerFilter() {
         return new HostServerFilter();
     }
-
-//    @Bean
-//    @ConditionalOnMissingBean
-//    public SpringCloudRouterInterceptor springCloudRouterInterceptor() {
-//        return new SpringCloudRouterInterceptor();
-//    }
-
-//    @Bean
-//    public SmartInitializingSingleton restTemplateConfigurer(List<RestTemplate> restTemplates, SpringCloudRouterInterceptor springCloudInterceptor) {
-//        return () -> {
-//            for (RestTemplate restTemplate : restTemplates) {
-//                List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>(restTemplate.getInterceptors());
-//                interceptors.add(0, springCloudInterceptor);
-//                restTemplate.setInterceptors(interceptors);
-//            }
-//        };
-//    }
 }
