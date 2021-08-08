@@ -11,6 +11,9 @@
 
     <artifactId>console-server</artifactId>
 
+    <properties>
+        <springboot.version>2.3.12.RELEASE</springboot.version>
+    </properties>
 
     <dependencies>
         <dependency>

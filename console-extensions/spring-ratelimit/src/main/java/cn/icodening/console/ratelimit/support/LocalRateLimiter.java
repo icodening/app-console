@@ -33,7 +33,7 @@ public class LocalRateLimiter implements RateLimiter {
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalRateLimiter.class);
 
     @Override
-    public synchronized void refresh(ServerMessage serverMessage) {
+    public void refresh(ServerMessage serverMessage) {
         List<RateLimitEntity> configurations = InstanceConfigurationCache.getConfigs(RateLimitEntity.class);
         LOGGER.debug("refresh ratelimit config list is: " + configurations);
         if (configurations == null || configurations.isEmpty()) {

@@ -18,9 +18,11 @@
         <module>dynamic-config-common</module>
         <module>dynamic-config-springboot-adapter</module>
         <module>instance-log</module>
-        <module>spring-cloud-router</module>
         <module>monitor-sql</module>
         <module>dynamic-config-nacos-adapter</module>
+        <module>spring-cloud-router-common</module>
+        <module>spring-cloud-router-ribbon</module>
+        <module>spring-cloud-router-openfeign</module>
     </modules>
 
     <properties>
