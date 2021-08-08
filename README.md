@@ -1,4 +1,7 @@
 # app-console
+[![GitHub stars](https://img.shields.io/github/stars/icodening/app-console.svg)](https://github.com/icodening/app-console)
+[![GitHub forks](https://img.shields.io/github/forks/icodening/app-console.svg)](https://github.com/icodening/app-console)
+
 一款Spring Boot无侵入式应用管理框架.
 
 # Features
