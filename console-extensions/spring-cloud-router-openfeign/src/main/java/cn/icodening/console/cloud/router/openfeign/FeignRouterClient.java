@@ -1,17 +1,15 @@
 package cn.icodening.console.cloud.router.openfeign;
 
-import cn.icodening.console.cloud.router.common.*;
+import cn.icodening.console.cloud.router.common.HttpRequestRouterHelper;
+import cn.icodening.console.cloud.router.common.RouterConfigSource;
 import cn.icodening.console.common.entity.RouterConfigEntity;
-import cn.icodening.console.util.CaseInsensitiveKeyMap;
 import cn.icodening.console.util.ThreadContextUtil;
 import feign.Client;
 import feign.Request;
 import feign.Response;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
-import org.springframework.util.StringUtils;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.net.URI;
@@ -26,10 +24,6 @@ import java.util.Map;
  */
 public class FeignRouterClient implements Client {
 
-
-    private final Map<String, KeySourceExtractor<Request>> feignExtractor = new CaseInsensitiveKeyMap<>();
-    private final Map<String, ExpressionMatcher> expressionMatcherMap = new CaseInsensitiveKeyMap<>();
-
     @Resource
     private RouterConfigSource routerConfigSource;
 
@@ -39,22 +33,22 @@ public class FeignRouterClient implements Client {
         this.delegate = delegate;
     }
 
-    @PostConstruct
-    public void initialization() {
-        feignExtractor.putIfAbsent("header", new FeignClientRequestHeaderExtractor());
-        feignExtractor.putIfAbsent("query", new FeignClientRequestQueryExtractor());
-
-        expressionMatcherMap.putIfAbsent("regex", new ExpressionRegexMatcher());
-        expressionMatcherMap.putIfAbsent("equals", new ExpressionEqualsMatcher());
-    }
-
     @Override
     public Response execute(Request request, Request.Options options) throws IOException {
-        Request routerRequest = checkRouteIfNecessary(request);
-        HttpRequest httpRequest = buildHttpRequest(routerRequest);
+        String url = request.url();
+        String serviceName = URI.create(url).getHost();
+        HttpRequest httpRequest = buildHttpRequest(request);
+        String serviceId = httpRequest.getURI().getHost();
+        List<RouterConfigEntity> configs = routerConfigSource.getConfigs(serviceId);
+        String targetService = HttpRequestRouterHelper.getTargetService(configs, httpRequest);
+
+        if (!serviceName.equalsIgnoreCase(targetService)) {
+            String newUrl = url.replace(serviceName, targetService);
+            request = Request.create(request.method(), newUrl, request.headers(), request.body(), request.charset());
+        }
         //FIXME 想办法回调移除上下文对象
         ThreadContextUtil.set("request", httpRequest);
-        return delegate.execute(routerRequest, options);
+        return delegate.execute(request, options);
     }
 
     private HttpRequest buildHttpRequest(Request request) {
@@ -80,39 +74,5 @@ public class FeignRouterClient implements Client {
                 return uri;
             }
         };
-    }
-
-    private Request checkRouteIfNecessary(Request request) {
-        String url = request.url();
-        URI uri = URI.create(url);
-        String serviceName = uri.getHost();
-        List<RouterConfigEntity> configs = routerConfigSource.getConfigs(serviceName);
-        String targetService = serviceName;
-        //FIXME 按照优先级排序
-        Map<String, Collection<String>> headers = request.headers();
-        for (RouterConfigEntity config : configs) {
-            String keySource = config.getKeySource();
-            String key = config.getKeyName();
-            if (!headers.containsKey(key)) {
-                continue;
-            }
-            KeySourceExtractor<Request> requestTemplateKeySourceExtractor = feignExtractor.get(keySource);
-            String value = requestTemplateKeySourceExtractor.getValue(request, config.getKeyName());
-            if (!StringUtils.hasText(value)) {
-                continue;
-            }
-            String expression = config.getExpression();
-            String matchType = config.getMatchType();
-            ExpressionMatcher expressionMatcher = expressionMatcherMap.get(matchType);
-            if (expressionMatcher.match(expression, value)) {
-                targetService = config.getTargetService();
-                break;
-            }
-        }
-        String newUrl = url.replace(serviceName, targetService);
-        if (!newUrl.equalsIgnoreCase(url)) {
-            return Request.create(request.method(), newUrl, request.headers(), request.body(), request.charset());
-        }
-        return request;
     }
 }

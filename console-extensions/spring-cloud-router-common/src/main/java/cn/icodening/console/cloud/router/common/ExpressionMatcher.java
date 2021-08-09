@@ -1,11 +1,14 @@
 package cn.icodening.console.cloud.router.common;
 
+import cn.icodening.console.extension.Extensible;
+
 /**
  * 表达式比较器，精确、正则...
  *
  * @author icodening
  * @date 2021.07.24
  */
+@Extensible
 public interface ExpressionMatcher {
 
     /**

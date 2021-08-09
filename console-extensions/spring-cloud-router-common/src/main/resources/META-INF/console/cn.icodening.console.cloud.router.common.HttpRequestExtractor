@@ -1,0 +1,2 @@
+header=cn.icodening.console.cloud.router.common.HttpRequestHeaderExtractor
+query=cn.icodening.console.cloud.router.common.HttpRequestQueryExtractor

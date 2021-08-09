@@ -1,0 +1,2 @@
+equals=cn.icodening.console.cloud.router.common.ExpressionEqualsMatcher
+regex=cn.icodening.console.cloud.router.common.ExpressionRegexMatcher

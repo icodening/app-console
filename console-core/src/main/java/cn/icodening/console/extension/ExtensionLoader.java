@@ -185,6 +185,16 @@ public class ExtensionLoader<T> {
         return extensions;
     }
 
+    public Map<String, T> getAllExtensionMap() {
+        Map<String, T> retMap = new HashMap<>();
+        Set<String> names = nameExtensionWrapperMap.keySet();
+        for (String name : names) {
+            T extension = getExtension(name);
+            retMap.put(name, extension);
+        }
+        return retMap;
+    }
+
     /**
      * 无参数则获取默认实现
      */

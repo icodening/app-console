@@ -1,11 +1,14 @@
 package cn.icodening.console.cloud.router.common;
 
+import cn.icodening.console.extension.Extensible;
+
 /**
  * 键值提取器，如从请求header、query...提取相关值
  *
  * @author icodening
  * @date 2021.07.19
  */
+@Extensible
 public interface KeySourceExtractor<T> {
 
     /**

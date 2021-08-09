@@ -10,7 +10,7 @@ import java.util.Map;
  * @author icodening
  * @date 2021.07.24
  */
-public class HttpRequestQueryExtractor implements KeySourceExtractor<HttpRequest> {
+public class HttpRequestQueryExtractor implements HttpRequestExtractor {
 
     @Override
     public boolean contains(HttpRequest target, String name) {
