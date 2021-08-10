@@ -12,6 +12,10 @@ public class CaseInsensitiveKeyMap<V> implements Map<String, V> {
 
     private final Map<String, String> caseInsensitiveKeys = new HashMap<>();
 
+    public CaseInsensitiveKeyMap(int capacity) {
+        this(new LinkedHashMap<>(capacity));
+    }
+
     public CaseInsensitiveKeyMap() {
         this(new LinkedHashMap<>());
     }
