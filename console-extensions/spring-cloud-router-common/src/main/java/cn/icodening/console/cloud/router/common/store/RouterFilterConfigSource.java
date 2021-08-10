@@ -1,4 +1,4 @@
-package cn.icodening.console.cloud.router.common;
+package cn.icodening.console.cloud.router.common.store;
 
 import cn.icodening.console.common.entity.RouterFilterConfigEntity;
 import cn.icodening.console.util.CaseInsensitiveKeyMap;

@@ -1,7 +1,7 @@
 package cn.icodening.console.cloud.router.loadbalancer;
 
-import cn.icodening.console.cloud.router.common.RouterFilterConfigSource;
-import cn.icodening.console.cloud.router.common.RouterFilterHelper;
+import cn.icodening.console.cloud.router.common.filter.RouterFilterHelper;
+import cn.icodening.console.cloud.router.common.store.RouterFilterConfigSource;
 import cn.icodening.console.common.entity.RouterFilterConfigEntity;
 import cn.icodening.console.util.ThreadContextUtil;
 import org.springframework.cloud.client.ServiceInstance;
@@ -43,40 +43,6 @@ public class ServiceInstanceListLoadBalancePreFilterSupplier implements ServiceI
         List<RouterFilterConfigEntity> configs = routerFilterConfigSource.getConfigs(getServiceId());
         List<ServiceInstance> servers = new ArrayList<>(originServerList);
         return RouterFilterHelper.filterServers(request, configs, servers);
-//        for (RouterFilterConfigEntity config : configs) {
-//            if (config.getEnable() != null && !config.getEnable()) {
-//                continue;
-//            }
-//            String keySource = config.getKeySource();
-//            KeySourceExtractor<HttpRequest> httpRequestKeySourceExtractor = httpExtractorMap.get(keySource);
-//            //1.根据key源(header、query)从请求中查对应的key 如不存在则忽略
-//            boolean containsKey = httpRequestKeySourceExtractor.contains(request, config.getKeyName());
-//            if (!containsKey) {
-//                continue;
-//            }
-//            //2.根据配置的匹配类型(正则匹配、精确匹配)做对应的比较 如比较失败则忽略
-//            String matchType = config.getMatchType();
-//            String value = httpRequestKeySourceExtractor.getValue(request, config.getKeyName());
-//            if (!StringUtils.hasText(value)) {
-//                continue;
-//            }
-//            String expression = config.getExpression();
-//            ExpressionMatcher expressionMatcher = expressionMatcherMap.get(matchType);
-//            if (!expressionMatcher.match(expression, value)) {
-//                continue;
-//            }
-//
-//            //3.根据配置的过滤类型选择对应的过滤器
-//            String filterType = config.getFilterType();
-//            LoadBalancePreFilter<ServiceInstance> serverLoadBalancePreFilter = namedLoadBalancePreFilter.get(filterType);
-//            if (serverLoadBalancePreFilter != null) {
-//                servers = serverLoadBalancePreFilter.filter(servers, config.getSignatureKey() + "=" + config.getServerInstanceSignature());
-//            }
-//            if (servers == null) {
-//                servers = Collections.emptyList();
-//            }
-//        }
-//        return servers;
     }
 
     private HttpRequest getOriginHttpRequest() {

@@ -1,4 +1,4 @@
-package cn.icodening.console.cloud.router.common;
+package cn.icodening.console.cloud.router.common.filter;
 
 import org.springframework.cloud.client.ServiceInstance;
 

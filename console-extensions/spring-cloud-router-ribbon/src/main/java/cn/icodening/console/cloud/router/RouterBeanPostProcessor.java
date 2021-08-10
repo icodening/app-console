@@ -1,6 +1,6 @@
 package cn.icodening.console.cloud.router;
 
-import cn.icodening.console.cloud.router.common.RouterFilterConfigSource;
+import cn.icodening.console.cloud.router.common.store.RouterFilterConfigSource;
 import cn.icodening.console.cloud.router.ribbon.RibbonLoadBalancerWrapper;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.BaseLoadBalancer;

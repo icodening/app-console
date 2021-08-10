@@ -1,7 +1,7 @@
 package cn.icodening.console.cloud.router.openfeign;
 
 import cn.icodening.console.cloud.router.common.HttpRequestRouterHelper;
-import cn.icodening.console.cloud.router.common.RouterConfigSource;
+import cn.icodening.console.cloud.router.common.store.RouterConfigSource;
 import cn.icodening.console.common.entity.RouterConfigEntity;
 import cn.icodening.console.util.ThreadContextUtil;
 import feign.Client;

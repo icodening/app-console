@@ -1,6 +1,6 @@
 package cn.icodening.console.cloud.router;
 
-import cn.icodening.console.cloud.router.common.LoadBalancePreFilter;
+import cn.icodening.console.cloud.router.common.filter.LoadBalancePreFilter;
 import cn.icodening.console.cloud.router.config.EurekaSupportAutoConfiguration;
 import cn.icodening.console.cloud.router.config.NacosSupportAutoConfiguration;
 import cn.icodening.console.cloud.router.ribbon.HostServerFilter;

@@ -1,6 +1,6 @@
 package cn.icodening.console.cloud.router.ribbon;
 
-import cn.icodening.console.cloud.router.common.LoadBalancePreFilter;
+import cn.icodening.console.cloud.router.common.filter.LoadBalancePreFilter;
 import com.netflix.loadbalancer.Server;
 
 import java.util.List;
