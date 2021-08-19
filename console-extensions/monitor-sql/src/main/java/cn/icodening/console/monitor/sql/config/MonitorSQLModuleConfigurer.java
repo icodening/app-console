@@ -2,6 +2,7 @@ package cn.icodening.console.monitor.sql.config;
 
 import cn.icodening.console.injector.ModuleRegistry;
 import cn.icodening.console.injector.ModuleRegistryConfigurer;
+import cn.icodening.console.util.ClassUtil;
 
 /**
  * @author icodening
@@ -11,6 +12,9 @@ public class MonitorSQLModuleConfigurer implements ModuleRegistryConfigurer {
 
     @Override
     public void configureRegistry(ModuleRegistry moduleRegistry) {
-        moduleRegistry.registerCurrentModule();
+        boolean existsSpringServletContext = ClassUtil.exists("org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext");
+        if (existsSpringServletContext) {
+            moduleRegistry.registerCurrentModule();
+        }
     }
 }

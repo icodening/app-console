@@ -37,8 +37,6 @@ public class RegisterBootService extends BaseBootService {
 
     @Override
     public void start() throws AppConsoleException {
-        //FIXME magic number
-        ObjectMapper objectMapper = new ObjectMapper();
         String serverAddress = ConfigurationManager.INSTANCE.get("serverAddress");
         EventDispatcher.registerOnceEvent(ApplicationInstanceStartedEvent.class, (ConsoleEventListener<ApplicationInstanceStartedEvent>) event -> {
             ApplicationInstance applicationInstance = event.getApplicationInstance();
@@ -47,6 +45,8 @@ public class RegisterBootService extends BaseBootService {
                 Request post = Request.of(serverAddress + "/instance/register", "POST");
                 post.getHeaders().set("Content-Type", "application/json;charset=utf8");
                 try {
+                    //FIXME 仅使用一次ObjectMapper却依赖了一个jackson，考虑优化
+                    ObjectMapper objectMapper = new ObjectMapper();
                     byte[] requestBody = objectMapper.writeValueAsBytes(applicationInstance);
                     post.setBody(requestBody);
                     Response exchange = HttpUtil.exchange(post);
