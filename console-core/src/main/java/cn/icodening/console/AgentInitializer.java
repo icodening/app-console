@@ -1,5 +1,7 @@
 package cn.icodening.console;
 
+import java.lang.instrument.Instrumentation;
+
 /**
  * @author icodening
  * @date 2021.05.20
@@ -11,5 +13,5 @@ public interface AgentInitializer {
      *
      * @param agentArgs 启动时的premain args
      */
-    void initialize(String agentArgs);
+    void initialize(String agentArgs, Instrumentation instrumentation);
 }

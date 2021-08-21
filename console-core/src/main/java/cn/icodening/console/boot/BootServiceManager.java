@@ -2,6 +2,7 @@ package cn.icodening.console.boot;
 
 import cn.icodening.console.util.ExtensionClassLoaderHolder;
 
+import java.lang.instrument.Instrumentation;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -15,8 +16,8 @@ public class BootServiceManager {
 
     private static volatile List<BootService> bootServices = null;
 
-    public static void initBootServices(String args) {
-        processBootServices(boot -> boot.initialize(args));
+    public static void initBootServices(String args, Instrumentation instrumentation) {
+        processBootServices(boot -> boot.initialize(args, instrumentation));
 
     }
 

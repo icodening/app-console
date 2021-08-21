@@ -8,6 +8,7 @@ import cn.icodening.console.logger.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.instrument.Instrumentation;
 import java.util.Properties;
 import java.util.Set;
 
@@ -20,7 +21,7 @@ public class ConfigurationBootService extends BaseBootService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationBootService.class);
 
     @Override
-    public void initialize(String agentArgs) {
+    public void initialize(String agentArgs, Instrumentation instrumentation) {
         // load local config
         LOGGER.info("load " + ConfigurationManager.DEFAULT_CONFIG_PATH);
         try {

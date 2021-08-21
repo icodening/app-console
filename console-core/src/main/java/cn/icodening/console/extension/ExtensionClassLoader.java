@@ -20,6 +20,10 @@ import java.util.stream.Collectors;
  */
 public class ExtensionClassLoader extends ClassLoader {
 
+    static {
+        registerAsParallelCapable();
+    }
+
     private final List<File> classpath = new LinkedList<>();
 
     private List<Jar> allJars;

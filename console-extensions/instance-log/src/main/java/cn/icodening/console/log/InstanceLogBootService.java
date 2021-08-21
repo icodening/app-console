@@ -6,6 +6,7 @@ import cn.icodening.console.logger.Logger;
 import cn.icodening.console.logger.LoggerFactory;
 
 import java.io.*;
+import java.lang.instrument.Instrumentation;
 
 /**
  * @author icodening
@@ -18,7 +19,7 @@ public class InstanceLogBootService extends BaseBootService {
     public static final String TEMP_LOG_PATH_KEY = "temp_log";
 
     @Override
-    public void initialize(String agentArgs) {
+    public void initialize(String agentArgs, Instrumentation instrumentation) {
         try {
             File temp = File.createTempFile("instance-console", ".log");
             temp.deleteOnExit();
