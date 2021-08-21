@@ -102,7 +102,7 @@ public class AppConsoleAgent {
         Iterator<ModuleRegistryConfigurer> iterator = load.iterator();
         Method addUrlMethod = ReflectUtil.findMethod(URLClassLoader.class, "addURL", URL.class);
         addUrlMethod.setAccessible(true);
-        ModuleRegistry moduleRegistry = buildLoadedModuleRegistry();
+        ModuleRegistry moduleRegistry = ModuleRegistry.buildLoadedModuleRegistry();
         registerRequiredModule(moduleRegistry);
         while (iterator.hasNext()) {
             ModuleRegistryConfigurer registryConfigurer = iterator.next();
@@ -131,19 +131,5 @@ public class AppConsoleAgent {
         for (String requiredModule : REQUIRED_MODULES) {
             moduleRegistry.registerWithModuleName(requiredModule);
         }
-    }
-
-    private static ModuleRegistry buildLoadedModuleRegistry() {
-        List<JarFile> loadedJars = ExtensionClassLoaderHolder.get().getLoadedJars();
-        Map<String, JarFile> loaded = new HashMap<>();
-        for (JarFile loadedJar : loadedJars) {
-            try {
-                String moduleName = loadedJar.getManifest().getMainAttributes().getValue(Attributes.Name.IMPLEMENTATION_TITLE);
-                loaded.putIfAbsent(moduleName, loadedJar);
-            } catch (IOException e) {
-                LOGGER.warn(e.getMessage(), e);
-            }
-        }
-        return new ModuleRegistry(loaded);
     }
 }

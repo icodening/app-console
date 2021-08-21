@@ -1,5 +1,9 @@
 package cn.icodening.console.injector;
 
+import cn.icodening.console.logger.Logger;
+import cn.icodening.console.logger.LoggerFactory;
+import cn.icodening.console.util.ExtensionClassLoaderHolder;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -14,6 +18,8 @@ import java.util.jar.JarFile;
  * @date 2021.06.29
  */
 public class ModuleRegistry {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModuleRegistry.class);
 
     /**
      * 即将被注册的扩展包
@@ -32,6 +38,20 @@ public class ModuleRegistry {
     public ModuleRegistry(Map<String, JarFile> allLoadedJars) {
         this.allLoadedJars = allLoadedJars;
         this.loadedJars.addAll(allLoadedJars.values());
+    }
+
+    public static ModuleRegistry buildLoadedModuleRegistry() {
+        List<JarFile> loadedJars = ExtensionClassLoaderHolder.get().getLoadedJars();
+        Map<String, JarFile> loaded = new HashMap<>(16);
+        for (JarFile loadedJar : loadedJars) {
+            try {
+                String moduleName = loadedJar.getManifest().getMainAttributes().getValue(Attributes.Name.IMPLEMENTATION_TITLE);
+                loaded.putIfAbsent(moduleName, loadedJar);
+            } catch (IOException e) {
+                LOGGER.warn(e.getMessage(), e);
+            }
+        }
+        return new ModuleRegistry(loaded);
     }
 
     public Map<String, JarFile> getRegisteredModule() {
