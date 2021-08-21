@@ -41,10 +41,10 @@ public class BootServiceManager {
         if (null == bootServices) {
             ServiceLoader<BootService> load = ServiceLoader.load(BootService.class, ExtensionClassLoaderHolder.get());
             Iterator<BootService> iterator = load.iterator();
-            ArrayList<BootService> bootServices = new ArrayList<>();
+            List<BootService> bootServices = new ArrayList<>();
             iterator.forEachRemaining(bootServices::add);
+            Collections.sort(bootServices);
             BootServiceManager.bootServices = bootServices;
-            Collections.sort(BootServiceManager.bootServices);
         }
         return bootServices;
     }
