@@ -1,5 +1,7 @@
 package cn.icodening.console.util;
 
+import java.io.InputStream;
+
 /**
  * @author icodening
  * @date 2021.07.10
@@ -12,8 +14,9 @@ public class ClassUtil {
 
     public static boolean exists(String className, ClassLoader classLoader) {
         try {
-            classLoader.loadClass(className);
-            return true;
+            String clazzFileName = className.replaceAll("\\.", "/") + ".class";
+            InputStream resourceAsStream = classLoader.getResourceAsStream(clazzFileName);
+            return resourceAsStream != null;
         } catch (Throwable e) {
             return false;
         }
@@ -21,8 +24,7 @@ public class ClassUtil {
 
     public static boolean exists(String className) {
         try {
-            Thread.currentThread().getContextClassLoader().loadClass(className);
-            return true;
+            return exists(className, Thread.currentThread().getContextClassLoader());
         } catch (Throwable e) {
             return false;
         }
