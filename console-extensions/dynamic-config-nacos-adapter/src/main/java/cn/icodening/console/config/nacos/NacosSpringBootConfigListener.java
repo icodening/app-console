@@ -39,6 +39,10 @@ public class NacosSpringBootConfigListener implements ApplicationListener<Config
         String group = nacosConfigProperties.getGroup();
         try {
             String config = configService.getConfig(dataId, group, NacosUtils.DEFAULT_TIMEOUT);
+            if (config == null) {
+                LOGGER.warn("refresh nacos config fail! because nacos config is null");
+                return;
+            }
             Properties properties = new Properties();
             properties.load(new StringReader(config));
             properties.putAll(source);
