@@ -6,10 +6,11 @@ spring:
   jackson:
     time-zone: GMT+8
     serialization:
-      INDENT_OUTPUT: true
-      WRITE_DATES_AS_TIMESTAMPS: true
-    default-property-inclusion: non_null
-
+      INDENT_OUTPUT: true #格式化JSON输出
+      WRITE_DATES_AS_TIMESTAMPS: true #序列化时间格式时使用时间戳
+    default-property-inclusion: non_null #响应时过滤null字段
+  jpa:
+    database: ${spring.profiles.active}
 # 开启SQL参数显示
 #logging:
 #  level:

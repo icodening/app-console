@@ -3,7 +3,6 @@ spring:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:dbc2m
   jpa:
-    database: h2
     show-sql: true
     generate-ddl: true
     properties:
