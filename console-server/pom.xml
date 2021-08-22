@@ -20,10 +20,12 @@
             <groupId>cn.icodening</groupId>
             <artifactId>console-common</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.bytebuddy</groupId>
+                    <artifactId>byte-buddy</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -54,6 +56,12 @@
                 <version>${springboot.version}</version>
                 <configuration>
                     <mainClass>cn.icodening.console.server.ConsoleServerApplication</mainClass>
+                    <excludes>
+                        <exclude>
+                            <groupId>net.bytebuddy</groupId>
+                            <artifactId>byte-buddy</artifactId>
+                        </exclude>
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>
