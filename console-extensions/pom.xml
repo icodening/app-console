@@ -24,6 +24,7 @@
         <module>spring-cloud-router-ribbon</module>
         <module>spring-cloud-router-openfeign</module>
         <module>spring-cloud-router-loadbalancer</module>
+        <module>spring-boot-runtime-adapter</module>
     </modules>
 
     <properties>
