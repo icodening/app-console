@@ -30,11 +30,6 @@
             <artifactId>console-common</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>cn.icodening</groupId>
-            <artifactId>console-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 
     <build>
