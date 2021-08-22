@@ -1,8 +1,7 @@
 package cn.icodening.console.register.spring;
 
-import cn.icodening.console.common.event.ApplicationInstanceStartedEvent;
 import cn.icodening.console.common.model.ApplicationInstance;
-import cn.icodening.console.event.EventDispatcher;
+import cn.icodening.console.common.util.ApplicationInstanceHelper;
 import cn.icodening.console.logger.Logger;
 import cn.icodening.console.logger.LoggerFactory;
 import cn.icodening.console.util.NetUtil;
@@ -74,6 +73,6 @@ public class AgentStartInitialization implements InitializingBean, ApplicationCo
                 .applicationName(applicationName)
                 .identity(localhost + ":" + portString)
                 .build();
-        EventDispatcher.dispatch(new ApplicationInstanceStartedEvent(instance));
+        ApplicationInstanceHelper.register(instance);
     }
 }
