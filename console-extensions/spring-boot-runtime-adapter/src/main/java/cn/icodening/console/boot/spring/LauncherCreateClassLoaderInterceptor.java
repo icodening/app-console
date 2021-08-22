@@ -13,6 +13,8 @@ import java.util.*;
 import java.util.jar.JarFile;
 
 /**
+ * Spring Boot Jar运行模式下classpath注入
+ *
  * @author icodening
  * @date 2021.08.21
  */

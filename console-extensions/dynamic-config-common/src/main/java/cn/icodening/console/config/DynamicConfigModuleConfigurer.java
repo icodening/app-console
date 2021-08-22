@@ -3,7 +3,6 @@ package cn.icodening.console.config;
 import cn.icodening.console.injector.ModuleRegistry;
 import cn.icodening.console.injector.ModuleRegistryConfigurer;
 import cn.icodening.console.util.ClassUtil;
-import cn.icodening.console.util.ExtensionClassLoaderHolder;
 
 import java.util.*;
 
@@ -46,7 +45,7 @@ public class DynamicConfigModuleConfigurer implements ModuleRegistryConfigurer {
     }
 
     private List<DynamicConfigModuleRegister> getDynamicConfigModuleRegisters() {
-        ServiceLoader<DynamicConfigModuleRegister> load = ServiceLoader.load(DynamicConfigModuleRegister.class, ExtensionClassLoaderHolder.get());
+        ServiceLoader<DynamicConfigModuleRegister> load = ServiceLoader.load(DynamicConfigModuleRegister.class);
         Iterator<DynamicConfigModuleRegister> iterator = load.iterator();
         List<DynamicConfigModuleRegister> configModuleRegisters = new ArrayList<>(5);
         while (iterator.hasNext()) {
