@@ -1,5 +1,6 @@
 package cn.icodening.console.log;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,7 @@ public class InstanceLogBeanConfiguration {
 
     @Bean
     @ConditionalOnMissingClass("org.springframework.web.socket.server.standard.ServerEndpointExporter")
+    @ConditionalOnMissingBean(type = "org.springframework.web.socket.server.standard.ServerEndpointExporter")
     public WebSocketEndpointExporter webSocketEndpointExporter() {
         return new WebSocketEndpointExporter();
     }
