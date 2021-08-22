@@ -1,6 +1,6 @@
 package cn.icodening.console.log;
 
-import cn.icodening.console.boot.BaseBootService;
+import cn.icodening.console.AgentInitializer;
 import cn.icodening.console.config.ConfigurationManager;
 import cn.icodening.console.logger.Logger;
 import cn.icodening.console.logger.LoggerFactory;
@@ -12,9 +12,9 @@ import java.lang.instrument.Instrumentation;
  * @author icodening
  * @date 2021.07.12
  */
-public class InstanceLogBootService extends BaseBootService {
+public class InstanceLogInitializer implements AgentInitializer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InstanceLogBootService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InstanceLogInitializer.class);
 
     public static final String TEMP_LOG_PATH_KEY = "temp_log";
 

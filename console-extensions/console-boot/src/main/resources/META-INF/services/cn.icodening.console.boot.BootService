@@ -1,3 +1,2 @@
-cn.icodening.console.boot.ConfigurationBootService
 cn.icodening.console.boot.RegisterBootService
 cn.icodening.console.boot.ConsoleEventListenerBootService

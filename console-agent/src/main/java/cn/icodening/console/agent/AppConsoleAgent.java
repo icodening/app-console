@@ -1,24 +1,23 @@
 package cn.icodening.console.agent;
 
-import cn.icodening.console.AgentStartEventProvider;
+import cn.icodening.console.AgentInitializer;
 import cn.icodening.console.boot.BootServiceManager;
-import cn.icodening.console.event.AgentStartEvent;
-import cn.icodening.console.event.EventDispatcher;
 import cn.icodening.console.extension.ExtensionClassLoader;
 import cn.icodening.console.injector.ModuleRegistry;
 import cn.icodening.console.injector.ModuleRegistryConfigurer;
 import cn.icodening.console.logger.Logger;
 import cn.icodening.console.logger.LoggerFactory;
+import cn.icodening.console.util.AgentStartHelper;
 import cn.icodening.console.util.ExtensionClassLoaderHolder;
 import cn.icodening.console.util.ReflectUtil;
 
-import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
-import java.util.jar.Attributes;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.jar.JarFile;
 
 /**
@@ -34,38 +33,25 @@ public class AppConsoleAgent {
      */
     private static final String[] REQUIRED_MODULES = {"console-common", "console-boot"};
 
-    public static void premain(String agentArgs, Instrumentation instrumentation) {
-        addRequiredDependency();
-        agentInitializer(agentArgs, instrumentation);
-        List<AgentStartEvent> agentStartEvents = getAgentStartEventList();
-        if (agentStartEvents.isEmpty()) {
-            //直接启动
-            startAgent(agentArgs, instrumentation);
-            return;
-        }
-        //回调启动
-        EventDispatcher.registerOnceEvent(agentStartEvents.get(0).getClass(), event -> {
-            ((AgentStartEvent) event).invoke(agentArgs, instrumentation);
-            startAgent(agentArgs, instrumentation);
-        });
-    }
+    private static final String DELAY_START_KEY = "delay.start.agent";
 
-    private static List<AgentStartEvent> getAgentStartEventList() {
-        ExtensionClassLoader classLoader = ExtensionClassLoaderHolder.get();
-        ServiceLoader<AgentStartEventProvider> load = ServiceLoader.load(AgentStartEventProvider.class, classLoader);
-        Iterator<AgentStartEventProvider> iterator = load.iterator();
-        List<AgentStartEvent> agentStartEvents = new ArrayList<>(4);
-        iterator.forEachRemaining(event -> {
-            if (event.get() != null) {
-                agentStartEvents.add(event.get());
-            }
-        });
-        return agentStartEvents;
+    public static void premain(String agentArgs, Instrumentation instrumentation) {
+        agentInitializer(agentArgs, instrumentation);
+        boolean delay = Boolean.parseBoolean(System.getProperty(DELAY_START_KEY, "false"));
+        if (!delay) {
+            addRequiredDependency();
+            startAgent(agentArgs, instrumentation);
+        } else {
+            AgentStartHelper.setStart(() -> startAgent(agentArgs, instrumentation));
+        }
     }
 
     private static void agentInitializer(String agentArgs, Instrumentation instrumentation) {
         try {
-            BootServiceManager.initBootServices(agentArgs, instrumentation);
+            ServiceLoader<AgentInitializer> load = ServiceLoader.load(AgentInitializer.class, ExtensionClassLoaderHolder.get());
+            for (AgentInitializer agentInitializer : load) {
+                agentInitializer.initialize(agentArgs, instrumentation);
+            }
         } catch (Exception e) {
             LOGGER.warn(e.getMessage(), e);
         }

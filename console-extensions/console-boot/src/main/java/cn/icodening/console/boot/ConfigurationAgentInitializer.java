@@ -1,5 +1,6 @@
 package cn.icodening.console.boot;
 
+import cn.icodening.console.AgentInitializer;
 import cn.icodening.console.AppConsoleException;
 import cn.icodening.console.Sortable;
 import cn.icodening.console.config.ConfigurationManager;
@@ -16,9 +17,9 @@ import java.util.Set;
  * @author icodening
  * @date 2021.05.22
  */
-public class ConfigurationBootService extends BaseBootService {
+public class ConfigurationAgentInitializer implements AgentInitializer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationBootService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationAgentInitializer.class);
 
     @Override
     public void initialize(String agentArgs, Instrumentation instrumentation) {

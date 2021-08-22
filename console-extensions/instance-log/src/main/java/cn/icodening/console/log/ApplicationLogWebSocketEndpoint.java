@@ -25,7 +25,7 @@ public class ApplicationLogWebSocketEndpoint {
 
     @OnOpen
     public void onOpen(Session session) throws Exception {
-        FileInputStream fileInputStream = new FileInputStream(new File(ConfigurationManager.INSTANCE.get(InstanceLogBootService.TEMP_LOG_PATH_KEY)));
+        FileInputStream fileInputStream = new FileInputStream(new File(ConfigurationManager.INSTANCE.get(InstanceLogInitializer.TEMP_LOG_PATH_KEY)));
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
         final RemoteEndpoint.Basic basicRemote = session.getBasicRemote();
         for (String line; (line = bufferedReader.readLine()) != null; ) {
