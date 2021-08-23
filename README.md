@@ -91,6 +91,6 @@ serverAddress=http://127.0.0.1:28080
 不满足条件的调用结果
 ![app-route-filter](./docs/images/routeFilterResult2.png)
 # PS
-1. 仅支持基于SpringBoot 2.0.0.RELEASE及以上版本开发的应用
+1. 仅支持基于SpringBoot 2.0.0.RELEASE及以上版本开发Servlet Web应用, 暂不支持Reactive应用
 2. 在Spring环境下, 标识有@Extension接口的实现将被Spring容器接管，将享有Spring的特性。
 3. 不适用于传统基于Tomcat直接部署war包类型的项目
