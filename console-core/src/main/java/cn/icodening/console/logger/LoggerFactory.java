@@ -2,6 +2,7 @@ package cn.icodening.console.logger;
 
 import cn.icodening.console.logger.jdk.JDKLoggerAdapter;
 import cn.icodening.console.logger.log4j2.Log4j2LoggerAdapter;
+import cn.icodening.console.logger.logback.LogbackLoggerAdapter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,10 +17,11 @@ import java.util.concurrent.ConcurrentMap;
 public class LoggerFactory {
 
     private static final ConcurrentMap<String, LoggerHolder> LOGGERS = new ConcurrentHashMap<>();
+
     private static volatile LoggerAdapter LOGGER_ADAPTER;
 
     static {
-        String logger = System.getProperty("application.console.logger", "jdk");
+        String logger = System.getProperty("application.console.logger", "");
         switch (logger) {
             case "log4j2": {
                 setLoggerAdapter(new Log4j2LoggerAdapter());
@@ -29,16 +31,19 @@ public class LoggerFactory {
                 setLoggerAdapter(new JDKLoggerAdapter());
                 break;
             }
+            case "logback": {
+                setLoggerAdapter(new LogbackLoggerAdapter());
+                break;
+            }
             default:
                 List<Class<? extends LoggerAdapter>> candidates = Arrays.asList(
-                        Log4j2LoggerAdapter.class, JDKLoggerAdapter.class
+                        LogbackLoggerAdapter.class, Log4j2LoggerAdapter.class, JDKLoggerAdapter.class
                 );
                 for (Class<? extends LoggerAdapter> clazz : candidates) {
                     try {
                         setLoggerAdapter(clazz.newInstance());
                         break;
                     } catch (Throwable ignored) {
-                        ignored.printStackTrace();
                     }
                 }
         }
