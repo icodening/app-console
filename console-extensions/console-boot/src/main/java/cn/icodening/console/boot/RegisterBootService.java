@@ -16,9 +16,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 注册启动点
@@ -49,7 +47,6 @@ public class RegisterBootService extends BaseBootService {
                 JsonNode jsonNode = objectMapper.readTree(dataBytes);
                 JsonNode dataNode = jsonNode.get("data");
                 ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-                Iterator<Map.Entry<String, JsonNode>> fields = dataNode.fields();
                 dataNode.fields().forEachRemaining(mapEntry -> {
                     try {
                         String key = mapEntry.getKey();
