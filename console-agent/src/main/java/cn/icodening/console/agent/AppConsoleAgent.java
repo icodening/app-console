@@ -31,7 +31,7 @@ public class AppConsoleAgent {
     /**
      * 必备模块名
      */
-    private static final String[] REQUIRED_MODULES = {"console-common", "console-boot"};
+    private static final String[] REQUIRED_MODULES = {"console-boot"};
 
     private static final String DELAY_START_KEY = "delay.start.agent";
 
