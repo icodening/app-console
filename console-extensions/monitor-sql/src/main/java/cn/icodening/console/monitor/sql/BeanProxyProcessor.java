@@ -10,6 +10,7 @@ import java.util.function.Function;
  * @author icodening
  * @date 2021.07.28
  */
+@Deprecated
 public class BeanProxyProcessor<T> {
 
     private final Class<T> beanClass;
@@ -55,18 +56,4 @@ public class BeanProxyProcessor<T> {
         };
     }
 
-//    @Override
-//    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-//        if (proxyFunction == null) {
-//            return bean;
-//        }
-//        if (!beanClass.isAssignableFrom(bean.getClass())) {
-//            return bean;
-//        }
-//        if (StringUtils.hasText(this.beanName)
-//                && this.beanName.equals(beanName)) {
-//            return proxyFunction.apply((T) bean);
-//        }
-//        return proxyFunction.apply((T) bean);
-//    }
 }
