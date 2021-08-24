@@ -56,12 +56,6 @@
                 <version>${springboot.version}</version>
                 <configuration>
                     <mainClass>cn.icodening.console.server.ConsoleServerApplication</mainClass>
-                    <excludes>
-                        <exclude>
-                            <groupId>net.bytebuddy</groupId>
-                            <artifactId>byte-buddy</artifactId>
-                        </exclude>
-                    </excludes>
                 </configuration>
                 <executions>
                     <execution>
