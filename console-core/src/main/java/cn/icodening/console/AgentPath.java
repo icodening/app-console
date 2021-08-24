@@ -17,7 +17,7 @@ public enum AgentPath {
      */
     INSTANCE;
 
-    private File path;
+    private final File path;
 
     AgentPath() {
         path = findPath();
@@ -40,10 +40,10 @@ public enum AgentPath {
                 File agentJarFile = null;
                 try {
                     agentJarFile = new File(new URL(urlString).toURI());
+                    if (agentJarFile.exists()) {
+                        return agentJarFile.getParentFile();
+                    }
                 } catch (MalformedURLException | URISyntaxException ignore) {
-                }
-                if (agentJarFile.exists()) {
-                    return agentJarFile.getParentFile();
                 }
             } else {
                 int prefixLength = "file:".length();
