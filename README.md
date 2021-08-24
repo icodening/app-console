@@ -52,7 +52,8 @@ serverAddress=http://127.0.0.1:28080
 # Screenshot
 #### 配置应用启动参数: -javaagent:/xxx/console-agent.jar
 ![vm-option](./docs/images/usage-vmoption.png)
-
+注意，使用IDEA调试时需要使用该命令行(none)，如图所示
+![shorten](./docs/images/shorten.png)
 #### 应用完整依赖与启动日志
 ![dependency](./docs/images/adapterLog.png)
 
