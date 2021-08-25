@@ -15,6 +15,11 @@ public interface InterceptorDefine {
      */
     String type();
 
+    /**
+     * 获取拦截点定义
+     *
+     * @return 拦截点
+     */
     InterceptPoint[] getInterceptPoints();
 
 }
