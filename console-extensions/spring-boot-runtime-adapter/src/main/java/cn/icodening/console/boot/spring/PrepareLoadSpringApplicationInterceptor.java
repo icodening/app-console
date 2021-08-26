@@ -4,11 +4,7 @@ import cn.icodening.console.injector.ModuleRegistry;
 import cn.icodening.console.injector.ModuleRegistryConfigurer;
 import cn.icodening.console.intercept.PrepareClassLoadInterceptor;
 import cn.icodening.console.logger.Logger;
-import cn.icodening.console.logger.LoggerAdapter;
 import cn.icodening.console.logger.LoggerFactory;
-import cn.icodening.console.logger.jdk.JDKLoggerAdapter;
-import cn.icodening.console.logger.log4j2.Log4j2LoggerAdapter;
-import cn.icodening.console.logger.logback.LogbackLoggerAdapter;
 import cn.icodening.console.util.AgentStartHelper;
 import cn.icodening.console.util.ExtensionClassLoaderHolder;
 import cn.icodening.console.util.ReflectUtil;
@@ -16,7 +12,9 @@ import cn.icodening.console.util.ReflectUtil;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.jar.JarFile;
 
 /**
@@ -31,8 +29,6 @@ public class PrepareLoadSpringApplicationInterceptor implements PrepareClassLoad
 
     private static final String[] REQUIRED_MODULES = {"console-boot"};
 
-    private static final String[] LOGGER_CLASSES = {"cn.icodening.console.logger.logback.LogbackLoggerAdapter"};
-
     @Override
     public String type() {
         return CLASSNAME;
@@ -40,17 +36,6 @@ public class PrepareLoadSpringApplicationInterceptor implements PrepareClassLoad
 
     @Override
     public void prepare(ClassLoader classLoader) {
-        List<Class<? extends LoggerAdapter>> candidates = Arrays.asList(
-                LogbackLoggerAdapter.class, Log4j2LoggerAdapter.class, JDKLoggerAdapter.class
-        );
-        for (Class<? extends LoggerAdapter> clazz : candidates) {
-            try {
-                LoggerFactory.setLoggerAdapter(clazz.newInstance());
-                break;
-            } catch (Throwable ignored) {
-                ignored.printStackTrace();
-            }
-        }
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         ServiceLoader<ModuleRegistryConfigurer> load = ServiceLoader.load(ModuleRegistryConfigurer.class, ExtensionClassLoaderHolder.get());
         Iterator<ModuleRegistryConfigurer> iterator = load.iterator();
@@ -77,7 +62,6 @@ public class PrepareLoadSpringApplicationInterceptor implements PrepareClassLoad
             LOGGER.debug("enable modules: " + enableModules.toString());
         }
         AgentStartHelper.start();
-//        LoggerFactory.refreshLoggerAdapter();
     }
 
     private static void registerRequiredModule(ModuleRegistry moduleRegistry) {

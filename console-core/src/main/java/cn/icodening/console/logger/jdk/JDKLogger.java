@@ -33,17 +33,17 @@ public class JDKLogger implements Logger {
 
     @Override
     public void debug(String msg) {
-        info(msg);
+        logger.log(Level.FINE, msg);
     }
 
     @Override
     public void debug(Throwable e) {
-        info(e);
+        debug(e.getMessage());
     }
 
     @Override
     public void debug(String msg, Throwable e) {
-        info(msg, e);
+        logger.log(Level.FINE, e, e::getMessage);
     }
 
     @Override

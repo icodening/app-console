@@ -11,6 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
+ * FIXME 应用运行时非AppClassLoader类加载器导致仅JDK日志生效，是否需要移除
+ *
  * @author icodening
  * @date 2021.06.09
  */
