@@ -6,14 +6,7 @@ package cn.icodening.console.intercept;
  * @author icodening
  * @date 2021.08.21
  */
-public interface InterceptorDefine {
-
-    /**
-     * 需要拦截的class
-     *
-     * @return classname
-     */
-    String type();
+public interface InterceptorDefine extends InterceptTypes {
 
     /**
      * 获取拦截点定义

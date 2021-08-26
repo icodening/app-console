@@ -2,6 +2,7 @@ package cn.icodening.console.intercept;
 
 import cn.icodening.console.AgentInitializer;
 import cn.icodening.console.util.ExtensionClassLoaderHolder;
+import cn.icodening.console.util.ServiceLoaderUtil;
 import cn.icodening.console.util.StringUtil;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.builder.AgentBuilder;
@@ -15,7 +16,10 @@ import net.bytebuddy.matcher.ElementMatcher;
 import net.bytebuddy.matcher.ElementMatchers;
 
 import java.lang.instrument.Instrumentation;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,14 +34,8 @@ public class AgentMethodInterceptInitializer implements AgentInitializer {
 
     @Override
     public void initialize(String agentArgs, Instrumentation instrumentation) {
-        List<InterceptorDefine> interceptorDefines = new ArrayList<>();
-        ServiceLoader<InterceptorDefine> load = ServiceLoader.load(InterceptorDefine.class, ExtensionClassLoaderHolder.get());
-        if (!load.iterator().hasNext()) {
-            return;
-        }
-        for (InterceptorDefine value : load) {
-            interceptorDefines.add(value);
-        }
+        List<InterceptorDefine> interceptorDefines = ServiceLoaderUtil.getExtensions(InterceptorDefine.class, ExtensionClassLoaderHolder.get());
+        List<PrepareClassLoadInterceptor> prepareClassLoadInterceptors = ServiceLoaderUtil.getExtensions(PrepareClassLoadInterceptor.class, ExtensionClassLoaderHolder.get());
 
         AgentBuilder.Default agentBuilder = new AgentBuilder.Default(new ByteBuddy());
 
@@ -50,17 +48,27 @@ public class AgentMethodInterceptInitializer implements AgentInitializer {
                 .collect(Collectors.toList());
 
         //reduce type matcher
-        ElementMatcher.Junction<NamedElement> typeMatcher = availableInterceptorDefines.stream()
-                .flatMap(define -> Stream.of(ElementMatchers.named(define.type())))
+        ElementMatcher.Junction<NamedElement> typeMatcher = Stream.concat(availableInterceptorDefines.stream(), prepareClassLoadInterceptors.stream())
+                .flatMap(intercept -> Stream.of(ElementMatchers.named(intercept.type())))
                 .reduce(ElementMatchers.none(), ElementMatcher.Junction::or);
 
         //grouping by type
         Map<String, List<InterceptorDefine>> interceptorDefineMap = availableInterceptorDefines.stream().collect(Collectors.groupingBy(InterceptorDefine::type));
+        Map<String, List<PrepareClassLoadInterceptor>> prepareClassLoadMap = prepareClassLoadInterceptors.stream().collect(Collectors.groupingBy(PrepareClassLoadInterceptor::type));
 
         //FIXME 可以考虑添加拦截器排序功能
         agentBuilder.type(typeMatcher)
                 .transform((builder, typeDescription, classLoader, module) -> {
-                    List<InterceptorDefine> interceptorDefinesByType = interceptorDefineMap.get(typeDescription.getTypeName());
+                    //prepare class load
+                    String typeName = typeDescription.getTypeName();
+                    List<PrepareClassLoadInterceptor> classLoadInterceptors = prepareClassLoadMap.get(typeName);
+                    if (classLoadInterceptors != null) {
+                        for (PrepareClassLoadInterceptor classLoadInterceptor : classLoadInterceptors) {
+                            classLoadInterceptor.prepare(classLoader);
+                        }
+                    }
+
+                    List<InterceptorDefine> interceptorDefinesByType = interceptorDefineMap.get(typeName);
                     for (InterceptorDefine interceptorDefine : interceptorDefinesByType) {
                         InterceptPoint[] interceptPoints = interceptorDefine.getInterceptPoints();
                         DynamicType.Builder.MethodDefinition.ImplementationDefinition<?> method = null;
