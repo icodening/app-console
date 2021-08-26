@@ -18,6 +18,8 @@ import java.util.ServiceLoader;
 import java.util.jar.JarFile;
 
 /**
+ * 加载 {@link org.springframework.boot.SpringApplication} 类的拦截器，主要用于加载需要的模块并启动agent
+ *
  * @author icodening
  * @date 2021.08.26
  */
