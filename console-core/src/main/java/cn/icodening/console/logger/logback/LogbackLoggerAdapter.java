@@ -15,7 +15,6 @@ import java.io.File;
 public class LogbackLoggerAdapter implements LoggerAdapter {
 
     private final LoggerContext loggerContext = (LoggerContext) StaticLoggerBinder.getSingleton().getLoggerFactory();
-    ;
 
     @Override
     public Logger getLogger(Class<?> key) {
