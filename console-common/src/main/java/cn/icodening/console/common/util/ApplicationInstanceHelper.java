@@ -33,7 +33,8 @@ public class ApplicationInstanceHelper {
         if (applicationInstance == null || !isInit) {
             return;
         }
-        consumer.accept(applicationInstance);
+        ApplicationInstanceHelper.consumer.accept(applicationInstance);
+        ApplicationInstanceHelper.applicationInstance = applicationInstance;
     }
 
     public static void destroy() {
@@ -47,6 +48,9 @@ public class ApplicationInstanceHelper {
             } catch (IOException e) {
                 throw AppConsoleException.wrapperException(e);
             }
+            ApplicationInstanceHelper.isInit = false;
+            ApplicationInstanceHelper.consumer = null;
+            ApplicationInstanceHelper.applicationInstance = null;
         }
     }
 }
