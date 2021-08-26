@@ -4,6 +4,7 @@ import ch.qos.logback.classic.LoggerContext;
 import cn.icodening.console.logger.Level;
 import cn.icodening.console.logger.Logger;
 import cn.icodening.console.logger.LoggerAdapter;
+import org.slf4j.impl.StaticLoggerBinder;
 
 import java.io.File;
 
@@ -13,7 +14,8 @@ import java.io.File;
  */
 public class LogbackLoggerAdapter implements LoggerAdapter {
 
-    private final LoggerContext loggerContext = new LoggerContext();
+    private final LoggerContext loggerContext = (LoggerContext) StaticLoggerBinder.getSingleton().getLoggerFactory();
+    ;
 
     @Override
     public Logger getLogger(Class<?> key) {
