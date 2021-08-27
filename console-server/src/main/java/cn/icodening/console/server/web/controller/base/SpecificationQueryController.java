@@ -37,14 +37,16 @@ public interface SpecificationQueryController<T> extends BaseController<T> {
     }
 
     /**
-     * 构造查询条件
+     * 构造查询条件。 当返回空时会查全表
      *
      * @param currentPage 当前页
      * @param pageSize    分页大小
      * @param params      查询参数
      * @return 查询条件体
      */
-    Specification<T> createSpecification(Integer currentPage, Integer pageSize, MultiValueMap<String, String> params);
+    default Specification<T> createSpecification(Integer currentPage, Integer pageSize, MultiValueMap<String, String> params) {
+        return null;
+    }
 
     /**
      * 查询后置处理
