@@ -10,7 +10,6 @@ import java.util.function.Function;
  * @author icodening
  * @date 2021.07.28
  */
-@Deprecated
 public class BeanProxyProcessor<T> {
 
     private final Class<T> beanClass;
