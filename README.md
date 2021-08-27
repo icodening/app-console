@@ -2,7 +2,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/icodening/app-console.svg)](https://github.com/icodening/app-console)
 [![GitHub forks](https://img.shields.io/github/forks/icodening/app-console.svg)](https://github.com/icodening/app-console)
 
-一款Spring Boot无侵入式应用管理框架.
+一款Spring Boot无侵入式应用管理与增强的框架, 不需要对原有应用代码做任何改造，开箱即用。
 
 # Features
 >1. 对原有代码无任何侵入，亦不需要额外添加依赖
@@ -12,9 +12,18 @@
 >5. 对应用内部路由进行管理控制(应用需要基于Spring Cloud)  
 >6. 对应用环境变量修改并实时生效 
 >7. 在线实时查看应用日志
->8. 可对实例SQL进行监控
+>8. 可对实例SQL进行记录监控
 
 ``注: 该项目仅供学习使用,不可用于生产,且功能较为简单,等待后续扩展``
+# Technology Stack
+````
+1. Java Agent  
+2. Alibaba Nacos Config
+3. Netflix Ribbon
+4. OpenFeign
+5. WebSocket
+6. Spring Data JPA
+````
 # Build 
 ````shell script
 mvn package  
