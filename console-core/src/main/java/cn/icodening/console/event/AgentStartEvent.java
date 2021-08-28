@@ -4,10 +4,12 @@ import java.lang.instrument.Instrumentation;
 
 /**
  * agent启动事件
+ * TODO 按照当前设计，该类应该是不需要了，考虑删除
  *
  * @author icodening
  * @date 2021.06.27
  */
+@Deprecated
 public abstract class AgentStartEvent extends AppConsoleEvent {
 
     /**

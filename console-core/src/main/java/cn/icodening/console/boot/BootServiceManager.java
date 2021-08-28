@@ -1,6 +1,9 @@
 package cn.icodening.console.boot;
 
-import java.util.*;
+import cn.icodening.console.util.ServiceLoaderUtil;
+
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -32,10 +35,7 @@ public class BootServiceManager {
     private static List<BootService> getBootServices() {
         if (null == bootServices) {
             ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-            ServiceLoader<BootService> boots = ServiceLoader.load(BootService.class, contextClassLoader);
-            Iterator<BootService> iterator = boots.iterator();
-            List<BootService> bootServices = new ArrayList<>();
-            iterator.forEachRemaining(bootServices::add);
+            List<BootService> bootServices = ServiceLoaderUtil.getExtensions(BootService.class, contextClassLoader);
             Collections.sort(bootServices);
             BootServiceManager.bootServices = bootServices;
         }
