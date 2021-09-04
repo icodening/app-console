@@ -1,9 +1,10 @@
 package cn.icodening.console.common.util;
 
-import cn.icodening.console.AppConsoleException;
 import cn.icodening.console.common.model.ApplicationInstance;
 import cn.icodening.console.config.ConfigurationManager;
 import cn.icodening.console.http.Request;
+import cn.icodening.console.logger.Logger;
+import cn.icodening.console.logger.LoggerFactory;
 import cn.icodening.console.util.HttpUtil;
 
 import java.io.IOException;
@@ -15,11 +16,13 @@ import java.util.function.Consumer;
  */
 public class ApplicationInstanceHelper {
 
-    public static volatile ApplicationInstance applicationInstance;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationInstanceHelper.class);
 
-    public static volatile Consumer<ApplicationInstance> consumer;
+    private static volatile ApplicationInstance applicationInstance;
 
-    public static volatile boolean isInit = false;
+    private static volatile Consumer<ApplicationInstance> consumer;
+
+    private static volatile boolean isInit = false;
 
     public static void initialization(Consumer<ApplicationInstance> consumer) {
         if (consumer == null || isInit) {
@@ -45,12 +48,13 @@ public class ApplicationInstanceHelper {
             Request post = Request.of(serverAddress + "/instance/deregister/" + identity, "POST");
             try {
                 HttpUtil.exchange(post);
+                ApplicationInstanceHelper.isInit = false;
+                ApplicationInstanceHelper.consumer = null;
+                ApplicationInstanceHelper.applicationInstance = null;
             } catch (IOException e) {
-                throw AppConsoleException.wrapperException(e);
+                LOGGER.warn("deregister application fail!! " + e.getMessage());
             }
-            ApplicationInstanceHelper.isInit = false;
-            ApplicationInstanceHelper.consumer = null;
-            ApplicationInstanceHelper.applicationInstance = null;
+
         }
     }
 }

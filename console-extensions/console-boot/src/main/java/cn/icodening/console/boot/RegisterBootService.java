@@ -71,9 +71,9 @@ public class RegisterBootService extends BaseBootService {
                     }
                 });
                 LOGGER.info("register backend success! backend address is:" + serverAddress + ". " + applicationInstance);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 //TODO ignore or retry?
-                LOGGER.warn("register failed !!! " + applicationInstance, e.getCause());
+                LOGGER.warn(e.getMessage() + ", register failed !!! " + applicationInstance);
             }
         });
     }

@@ -3,6 +3,8 @@ package cn.icodening.console.config;
 import cn.icodening.console.common.entity.ConfigEntity;
 import cn.icodening.console.http.Request;
 import cn.icodening.console.http.Response;
+import cn.icodening.console.logger.Logger;
+import cn.icodening.console.logger.LoggerFactory;
 import cn.icodening.console.util.HttpUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,7 +15,6 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +26,8 @@ import java.util.Set;
  * @date 2021.07.11
  */
 public class AppConsoleApplicationContextInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppConsoleApplicationContextInitializer.class);
 
     private static final String APPLICATION_NAME_KEY = "spring.application.name";
 
@@ -50,8 +53,8 @@ public class AppConsoleApplicationContextInitializer implements ApplicationConte
                 ConfigEntity target = objectMapper.readValue(objectNode.toString(), ConfigEntity.class);
                 properties.load(new StringReader(target.getContent()));
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Throwable e) {
+            LOGGER.warn("initialize dynamic config fail !!! because:" + e.getMessage());
         }
 
         Set<String> set = properties.stringPropertyNames();
