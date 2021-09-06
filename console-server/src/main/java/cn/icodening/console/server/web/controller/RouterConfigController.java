@@ -4,7 +4,6 @@ import cn.icodening.console.common.entity.RouterConfigEntity;
 import cn.icodening.console.server.service.IService;
 import cn.icodening.console.server.service.RouterConfigService;
 import cn.icodening.console.server.web.controller.base.CrudController;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,8 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/routerConfig")
 public class RouterConfigController implements CrudController<RouterConfigEntity> {
 
-    @Autowired
-    private RouterConfigService routerConfigService;
+    private final RouterConfigService routerConfigService;
+
+    public RouterConfigController(RouterConfigService routerConfigService) {
+        this.routerConfigService = routerConfigService;
+    }
 
     @Override
     public IService<RouterConfigEntity> getService() {

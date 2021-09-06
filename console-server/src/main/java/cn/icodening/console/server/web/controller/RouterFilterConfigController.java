@@ -4,7 +4,6 @@ import cn.icodening.console.common.entity.RouterFilterConfigEntity;
 import cn.icodening.console.server.service.IService;
 import cn.icodening.console.server.service.RouterFilterConfigService;
 import cn.icodening.console.server.web.controller.base.CrudController;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,8 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/routerFilterConfig")
 public class RouterFilterConfigController implements CrudController<RouterFilterConfigEntity> {
 
-    @Autowired
-    private RouterFilterConfigService routerConfigService;
+    private final RouterFilterConfigService routerConfigService;
+
+    public RouterFilterConfigController(RouterFilterConfigService routerConfigService) {
+        this.routerConfigService = routerConfigService;
+    }
 
     @Override
     public IService<RouterFilterConfigEntity> getService() {

@@ -27,11 +27,14 @@ import java.util.stream.Stream;
 @WrapperResponse
 public class InstanceController implements SpecificationQueryController<InstanceEntity> {
 
-    @Autowired
-    private InstanceService instanceService;
+    private final InstanceService instanceService;
 
     @Autowired
     private List<InstanceConfigurationService<?>> instanceConfigurationServices;
+
+    public InstanceController(InstanceService instanceService) {
+        this.instanceService = instanceService;
+    }
 
     @PostMapping("/register")
     public Object register(@RequestBody InstanceEntity instanceEntity) {

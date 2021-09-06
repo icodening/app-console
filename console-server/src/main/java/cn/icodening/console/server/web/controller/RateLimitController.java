@@ -4,7 +4,6 @@ import cn.icodening.console.common.entity.RateLimitEntity;
 import cn.icodening.console.server.service.IService;
 import cn.icodening.console.server.service.RateLimitService;
 import cn.icodening.console.server.web.controller.base.CrudController;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
@@ -26,8 +25,11 @@ import java.util.stream.Stream;
 @RequestMapping("/ratelimit")
 public class RateLimitController implements CrudController<RateLimitEntity> {
 
-    @Autowired
-    private RateLimitService rateLimitService;
+    private final RateLimitService rateLimitService;
+
+    public RateLimitController(RateLimitService rateLimitService) {
+        this.rateLimitService = rateLimitService;
+    }
 
     @Override
     public IService<RateLimitEntity> getService() {

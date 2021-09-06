@@ -4,7 +4,6 @@ import cn.icodening.console.common.entity.ConfigEntity;
 import cn.icodening.console.server.service.ConfigService;
 import cn.icodening.console.server.service.IService;
 import cn.icodening.console.server.web.controller.base.CrudController;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
@@ -26,8 +25,11 @@ import java.util.stream.Stream;
 @RequestMapping("/config")
 public class ConfigController implements CrudController<ConfigEntity> {
 
-    @Autowired
-    private ConfigService configService;
+    private final ConfigService configService;
+
+    public ConfigController(ConfigService configService) {
+        this.configService = configService;
+    }
 
     @Override
     public IService<ConfigEntity> getService() {
