@@ -21,7 +21,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -52,6 +54,12 @@ public class ReceiveConfigServlet extends FrameworkServlet {
             String messageAction = req.getHeader("Console-Push-Action");
             Class type = Class.forName(messageType);
             List<Object> retList = convertToConfigList(dataString, type);
+            List<Object> config = InstanceConfigurationCache.getConfigs(type);
+            Set<Object> configSet = new HashSet<>(retList);
+            if (config != null) {
+                configSet.addAll(config);
+            }
+            retList = new ArrayList<>(configSet);
             InstanceConfigurationCache.setConfigs(type, retList);
             ServerMessage serverMessage = new ServerMessage();
             serverMessage.setType(messageType);
