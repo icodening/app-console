@@ -3,6 +3,8 @@ package cn.icodening.console.server.service.impl;
 import cn.icodening.console.server.repository.BaseRepository;
 import cn.icodening.console.server.service.IService;
 import cn.icodening.console.server.util.PageResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -15,6 +17,8 @@ import java.util.Optional;
 
 @Transactional
 public abstract class AbstractServiceImpl<T, R extends BaseRepository<T>> implements IService<T> {
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected R baseRepository;
 
